@@ -4,9 +4,7 @@
     <string name="radio_name">Nom de la radio</string>
     <string name="url">URL</string>
 
-    <!-- nav header activity main -->
-    <string name="version">Radio 2.2</string>
-    <string name="by">Old Geek, avril 2016</string>
+
 
 
     <string name="edit">éditer</string>
@@ -14,19 +12,28 @@
 
     <string name="deleteRadioConfirm">Supprimer cette radio ?</string>
     <string name="addRadio">Ajouter une radio</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="errorInvalidURL">Veuillez entrer une adresse valide</string>
 
 
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
 
+    <!-- nav header activity main -->
+    <string name="version">Radio 2.2</string>
+    <string name="by">Old Geek, avril 2016</string>
+
 
     <string name="musique">Musique</string>
+
+    <string name="update">Mise à jour</string>
+
+    <string name="about">A propos</string>
+
     <string name="exit">Quitter</string>
 
 
-    <string name="about">A propos</string>
+
 
     <string name="about_message">
         \n
@@ -61,5 +68,19 @@
     <string name="continuer">continuer</string>
     <string name="cancel_timer">annuler le timer</string>
     <string name="impossible">0 impossible</string>
+
+
+    <!-- update -->
+    <string name="appupdater_update_available">Nouvelle mise à jour disponible</string>
+
+    <string name="appupdater_update_available_description_dialog">La mise à jour %1$s est disponible. En téléchargeant cette version de l\'application, vous aurez accès aux dernières fonctionnalités et améliorations de %2$s.</string>
+    <string name="appupdater_update_available_description_dialog_before_release_notes">La mise à jour %1$s est disponible.\n\nNOUVEAUTÉS:\n%2$s</string>
+    <string name="appupdater_update_available_description_snackbar">Mise à jour %1$s disponible.</string>
+    <string name="appupdater_update_available_description_notification">La mise à jour %1$s de %2$s est disponible.</string>
+    <string name="appupdater_update_not_available">Aucune mise à jour disponible</string>
+    <string name="appupdater_update_not_available_description">Vous avez la dernière version disponible de %s.</string>
+    <string name="appupdater_btn_update">Télécharger</string>
+    <string name="appupdater_btn_disable">Ignorer</string>
+    <string name="appupdater_btn_dismiss">Plus tard</string>
 
 </resources>

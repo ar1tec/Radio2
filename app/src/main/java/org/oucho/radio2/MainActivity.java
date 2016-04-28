@@ -49,6 +49,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -64,6 +65,10 @@ import org.oucho.radio2.itf.ListsClickListener;
 import org.oucho.radio2.itf.PlayableItem;
 import org.oucho.radio2.itf.Radio;
 import org.oucho.radio2.itf.RadioAdapter;
+import org.oucho.radio2.update.AppUpdater;
+import org.oucho.radio2.update.enums.Display;
+import org.oucho.radio2.update.enums.Duration;
+import org.oucho.radio2.update.enums.UpdateFrom;
 import org.oucho.radio2.utils.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
 import org.oucho.radio2.utils.SeekArc;
@@ -94,6 +99,8 @@ public class MainActivity extends AppCompatActivity
     private static final String RESTART = "restart";
 
     private static final String STATE = "org.oucho.radio2.STATE";
+
+    private static final String updateURL = "http://oucho.free.fr/app_android/Radio/update.xml";
 
     private static String etat_lecture = "";
     private static String nom_radio = "";
@@ -197,12 +204,15 @@ public class MainActivity extends AppCompatActivity
 
         State.getState(context);
 
+        updateOnStart();
+
     }
 
 
     public static Context getContext() {
         return context;
     }
+
 
 
    /* **********************************************************************************************
@@ -394,6 +404,10 @@ public class MainActivity extends AppCompatActivity
         switch (menuItem.getItemId()) {
             case R.id.action_musique:
                 musique();
+                break;
+
+            case R.id.nav_update:
+                    checkUpdate();
                 break;
 
             case R.id.nav_help:
@@ -602,7 +616,8 @@ public class MainActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         int title = oldRadio==null ? R.string.addRadio : R.string.edit;
         builder.setTitle(getResources().getString(title));
-        @SuppressLint("InflateParams") final View view = getLayoutInflater().inflate(R.layout.layout_editwebradio, null);
+        @SuppressLint("InflateParams")
+        final View view = getLayoutInflater().inflate(R.layout.layout_editwebradio, null);
         builder.setView(view);
 
         final EditText editTextUrl = (EditText)view.findViewById(R.id.editTextUrl);
@@ -641,10 +656,38 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
         AlertDialog dialog = builder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
 
+    }
+
+
+
+
+   /* **********************************************************************************************
+    * Mise à jour
+    * *********************************************************************************************/
+
+    private void updateOnStart(){
+
+        new AppUpdater(this)
+                .setUpdateFrom(UpdateFrom.XML)
+                .setUpdateXML(updateURL)
+                .showEvery(5)
+                .setDisplay(Display.SNACKBAR)
+                .setDuration(Duration.NORMAL)
+                .start();
+    }
+
+    private void checkUpdate() {
+        new AppUpdater(this)
+                .setUpdateFrom(UpdateFrom.XML)
+                .setUpdateXML(updateURL)
+                .setDisplay(Display.DIALOG)
+                .showAppUpdated(true)
+                .start();
     }
 
 
@@ -1048,7 +1091,8 @@ public class MainActivity extends AppCompatActivity
 
         LayoutInflater inflater = getLayoutInflater();
 
-        @SuppressLint("InflateParams") View dialoglayout = inflater.inflate(R.layout.alertdialog_main_noshadow, null);
+        @SuppressLint("InflateParams")
+        View dialoglayout = inflater.inflate(R.layout.alertdialog_main_noshadow, null);
         Toolbar toolbar = (Toolbar) dialoglayout.findViewById(R.id.dialog_toolbar_noshadow);
         toolbar.setTitle(title);
         toolbar.setTitleTextColor(0xffffffff);
