@@ -114,6 +114,8 @@ public class MainActivity extends AppCompatActivity
 
     private Handler handler;
 
+
+
    /* **********************************************************************************************
     * Création de l'activité
     * *********************************************************************************************/
@@ -627,14 +629,22 @@ public class MainActivity extends AppCompatActivity
 
                 Radio newRadio = new Radio(url, name);
                 Radio.addRadio(newRadio);
+
                 updateListView();
             }
         });
 
-        builder.setNegativeButton(R.string.cancel, null);
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                updateListView();
+            }
+        });
+
         AlertDialog dialog = builder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
+
     }
 
 
@@ -814,17 +824,17 @@ public class MainActivity extends AppCompatActivity
         mSeekArc.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
 
             @Override
-            public void onStopTrackingTouch(SeekArc seekArc) {
+            public void onStopTrackingTouch() {
                 // vide, obligatoire
             }
 
             @Override
-            public void onStartTrackingTouch(SeekArc seekArc) {
+            public void onStartTrackingTouch() {
                 // vide, obligatoire
             }
 
             @Override
-            public void onProgressChanged(SeekArc seekArc, int progress,boolean fromUser) {
+            public void onProgressChanged(int progress) {
 
                 String minute;
 
@@ -960,6 +970,7 @@ public class MainActivity extends AppCompatActivity
 
         timeAfficheur = ((TextView) findViewById(R.id.time_ecran));
 
+        assert timeAfficheur != null;
         timeAfficheur.setVisibility(View.VISIBLE);
 
 
@@ -1002,6 +1013,7 @@ public class MainActivity extends AppCompatActivity
 
         timeAfficheur = ((TextView) findViewById(R.id.time_ecran));
 
+        assert timeAfficheur != null;
         timeAfficheur.setVisibility(View.INVISIBLE);
 
     }

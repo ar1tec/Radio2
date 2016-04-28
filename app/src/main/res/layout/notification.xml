@@ -4,7 +4,8 @@
     android:layout_height="fill_parent"
     android:id="@+id/notification_layout"
     android:background="@color/controls_bg_dark"
-    android:gravity="left|top">
+    android:gravity="left|top"
+    tools:ignore="Overdraw">
 
     <ImageView
         android:id="@+id/notif_ombre"
