@@ -20,7 +20,7 @@
     <string name="drawer_close">close</string>
 
     <!-- nav header activity main -->
-    <string name="version">Radio 2.4</string>
+    <string name="version">Radio 2.4.1</string>
     <string name="by">Old Geek, avril 2016</string>
 
 
@@ -34,29 +34,25 @@
 
 
 
-
     <string name="about_message">
         \n
         Radio 2, web radio for android\n
         \n
-        Copyright © 2016 Old Geek\n
+        Old Geek, 2016\n
         \n
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.\n
-        \n
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.\n
-        \n
-        You should have received a copy of the GNU General Public License
-        along with this program.\n
-        If not, see http://www.gnu.org/licenses \n
+        Licence: aucune.\n
         \n
         \n
-        Source code: https://github.com/Old-Geek/Radio2\n
+        Librairies:\n
+        \n
+        AppUpdater\n
+        Apache License 2.0\n
+        http://www.apache.org/licenses\n
+        \n
+        \n
+        Code source\n
+        Musique: https://github.com/Old-Geek/Radio2\n
+        AppUpdater: https://github.com/javiersantos/AppUpdater\n
         \n
     </string>
 
