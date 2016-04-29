@@ -20,7 +20,7 @@ class UtilsDisplay {
 
 
     static void showUpdateAvailableDialog(final Context context, String title, String content, String btnNegative, String btnPositive, String btnNeutral, final UpdateFrom updateFrom, final URL apk) {
-        final LibraryPreferences libraryPreferences = new LibraryPreferences(context);
+       // final LibraryPreferences libraryPreferences = new LibraryPreferences(context);
 
         new AlertDialog.Builder(context)
 
@@ -39,11 +39,11 @@ class UtilsDisplay {
                     }
                 })
 
-        .setNeutralButton(btnNeutral, new DialogInterface.OnClickListener() {
+/*        .setNeutralButton(btnNeutral, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         libraryPreferences.setAppUpdaterShow(false);
                     }
-                })
+                })*/
 
         .setNegativeButton(btnNegative, null).show();
 
