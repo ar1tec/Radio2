@@ -20,8 +20,6 @@ Screenshots
 License
 -------
 
-## License
-
 Aucune, profitez, partagez.
 
 
@@ -29,5 +27,6 @@ Aucune, profitez, partagez.
 
 AppUpdater
 Apache License 2.0
-AppUpdater: https://github.com/javiersantos/AppUpdater
+
+https://github.com/javiersantos/AppUpdater
 
