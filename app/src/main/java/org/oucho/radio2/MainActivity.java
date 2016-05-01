@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String STATE = "org.oucho.radio2.STATE";
 
-    private static final String updateURL = "http://oucho.free.fr/app_android/Radio/update.xml";
+    private static final String updateURL = "http://oucho.free.fr/app_android/Radio/update_radio2.xml";
 
     private static String etat_lecture = "";
     private static String nom_radio = "";
