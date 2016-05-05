@@ -330,13 +330,13 @@ public class MainActivity extends AppCompatActivity
     private void updatePlayPause() {
         ImageView equalizer = (ImageView) findViewById(R.id.icon_equalizer);
 
-        if (State.isStopped() && State.isWantPlaying()) {
+        if (State.isPlaying() || State.isPaused()) {
 
-            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
+            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
 
         } else {
 
-            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
+            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
 
         }
     }
