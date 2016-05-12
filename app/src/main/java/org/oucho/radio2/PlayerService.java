@@ -142,6 +142,7 @@ public class PlayerService extends Service
       return done();
    }
 
+    @SuppressWarnings("UnusedReturnValue")
     private int intentPlay(Intent intent) {
 
         if ( intent.hasExtra("url") )
@@ -215,6 +216,7 @@ public class PlayerService extends Service
    }
 
 
+   @SuppressWarnings("UnusedReturnValue")
    public int playLaunch(String url) {
 
       launch_url = null;
@@ -303,6 +305,7 @@ public class PlayerService extends Service
     * Reduce volume, for a short while, for a notification.
     ***********************************************************************************************/
 
+    @SuppressWarnings("UnusedReturnValue")
     private int duck() {
 
         if ( State.is(State.STATE_DUCK) || ! State.isPlaying() )

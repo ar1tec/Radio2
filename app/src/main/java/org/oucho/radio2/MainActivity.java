@@ -29,7 +29,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,8 +46,6 @@ import org.oucho.radio2.itf.Radio;
 import org.oucho.radio2.itf.RadioAdapter;
 import org.oucho.radio2.update.AppUpdater;
 import org.oucho.radio2.update.enums.Display;
-import org.oucho.radio2.update.enums.Duration;
-import org.oucho.radio2.update.enums.UpdateFrom;
 import org.oucho.radio2.utils.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
 import org.oucho.radio2.utils.SeekArc;
@@ -653,20 +650,16 @@ public class MainActivity extends AppCompatActivity
     private void updateOnStart(){
 
         new AppUpdater(this)
-                .setUpdateFrom(UpdateFrom.XML)
                 .setUpdateXML(updateURL)
-                .showEvery(5)
                 .setDisplay(Display.SNACKBAR)
-                .setDuration(Duration.NORMAL)
                 .start();
     }
 
     private void checkUpdate() {
         new AppUpdater(this)
-                .setUpdateFrom(UpdateFrom.XML)
                 .setUpdateXML(updateURL)
                 .setDisplay(Display.DIALOG)
-                .showAppUpdated(true)
+                .showAppUpdated()
                 .start();
     }
 

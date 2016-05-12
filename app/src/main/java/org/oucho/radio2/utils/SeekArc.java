@@ -51,8 +51,10 @@ public class SeekArc extends View {
 
 		void onProgressChanged(int progress);
 
+		@SuppressWarnings("EmptyMethod")
 		void onStartTrackingTouch();
 
+		@SuppressWarnings("EmptyMethod")
 		void onStopTrackingTouch();
 	}
 

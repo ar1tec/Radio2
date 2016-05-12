@@ -9,12 +9,6 @@ public class Update {
 
     public Update() {}
 
-    public Update(String latestVersion, String releaseNotes, URL apk) {
-        this.version = latestVersion;
-        this.apk = apk;
-        this.releaseNotes = releaseNotes;
-    }
-
     public String getLatestVersion() {
         return version;
     }

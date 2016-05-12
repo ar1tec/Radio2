@@ -20,7 +20,7 @@
     <string name="drawer_close">close</string>
 
     <!-- nav header activity main -->
-    <string name="version">Radio 2.4.2</string>
+    <string name="version">Radio 2.4.4</string>
     <string name="by">Old Geek, avril 2016</string>
 
 
@@ -72,11 +72,9 @@
     <string name="appupdater_update_available_description_dialog">La mise à jour %1$s est disponible. En téléchargeant cette version de l\'application, vous aurez accès aux dernières fonctionnalités et améliorations de %2$s.</string>
     <string name="appupdater_update_available_description_dialog_before_release_notes">La mise à jour %1$s est disponible.\n\nNOUVEAUTÉS:\n%2$s</string>
     <string name="appupdater_update_available_description_snackbar">Mise à jour %1$s disponible.</string>
-    <string name="appupdater_update_available_description_notification">La mise à jour %1$s de %2$s est disponible.</string>
     <string name="appupdater_update_not_available">Aucune mise à jour disponible</string>
     <string name="appupdater_update_not_available_description">Vous avez la dernière version disponible de %s.</string>
     <string name="appupdater_btn_update">Télécharger</string>
-    <string name="appupdater_btn_disable">Ignorer</string>
     <string name="appupdater_btn_dismiss">Plus tard</string>
 
 </resources>

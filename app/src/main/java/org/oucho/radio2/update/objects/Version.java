@@ -6,7 +6,7 @@ import android.util.Log;
 public class Version implements Comparable<Version> {
     private final String version;
 
-    public final String get() {
+    private String get() {
         return this.version;
     }
 
@@ -39,11 +39,7 @@ public class Version implements Comparable<Version> {
 
     @Override
     public boolean equals(Object that) {
-        if (this == that)
-            return true;
-        if (that == null)
-            return false;
-        return this.getClass() == that.getClass() && this.compareTo((Version) that) == 0;
+        return this == that || that != null && this.getClass() == that.getClass() && this.compareTo((Version) that) == 0;
     }
 
 }

@@ -8,14 +8,11 @@ android {
         applicationId "org.oucho.radio2"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 7
-        versionName "2.4.2"
+        versionCode 8
+        versionName "2.4.4"
+        setProperty("archivesBaseName", "Radio_$versionName")
     }
     buildTypes {
-        debug {
-            applicationIdSuffix ".debug"
-            versionNameSuffix " DEBUG"
-        }
         release {
             minifyEnabled true
             shrinkResources true
