@@ -3,7 +3,7 @@ package org.oucho.radio2.update;
 import android.content.Context;
 import android.os.AsyncTask;
 
-//@SuppressWarnings("unused")
+@SuppressWarnings("unused")
 class CheckAsync {
 
     static class LatestAppVersion extends AsyncTask<Void, Void, Update> {

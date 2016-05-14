@@ -45,7 +45,7 @@ class RssParser {
     }
 
 
-    class RssHandler extends DefaultHandler {
+    static class RssHandler extends DefaultHandler {
         private Update update;
         private StringBuilder builder;
 
