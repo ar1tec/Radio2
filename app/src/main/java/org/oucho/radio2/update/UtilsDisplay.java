@@ -41,12 +41,11 @@ class UtilsDisplay {
                 .show();
     }
 
-    static void showUpdateAvailableSnackbar(final Context context, String content, Boolean indefinite, final URL apk) {
+    static void showUpdateAvailableSnackbar(final Context context, String content, final URL apk) {
         Activity activity = (Activity) context;
-        int snackbarTime = indefinite ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG;
 
 
-        Snackbar snackbar = Snackbar.make(activity.findViewById(android.R.id.content), content, snackbarTime);
+        Snackbar snackbar = Snackbar.make(activity.findViewById(android.R.id.content), content, Snackbar.LENGTH_LONG);
         snackbar.setAction(context.getResources().getString(R.string.appupdater_btn_update), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,12 +54,11 @@ class UtilsDisplay {
         }).show();
     }
 
-    static void showUpdateNotAvailableSnackbar(final Context context, String content, Boolean indefinite) {
+    static void showUpdateNotAvailableSnackbar(final Context context, String content) {
         Activity activity = (Activity) context;
-        int snackbarTime = indefinite ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG;
 
 
-        Snackbar.make(activity.findViewById(android.R.id.content), content, snackbarTime).show();
+        Snackbar.make(activity.findViewById(android.R.id.content), content, Snackbar.LENGTH_LONG).show();
     }
 
 }

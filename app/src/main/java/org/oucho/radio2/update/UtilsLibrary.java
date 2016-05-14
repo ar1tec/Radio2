@@ -7,10 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 
-import org.oucho.radio2.update.enums.Duration;
-import org.oucho.radio2.update.objects.Update;
-import org.oucho.radio2.update.objects.Version;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -58,19 +54,6 @@ class UtilsLibrary {
         return res;
     }
 
-    @SuppressWarnings("SameParameterValue")
-    static Boolean getDurationEnumToBoolean(Duration duration) {
-        Boolean res = false;
-
-        switch (duration) {
-            case INDEFINITE:
-                res = true;
-                break;
-        }
-
-        return res;
-    }
-
     static Update getLatestAppVersionXml(String urlXml) {
         RssParser parser = new RssParser(urlXml);
         return parser.parse();
@@ -90,10 +73,6 @@ class UtilsLibrary {
 
         context.startActivity(intent);
 
-    }
-
-    static Boolean isAbleToShow(Integer successfulChecks, Integer showEvery) {
-        return successfulChecks % showEvery == 0;
     }
 
     static Boolean isNetworkAvailable(Context context) {

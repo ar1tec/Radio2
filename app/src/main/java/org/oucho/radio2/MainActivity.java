@@ -44,8 +44,8 @@ import org.oucho.radio2.itf.ListsClickListener;
 import org.oucho.radio2.itf.PlayableItem;
 import org.oucho.radio2.itf.Radio;
 import org.oucho.radio2.itf.RadioAdapter;
-import org.oucho.radio2.update.AppUpdater;
-import org.oucho.radio2.update.enums.Display;
+import org.oucho.radio2.update.AppUpdate;
+import org.oucho.radio2.update.Display;
 import org.oucho.radio2.utils.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
 import org.oucho.radio2.utils.SeekArc;
@@ -649,14 +649,14 @@ public class MainActivity extends AppCompatActivity
 
     private void updateOnStart(){
 
-        new AppUpdater(this)
+        new AppUpdate(this)
                 .setUpdateXML(updateURL)
                 .setDisplay(Display.SNACKBAR)
                 .start();
     }
 
     private void checkUpdate() {
-        new AppUpdater(this)
+        new AppUpdate(this)
                 .setUpdateXML(updateURL)
                 .setDisplay(Display.DIALOG)
                 .showAppUpdated()

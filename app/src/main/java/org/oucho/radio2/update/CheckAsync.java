@@ -3,22 +3,16 @@ package org.oucho.radio2.update;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import org.oucho.radio2.update.objects.Update;
-
-@SuppressWarnings("unused")
-class UtilsAsync {
+//@SuppressWarnings("unused")
+class CheckAsync {
 
     static class LatestAppVersion extends AsyncTask<Void, Void, Update> {
         private final Context context;
-        private final LibraryPreferences libraryPreferences;
-        private final Boolean fromUtils;
         private final String xmlUrl;
-        private final AppUpdater.LibraryListener listener;
+        private final AppUpdate.LibraryListener listener;
 
-        public LatestAppVersion(Context context, Boolean fromUtils, String xmlUrl, AppUpdater.LibraryListener listener) {
+        public LatestAppVersion(Context context, String xmlUrl, AppUpdate.LibraryListener listener) {
             this.context = context;
-            this.libraryPreferences = new LibraryPreferences(context);
-            this.fromUtils = fromUtils;
             this.xmlUrl = xmlUrl;
             this.listener = listener;
         }
@@ -28,14 +22,12 @@ class UtilsAsync {
             super.onPreExecute();
 
             if (UtilsLibrary.isNetworkAvailable(context)) {
-                if (!fromUtils && !libraryPreferences.getAppUpdaterShow()) {
+
+                if (xmlUrl == null || !UtilsLibrary.isStringAnUrl(xmlUrl)) {
+                    listener.onFailed();
                     cancel(true);
-                } else {
-                    if (xmlUrl == null || !UtilsLibrary.isStringAnUrl(xmlUrl)) {
-                        listener.onFailed();
-                        cancel(true);
-                    }
                 }
+
             } else {
                 listener.onFailed();
                 cancel(true);
@@ -47,7 +39,7 @@ class UtilsAsync {
 
             try {
 
-                    return UtilsLibrary.getLatestAppVersionXml(xmlUrl);
+                return UtilsLibrary.getLatestAppVersionXml(xmlUrl);
 
             } catch (Exception e) {
                 cancel(true);

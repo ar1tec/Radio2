@@ -4,9 +4,6 @@
     <string name="radio_name">Nom de la radio</string>
     <string name="url">URL</string>
 
-
-
-
     <string name="edit">éditer</string>
     <string name="delete">supprimer</string>
 
@@ -40,19 +37,11 @@
         \n
         Old Geek, 2016\n
         \n
-        Licence: aucune.\n
-        \n
-        \n
-        Librairies:\n
-        \n
-        AppUpdater\n
-        Apache License 2.0\n
-        http://www.apache.org/licenses\n
+        Licence: aucune, profitez, partagez.\n
         \n
         \n
         Code source\n
         Musique: https://github.com/Old-Geek/Radio2\n
-        AppUpdater: https://github.com/javiersantos/AppUpdater\n
         \n
     </string>
 

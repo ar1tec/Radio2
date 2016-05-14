@@ -1,4 +1,4 @@
-package org.oucho.radio2.update.objects;
+package org.oucho.radio2.update;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -11,7 +11,7 @@ public class Version implements Comparable<Version> {
     }
 
     public Version(String version) {
-        final String TAG = "AppUpdater";
+        final String TAG = "AppUpdate";
         if (version == null)
             Log.e(TAG, "Version can not be null");
         else if (!version.matches("[0-9]+(\\.[0-9]+)*"))
@@ -25,12 +25,13 @@ public class Version implements Comparable<Version> {
         String[] thatParts = that.get().split("\\.");
         int length = Math.max(thisParts.length, thatParts.length);
         for (int i = 0; i < length; i++) {
-            int thisPart = i < thisParts.length ?
-                    Integer.parseInt(thisParts[i]) : 0;
-            int thatPart = i < thatParts.length ?
-                    Integer.parseInt(thatParts[i]) : 0;
+
+            int thisPart = i < thisParts.length ? Integer.parseInt(thisParts[i]) : 0;
+            int thatPart = i < thatParts.length ? Integer.parseInt(thatParts[i]) : 0;
+
             if (thisPart < thatPart)
                 return -1;
+
             if (thisPart > thatPart)
                 return 1;
         }

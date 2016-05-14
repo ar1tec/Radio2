@@ -1,4 +1,4 @@
-package org.oucho.radio2.update.objects;
+package org.oucho.radio2.update;
 
 import java.net.URL;
 

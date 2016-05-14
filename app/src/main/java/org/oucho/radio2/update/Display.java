@@ -1,4 +1,4 @@
-package org.oucho.radio2.update.enums;
+package org.oucho.radio2.update;
 
 public enum Display {
     DIALOG,
