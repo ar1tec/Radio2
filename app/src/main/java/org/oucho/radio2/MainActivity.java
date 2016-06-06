@@ -30,7 +30,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,6 +45,7 @@ import org.oucho.radio2.itf.Radio;
 import org.oucho.radio2.itf.RadioAdapter;
 import org.oucho.radio2.update.AppUpdate;
 import org.oucho.radio2.update.Display;
+import org.oucho.radio2.utils.AboutDialog;
 import org.oucho.radio2.utils.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
 import org.oucho.radio2.utils.SeekArc;
@@ -1059,24 +1059,8 @@ public class MainActivity extends AppCompatActivity
 
     private void about() {
 
-        String title = getString(R.string.about);
-        AlertDialog.Builder about = new AlertDialog.Builder(this);
-
-        LayoutInflater inflater = getLayoutInflater();
-
-        @SuppressLint("InflateParams")
-        View dialoglayout = inflater.inflate(R.layout.alertdialog_main_noshadow, null);
-        Toolbar toolbar = (Toolbar) dialoglayout.findViewById(R.id.dialog_toolbar_noshadow);
-        toolbar.setTitle(title);
-        toolbar.setTitleTextColor(0xffffffff);
-
-        final TextView text = (TextView) dialoglayout.findViewById(R.id.showrules_dialog);
-        text.setText(getString(R.string.about_message));
-
-        about.setView(dialoglayout);
-
-        AlertDialog dialog = about.create();
-        dialog.show();
+        AboutDialog dialog = new AboutDialog();
+        dialog.show(getSupportFragmentManager(), "about");
     }
 
 
