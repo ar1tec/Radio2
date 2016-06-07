@@ -43,8 +43,6 @@ import org.oucho.radio2.itf.ListsClickListener;
 import org.oucho.radio2.itf.PlayableItem;
 import org.oucho.radio2.itf.Radio;
 import org.oucho.radio2.itf.RadioAdapter;
-import org.oucho.radio2.update.AppUpdate;
-import org.oucho.radio2.update.Display;
 import org.oucho.radio2.utils.AboutDialog;
 import org.oucho.radio2.utils.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
@@ -76,8 +74,6 @@ public class MainActivity extends AppCompatActivity
     private static final String RESTART = "restart";
 
     private static final String STATE = "org.oucho.radio2.STATE";
-
-    private static final String updateURL = "http://oucho.free.fr/app_android/Radio/update_radio2.xml";
 
     private static String etat_lecture = "";
     private static String nom_radio = "";
@@ -180,8 +176,6 @@ public class MainActivity extends AppCompatActivity
         volume();
 
         State.getState(context);
-
-        updateOnStart();
 
     }
 
@@ -381,10 +375,6 @@ public class MainActivity extends AppCompatActivity
         switch (menuItem.getItemId()) {
             case R.id.action_musique:
                 musique();
-                break;
-
-            case R.id.nav_update:
-                    checkUpdate();
                 break;
 
             case R.id.nav_help:
@@ -638,29 +628,6 @@ public class MainActivity extends AppCompatActivity
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
 
-    }
-
-
-
-
-   /* **********************************************************************************************
-    * Mise à jour
-    * *********************************************************************************************/
-
-    private void updateOnStart(){
-
-        new AppUpdate(this)
-                .setUpdateXML(updateURL)
-                .setDisplay(Display.SNACKBAR)
-                .start();
-    }
-
-    private void checkUpdate() {
-        new AppUpdate(this)
-                .setUpdateXML(updateURL)
-                .setDisplay(Display.DIALOG)
-                .showAppUpdated()
-                .start();
     }
 
 

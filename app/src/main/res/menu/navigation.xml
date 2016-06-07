@@ -13,11 +13,6 @@
     <group android:id="@+id/menu_bottom">
 
         <item
-            android:id="@+id/nav_update"
-            android:icon="@drawable/ic_menu_update"
-            android:title="@string/update" />
-
-        <item
             android:id="@+id/nav_help"
             android:icon="@drawable/ic_menu_help"
             android:title="@string/about" />
