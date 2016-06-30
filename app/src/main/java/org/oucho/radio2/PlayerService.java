@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.util.Log;
 import android.webkit.URLUtil;
 
 import org.oucho.radio2.net.Connectivity;
@@ -138,7 +139,43 @@ public class PlayerService extends Service
       if (action.equals(intent_play))
           intentPlay(intent);
 
+      if (action.equals("vol1"))
+         return setVolume(0.1f);
 
+      if (action.equals("vol2"))
+         return setVolume(0.2f);
+
+      if (action.equals("vol3"))
+         return setVolume(0.3f);
+
+      if (action.equals("vol4"))
+         return setVolume(0.4f);
+
+      if (action.equals("vol5"))
+         return setVolume(0.5f);
+
+      if (action.equals("vol6"))
+         return setVolume(0.6f);
+
+      if (action.equals("vol7"))
+         return setVolume(0.7f);
+
+      if (action.equals("vol8"))
+         return setVolume(0.8f);
+
+      if (action.equals("vol9"))
+         return setVolume(0.9f);
+
+      if (action.equals("vol10"))
+         return setVolume(1.0f);
+
+      return done();
+   }
+
+
+   public int setVolume(float vol) {
+
+      player.setVolume(vol, vol);
       return done();
    }
 

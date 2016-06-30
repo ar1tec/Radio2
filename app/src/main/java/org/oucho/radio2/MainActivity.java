@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity
     private Handler handler;
 
 
+    private CountDownTimer minuteurVolume;
 
    /* **********************************************************************************************
     * Création de l'activité
@@ -227,7 +228,7 @@ public class MainActivity extends AppCompatActivity
 
 
         if (State.isStopped()) {
-            
+
             TextView status = (TextView) findViewById(R.id.etat);
 
             etat_lecture = "Stop";
@@ -412,7 +413,10 @@ public class MainActivity extends AppCompatActivity
     * Quitter
     * *******/
 
+
     private void exit() {
+        stopTimer();
+
         Intent player = new Intent(this, PlayerService.class);
         player.putExtra("action", STOP);
         startService(player);
@@ -422,8 +426,6 @@ public class MainActivity extends AppCompatActivity
             unregisterReceiver(Etat_player_Receiver);
             isRegistered = false;
         }
-
-        stopTimer();
 
         killNotif();
 
@@ -883,6 +885,8 @@ public class MainActivity extends AppCompatActivity
         State.getState(context);
 
         showTimeEcran();
+
+        baisseVolume(delay);
     }
 
 
@@ -987,6 +991,10 @@ public class MainActivity extends AppCompatActivity
         if (running) {
             mTask.cancel(true);
             timerEcran.cancel();
+
+            minuteurVolume.cancel();
+
+            setVolume("vol10");
         }
 
         running = false;
@@ -1018,6 +1026,106 @@ public class MainActivity extends AppCompatActivity
         State.getState(context);
     }
 
+
+    /* ********************************
+    * Réduction progressive du volume
+    * ********************************/
+
+
+
+    private void baisseVolume(final int delay) {
+
+        // définir si le delay est supérieur ou inférieur à 10mn
+
+        final short minutes = (short) ( ( (delay / 1000) % 3600) / 60);
+
+        final boolean tempsMinuterie = minutes > 10;
+
+        int cycle;
+
+        if (tempsMinuterie) {
+            cycle = 60000;
+        } else {
+            cycle = 1000;
+        }
+
+
+        minuteurVolume = new CountDownTimer(delay, cycle) {
+            @Override
+            public void onTick(long mseconds) {
+
+                long temps1 = ((mTask.getDelay(TimeUnit.MILLISECONDS) / 1000) % 3600) / 60 ;
+
+                long temps2 = mTask.getDelay(TimeUnit.MILLISECONDS) / 1000;
+
+                if (tempsMinuterie) {
+
+                    if (temps1 < 1) {
+                        setVolume("vol1");
+                    } else if (temps1 < 2) {
+                        setVolume("vol2");
+                    } else if (temps1 < 3) {
+                        setVolume("vol3");
+                    } else if (temps1 < 4) {
+                        setVolume("vol4");
+                    } else if (temps1 < 5) {
+                        setVolume("vol5");
+                    } else if (temps1 < 6) {
+                        setVolume("vol6");
+                    } else if (temps1 < 7) {
+                        setVolume("vol7");
+                    } else if (temps1 < 8) {
+                        setVolume("vol8");
+                    } else if (temps1 < 9) {
+                        setVolume("vol9");
+                    } else if (temps1 < 10) {
+                        setVolume("vol10");
+                    }
+
+                } else {
+
+                    if (temps2 < 6) {
+                        setVolume("vol1");
+                    } else if (temps2 < 12) {
+                        setVolume("vol2");
+                    } else if (temps2 < 18) {
+                        setVolume("vol3");
+                    } else if (temps2 < 24) {
+                        setVolume("vol4");
+                    } else if (temps2 < 30) {
+                        setVolume("vol5");
+                    } else if (temps2 < 36) {
+                        setVolume("vol6");
+                    } else if (temps2 < 42) {
+                        setVolume("vol7");
+                    } else if (temps2 < 48) {
+                        setVolume("vol8");
+                    } else if (temps2 < 54) {
+                        setVolume("vol9");
+                    } else if (temps2 < 60) {
+                        setVolume("vol10");
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+
+        }.start();
+    }
+
+    private void setVolume(String volume) {
+
+        if (State.isPlaying() || State.isPaused()) {
+            Intent niveau = new Intent(getContext(), PlayerService.class);
+            niveau.putExtra("action", volume);
+            startService(niveau);
+        }
+    }
 
 
     /***********************************************************************************************
