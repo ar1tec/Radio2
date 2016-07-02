@@ -14,6 +14,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.TrafficStats;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -90,12 +91,17 @@ public class MainActivity extends AppCompatActivity
     private TextView timeAfficheur;
 
     private Etat_player Etat_player_Receiver;
-    private boolean isRegistered = false;
+   // private boolean isRegistered = false;
 
     private Handler handler;
 
-
     private CountDownTimer minuteurVolume;
+
+    private MediaPlayer soundChargement;
+
+    boolean bitrate = false;
+
+
 
    /* **********************************************************************************************
     * Création de l'activité
@@ -117,7 +123,7 @@ public class MainActivity extends AppCompatActivity
         Etat_player_Receiver = new Etat_player();
         IntentFilter filter = new IntentFilter(STATE);
         registerReceiver(Etat_player_Receiver, filter);
-        isRegistered = true;
+        //isRegistered = true;
 
         Control_Volume niveau_Volume = new Control_Volume(this, new Handler());
         getApplicationContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
@@ -172,8 +178,12 @@ public class MainActivity extends AppCompatActivity
         this.findViewById(R.id.play).setOnClickListener(this);
         this.findViewById(R.id.pause).setOnClickListener(this);
 
+        soundChargement = MediaPlayer.create(this, R.raw.radio_connection);
+        soundChargement.setLooping(true);
 
         getBitRate();
+        bitrate = true;
+
         volume();
 
         State.getState(context);
@@ -184,7 +194,6 @@ public class MainActivity extends AppCompatActivity
     public static Context getContext() {
         return context;
     }
-
 
 
    /* **********************************************************************************************
@@ -200,14 +209,17 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
 
-        if (isRegistered) {
+/*        if (isRegistered) {
             unregisterReceiver(Etat_player_Receiver);
             isRegistered = false;
-        }
+        }*/
 
         killNotif();
 
-        stopBitrate();
+        if (bitrate) {
+            stopBitrate();
+            bitrate = false;
+        }
 
     }
 
@@ -220,12 +232,16 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        if (!isRegistered) {
+        if (!bitrate) {
+            getBitRate();
+            bitrate = true;
+        }
+
+/*        if (!isRegistered) {
             IntentFilter filter = new IntentFilter(STATE);
             registerReceiver(Etat_player_Receiver, filter);
             isRegistered = true;
-        }
-
+        }*/
 
         if (State.isStopped()) {
 
@@ -250,14 +266,21 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
 
+        if (bitrate)
+            stopBitrate();
+
         killNotif();
+
+        soundChargement.release();
 
     }
 
 
 
    /* **********************************************************************************************
+    *
     * Broadcast receiver
+    *
     * *********************************************************************************************/
 
     private class Etat_player extends BroadcastReceiver {
@@ -285,6 +308,12 @@ public class MainActivity extends AppCompatActivity
                 updateListView();
 
                 updatePlayPause();
+
+                if (etat_lecture.equals("Chargement...")) {
+                    soundChargement.start();
+                } else if (soundChargement.isPlaying()) {
+                    soundChargement.pause();
+                }
 
             }
         }
@@ -415,6 +444,12 @@ public class MainActivity extends AppCompatActivity
 
 
     private void exit() {
+
+        soundChargement.release();
+
+        if (bitrate)
+            stopBitrate();
+
         stopTimer();
 
         Intent player = new Intent(this, PlayerService.class);
@@ -422,10 +457,10 @@ public class MainActivity extends AppCompatActivity
         startService(player);
 
 
-        if (isRegistered) {
+        //if (isRegistered) {
             unregisterReceiver(Etat_player_Receiver);
-            isRegistered = false;
-        }
+        //    isRegistered = false;
+        //}
 
         killNotif();
 
@@ -784,7 +819,12 @@ public class MainActivity extends AppCompatActivity
 
 
     private void stopBitrate() {
-        handler.removeCallbacksAndMessages(null);
+
+        if (bitrate) {
+            handler.removeCallbacksAndMessages(null);
+            bitrate = false;
+        }
+
     }
 
    /* **********************************************************************************************
@@ -1151,6 +1191,10 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
             return true;
+        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            moveTaskToBack(true);
+
         }
 
         return super.onKeyDown(keyCode, event);

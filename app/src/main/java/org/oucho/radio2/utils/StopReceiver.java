@@ -17,7 +17,6 @@ public class StopReceiver extends BroadcastReceiver {
 
         String etat = intent.getAction();
 
-
         if ("org.oucho.radio2.STATE".equals(etat)) {
 
             String nom_radio = intent.getStringExtra("name");

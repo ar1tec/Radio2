@@ -16,7 +16,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.util.Log;
 import android.webkit.URLUtil;
 
 import org.oucho.radio2.net.Connectivity;

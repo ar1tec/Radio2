@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import org.oucho.radio2.utils.Counter;
 import org.oucho.radio2.utils.Later;
@@ -31,6 +32,8 @@ public class Connectivity extends BroadcastReceiver {
 
    public Connectivity(Context a_context, PlayerService a_player) {
 
+      //Log.d("Connectivity", "Connectivity");
+
       context = a_context;
       player = a_player;
 
@@ -40,6 +43,9 @@ public class Connectivity extends BroadcastReceiver {
 
    static private void initConnectivity(Context context) {
 
+      //Log.d("Connectivity", "initConnectivity");
+
+
       if ( connectivity == null )
          connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
       if ( connectivity != null )
@@ -47,14 +53,25 @@ public class Connectivity extends BroadcastReceiver {
    }
 
    public void destroy() {
+
+      //Log.d("Connectivity", "destroy");
+
+
       context.unregisterReceiver(this);
    }
 
    static private int getType() {
+
+      //Log.d("Connectivity", "getType");
+
+
       return getType(null);
    }
 
    static private int getType(Intent intent) {
+
+      //Log.d("Connectivity", "getType2");
+
 
       if (connectivity == null)
          return TYPE_NONE;
@@ -74,7 +91,7 @@ public class Connectivity extends BroadcastReceiver {
                if ( network.getState() == NetworkInfo.State.CONNECTED )
                   return type;
 
-             default: //do nothing
+             default:
                  break;
          }
       }
@@ -84,11 +101,20 @@ public class Connectivity extends BroadcastReceiver {
 
    public static boolean onWifi() {
 
+      //Log.d("Connectivity", "onWifi: " + ConnectivityManager.TYPE_WIFI);
+
+
       return previous_type == ConnectivityManager.TYPE_WIFI;
    }
 
    static public boolean isConnected(Context context) {
+
        initConnectivity(context);
+
+
+       //Log.d("Connectivity", "isConnected: " + (getType() != TYPE_NONE));
+
+
       return (getType() != TYPE_NONE);
    }
 
@@ -97,7 +123,13 @@ public class Connectivity extends BroadcastReceiver {
    @Override
    public void onReceive(Context context, Intent intent) {
 
+      //Log.d("Connectivity", "onReceive");
+
+
       int type = getType(intent);
+
+       //Log.d("Connectivity", "onReceive:" + getType(intent) );
+
       boolean want_network_playing = State.isWantPlaying() && player.isNetworkUrl();
 
       if ( type == TYPE_NONE && previous_type != TYPE_NONE && want_network_playing )
@@ -112,7 +144,17 @@ public class Connectivity extends BroadcastReceiver {
       previous_type = type;
    }
 
+
+
+
+
+
+
    public void dropped_connection() {  // We've lost connectivity.
+
+      //Log.d("Connectivity", "dropped_connection");
+
+
       player.stop();
       then = Counter.now();
       State.setState(context, State.STATE_DISCONNECTED, true);
@@ -130,6 +172,10 @@ public class Connectivity extends BroadcastReceiver {
    }
 
    private void restart() {
+
+      //Log.d("Connectivity", "restart");
+
+
       if ( disable_task != null ) {
          disable_task.cancel(true);
          disable_task = null;

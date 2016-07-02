@@ -76,7 +76,7 @@ public class State {
           return "Erreur";
 
       if (is(STATE_DISCONNECTED))
-          return "Pas de connexion réseau";
+          return "Déconnecté";
 
       // Should not happen.
       return "Unknown";
