@@ -3,6 +3,7 @@ package org.oucho.radio2.update;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.oucho.radio2.R;
 
@@ -83,7 +84,11 @@ public class AppUpdate {
             @Override
             public void onFailed() {
 
+                try {
                     throw new IllegalArgumentException("XML file is not valid!");
+                } catch (IllegalArgumentException e) {
+                    Log.d("AppUpdate", String.valueOf(e));
+                }
             }
         });
 

@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.util.Log;
 import android.webkit.URLUtil;
 
 import org.oucho.radio2.net.Connectivity;
@@ -212,6 +213,8 @@ public class PlayerService extends Service
 
       if ( isNetworkUrl(url) && ! Connectivity.isConnected(context) ) {
 
+         Log.d("PlayerService", "if ( isNetworkUrl(url) && ! Connectivity.isConnected(context) )");
+
          connectivity.dropped_connection();
          return done();
       }
@@ -309,6 +312,8 @@ public class PlayerService extends Service
    }
 
    private int stop(boolean update_state) {
+
+      Log.d("PlayerService", "STOP");
 
       Counter.timePasses();
       launch_url = null;
@@ -450,6 +455,7 @@ public class PlayerService extends Service
             public void later() {
                start_buffering_task = null;
                onError(null,0,0);
+               Log.d("PlayerService", "start_buffering(), start_buffering_task" );
             }
          }.start();
    }
@@ -466,11 +472,15 @@ public class PlayerService extends Service
             public void later() {
                 stopSoonTask = null;
                stop();
+               Log.d("PlayerService", "stop_soon(), stopSoonTask" );
+
             }
          }.start();
    }
 
    private void tryRecover() {
+
+      Log.d("PlayerService", "tryRecover()" );
 
       stop_soon();
 

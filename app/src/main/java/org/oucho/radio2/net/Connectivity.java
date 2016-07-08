@@ -1,19 +1,17 @@
 package org.oucho.radio2.net;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+import android.os.Handler;
 import android.util.Log;
 
-import org.oucho.radio2.utils.Counter;
-import org.oucho.radio2.utils.Later;
 import org.oucho.radio2.PlayerService;
+import org.oucho.radio2.utils.Counter;
 import org.oucho.radio2.utils.State;
 
 public class Connectivity extends BroadcastReceiver {
@@ -21,30 +19,25 @@ public class Connectivity extends BroadcastReceiver {
    private static ConnectivityManager connectivity = null;
 
    private Context context = null;
-   private PlayerService player = null;
+   private PlayerService playerService = null;
    private static final int TYPE_NONE = -1;
 
    private static int previous_type = TYPE_NONE;
 
-    private static AsyncTask<Integer,Void,Void> disable_task = null;
-    private int then = 0;
+   private int then = 0;
 
+   private Handler handler;
 
    public Connectivity(Context a_context, PlayerService a_player) {
 
-      //Log.d("Connectivity", "Connectivity");
-
       context = a_context;
-      player = a_player;
+      playerService = a_player;
 
       initConnectivity(context);
       context.registerReceiver(this, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
    }
 
    static private void initConnectivity(Context context) {
-
-      //Log.d("Connectivity", "initConnectivity");
-
 
       if ( connectivity == null )
          connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -54,24 +47,15 @@ public class Connectivity extends BroadcastReceiver {
 
    public void destroy() {
 
-      //Log.d("Connectivity", "destroy");
-
-
       context.unregisterReceiver(this);
    }
 
    static private int getType() {
 
-      //Log.d("Connectivity", "getType");
-
-
       return getType(null);
    }
 
    static private int getType(Intent intent) {
-
-      //Log.d("Connectivity", "getType2");
-
 
       if (connectivity == null)
          return TYPE_NONE;
@@ -101,19 +85,12 @@ public class Connectivity extends BroadcastReceiver {
 
    public static boolean onWifi() {
 
-      //Log.d("Connectivity", "onWifi: " + ConnectivityManager.TYPE_WIFI);
-
-
       return previous_type == ConnectivityManager.TYPE_WIFI;
    }
 
    static public boolean isConnected(Context context) {
 
        initConnectivity(context);
-
-
-       //Log.d("Connectivity", "isConnected: " + (getType() != TYPE_NONE));
-
 
       return (getType() != TYPE_NONE);
    }
@@ -123,14 +100,9 @@ public class Connectivity extends BroadcastReceiver {
    @Override
    public void onReceive(Context context, Intent intent) {
 
-      //Log.d("Connectivity", "onReceive");
-
-
       int type = getType(intent);
 
-       //Log.d("Connectivity", "onReceive:" + getType(intent) );
-
-      boolean want_network_playing = State.isWantPlaying() && player.isNetworkUrl();
+      boolean want_network_playing = State.isWantPlaying() && playerService.isNetworkUrl();
 
       if ( type == TYPE_NONE && previous_type != TYPE_NONE && want_network_playing )
          dropped_connection();
@@ -148,42 +120,81 @@ public class Connectivity extends BroadcastReceiver {
 
 
 
+   public void dropped_connection() {
 
+      Log.d("Connectivity", "dropped_connection(), perte de connexion");
 
-   public void dropped_connection() {  // We've lost connectivity.
-
-      //Log.d("Connectivity", "dropped_connection");
-
-
-      player.stop();
-      then = Counter.now();
       State.setState(context, State.STATE_DISCONNECTED, true);
 
-      if ( disable_task != null )
-         disable_task.cancel(true);
 
-      disable_task = new Later(300) {
-            @Override
-            public void later() {
-               player.stop();
-               disable_task = null;
+      handler = new Handler();
+      handler.postDelayed(new Runnable() {
+
+         @SuppressLint("SetTextI18n")
+         public void run() {
+
+            if (State.isOnline(context)) {
+
+               Log.d("Connectivity", "dropped_connection(), isOnline");
+
+               Intent player = new Intent(context, PlayerService.class);
+               player.putExtra("action", "stop");
+               context.startService(player);
+
+               Intent player2 = new Intent(context, PlayerService.class);
+               player2.putExtra("action", "play");
+               context.startService(player2);
+
+               reconnect(5000);
+
+            } else {
+
+               Intent player3 = new Intent(context, PlayerService.class);
+               player3.putExtra("action", "stop");
+               context.startService(player3);
             }
-         }.start();
+
+         }
+      }, 2000);
+
    }
+
+
+ private void reconnect(int delay) {
+
+    handler = new Handler();
+    handler.postDelayed(new Runnable() {
+
+       @SuppressLint("SetTextI18n")
+       public void run() {
+
+          Log.d("Connectivity", "reconnect(int delay), reconnexion x seconde");
+
+          if (!State.isPlaying()) {
+
+             Intent player2 = new Intent(context, PlayerService.class);
+             player2.putExtra("action", "play");
+             context.startService(player2);
+          }
+       }
+
+    }, delay);
+
+ }
+
 
    private void restart() {
 
-      //Log.d("Connectivity", "restart");
+      Log.d("Connectivity", "restart");
 
+      Intent playerS = new Intent(context, PlayerService.class);
+      playerS.putExtra("action", "stop");
+      context.startService(playerS);
 
-      if ( disable_task != null ) {
-         disable_task.cancel(true);
-         disable_task = null;
-      }
+      Intent playerP = new Intent(context, PlayerService.class);
+      playerP.putExtra("action", "play");
+      context.startService(playerP);
 
-      SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-      if ( settings.getBoolean("reconnect", false) )
-         player.play();
    }
 }
 

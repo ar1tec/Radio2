@@ -2,6 +2,8 @@ package org.oucho.radio2.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import org.oucho.radio2.PlayerService;
 
@@ -18,17 +20,19 @@ public class State {
    public static final String STATE_DUCK         = "\\_o< coin";
    public static final String STATE_DISCONNECTED = "Déconnecté";
 
+    public static final boolean WiFi = false;
+
 
 
     private static String current_state = STATE_STOP;
 
    private static boolean current_isNetworkUrl = false;
 
+
    public static void setState(Context context, String s, boolean isNetworkUrl) {
 
       if ( s == null )
          return;
-
 
       current_state = s;
 
@@ -97,5 +101,13 @@ public class State {
    public static boolean isWantPlaying() {
        return isPlaying() || is(STATE_ERROR);
    }
+
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
 }
 
