@@ -49,6 +49,8 @@ import org.oucho.radio2.utils.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
 import org.oucho.radio2.utils.SeekArc;
 import org.oucho.radio2.utils.State;
+import org.oucho.radio2.update.CheckUpdate;
+
 
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -187,6 +189,8 @@ public class MainActivity extends AppCompatActivity
         volume();
 
         State.getState(context);
+
+        CheckUpdate.onStart(this);
 
     }
 
@@ -405,6 +409,10 @@ public class MainActivity extends AppCompatActivity
         switch (menuItem.getItemId()) {
             case R.id.action_musique:
                 musique();
+                break;
+
+            case R.id.nav_update:
+                CheckUpdate.withInfo(this);
                 break;
 
             case R.id.nav_help:
