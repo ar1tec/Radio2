@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity
     private TextView timeAfficheur;
 
     private Etat_player Etat_player_Receiver;
-   // private boolean isRegistered = false;
 
     private Handler handler;
 
@@ -125,7 +124,6 @@ public class MainActivity extends AppCompatActivity
         Etat_player_Receiver = new Etat_player();
         IntentFilter filter = new IntentFilter(STATE);
         registerReceiver(Etat_player_Receiver, filter);
-        //isRegistered = true;
 
         Control_Volume niveau_Volume = new Control_Volume(this, new Handler());
         getApplicationContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
@@ -213,11 +211,6 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
 
-/*        if (isRegistered) {
-            unregisterReceiver(Etat_player_Receiver);
-            isRegistered = false;
-        }*/
-
         killNotif();
 
         if (bitrate) {
@@ -240,12 +233,6 @@ public class MainActivity extends AppCompatActivity
             getBitRate();
             bitrate = true;
         }
-
-/*        if (!isRegistered) {
-            IntentFilter filter = new IntentFilter(STATE);
-            registerReceiver(Etat_player_Receiver, filter);
-            isRegistered = true;
-        }*/
 
         if (State.isStopped()) {
 
@@ -392,7 +379,7 @@ public class MainActivity extends AppCompatActivity
                     showTimerInfo();
                 }
                 return true;
-            default: //do nothing
+            default:
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -464,11 +451,7 @@ public class MainActivity extends AppCompatActivity
         player.putExtra("action", STOP);
         startService(player);
 
-
-        //if (isRegistered) {
-            unregisterReceiver(Etat_player_Receiver);
-        //    isRegistered = false;
-        //}
+        unregisterReceiver(Etat_player_Receiver);
 
         killNotif();
 
@@ -1154,13 +1137,11 @@ public class MainActivity extends AppCompatActivity
                         setVolume("vol10");
                     }
                 }
-
-
             }
 
             @Override
             public void onFinish() {
-
+            exit();
             }
 
         }.start();

@@ -20,9 +20,6 @@ public class State {
    public static final String STATE_DUCK         = "\\_o< coin";
    public static final String STATE_DISCONNECTED = "Déconnecté";
 
-    public static final boolean WiFi = false;
-
-
 
     private static String current_state = STATE_STOP;
 
