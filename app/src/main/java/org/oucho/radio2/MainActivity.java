@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity
         this.findViewById(R.id.play).setOnClickListener(this);
         this.findViewById(R.id.pause).setOnClickListener(this);
 
-        soundChargement = MediaPlayer.create(this, R.raw.radio_connection);
+        soundChargement = MediaPlayer.create(this, R.raw.connexion);
         soundChargement.setLooping(true);
 
         getBitRate();
