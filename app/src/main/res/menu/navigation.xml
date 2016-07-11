@@ -8,6 +8,17 @@
             android:icon="@drawable/ic_music"
             android:title="@string/musique"/>
 
+        <item
+            android:id="@+id/action_export"
+            android:icon="@drawable/ic_save_black_24dp"
+            android:title="@string/exporterMenu"/>
+
+        <item
+            android:id="@+id/action_import"
+            android:icon="@drawable/ic_input_black_24dp"
+            android:title="@string/importerMenu"/>
+
+
     </group>
 
     <group android:id="@+id/menu_bottom">

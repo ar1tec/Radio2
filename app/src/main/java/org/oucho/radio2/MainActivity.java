@@ -1,5 +1,6 @@
 package org.oucho.radio2;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -16,10 +17,13 @@ import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.TrafficStats;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -44,6 +48,7 @@ import org.oucho.radio2.itf.ListsClickListener;
 import org.oucho.radio2.itf.PlayableItem;
 import org.oucho.radio2.itf.Radio;
 import org.oucho.radio2.itf.RadioAdapter;
+import org.oucho.radio2.itf.RadiosDatabase;
 import org.oucho.radio2.utils.AboutDialog;
 import org.oucho.radio2.utils.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
@@ -52,6 +57,8 @@ import org.oucho.radio2.utils.State;
 import org.oucho.radio2.update.CheckUpdate;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -68,6 +75,8 @@ public class MainActivity extends AppCompatActivity
    /* **********************************************************************************************
     * Déclaration des variables
     * *********************************************************************************************/
+
+    private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 
     private static Context context;
 
@@ -190,7 +199,10 @@ public class MainActivity extends AppCompatActivity
 
         CheckUpdate.onStart(this);
 
+
+
     }
+
 
 
     public static Context getContext() {
@@ -396,6 +408,14 @@ public class MainActivity extends AppCompatActivity
         switch (menuItem.getItemId()) {
             case R.id.action_musique:
                 musique();
+                break;
+
+            case R.id.action_export:
+                exporter();
+                break;
+
+            case R.id.action_import:
+                importer();
                 break;
 
             case R.id.nav_update:
@@ -1037,6 +1057,101 @@ public class MainActivity extends AppCompatActivity
 
         assert timeAfficheur != null;
         timeAfficheur.setVisibility(View.INVISIBLE);
+
+    }
+
+
+
+    /* ***********************************************
+     * Sauvegarde/restauration de la liste des radios
+     * ***********************************************/
+    private void importer() {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            checkWritePermission();
+        }
+
+
+        try {
+
+            String source = Environment.getExternalStorageDirectory().toString() + "/Radio/WebRadioList.db";
+            String destination = String.valueOf(getDatabasePath(RadiosDatabase.DB_NAME));
+
+            File file = new File(source);
+
+            if (file.exists()) {
+
+                RadiosDatabase radiosDatabase = new RadiosDatabase();
+                radiosDatabase.importExport(source, destination);
+
+                updateListView();
+
+                Toast.makeText(context, getString(R.string.importer), Toast.LENGTH_SHORT).show();
+
+            } else {
+                Toast.makeText(context, getString(R.string.importer_erreur), Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (IOException ignored) {}
+
+    }
+
+    private void exporter() {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            checkWritePermission();
+        }
+
+        try {
+
+            String repDestination = Environment.getExternalStorageDirectory().toString() + "/Radio";
+
+            File newRep = new File(repDestination);
+            if (!newRep.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                newRep.mkdir();
+            }
+
+            String source = String.valueOf(getDatabasePath(RadiosDatabase.DB_NAME));
+
+            String destination = repDestination + "/WebRadioList.db";
+
+            RadiosDatabase radiosDatabase = new RadiosDatabase();
+            radiosDatabase.importExport(source, destination);
+
+            Toast.makeText(context, getString(R.string.exporter), Toast.LENGTH_SHORT).show();
+
+        } catch (IOException ignored) {}
+    }
+
+
+
+    private void checkWritePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            DialogUtils.showPermissionDialog(this, getString(R.string.permission_write_external_storage),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                        }
+                    });
+
+        }
+    }
+
+    public static class DialogUtils {
+
+        public static void showPermissionDialog(Context context, String message, DialogInterface.OnClickListener listener) {
+            new AlertDialog.Builder(context)
+                    .setTitle(R.string.permission)
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.ok, listener)
+                    .show();
+        }
+
 
     }
 
