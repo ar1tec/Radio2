@@ -6,7 +6,7 @@
     <dimen name="dialogPadding">24dp</dimen>
 
     <dimen name="playerBar">60dp</dimen>
-    <dimen name="affichage_info">110dp</dimen>
+    <dimen name="affichage_info">102dp</dimen>
 
     <dimen name="nav_header_height">160dp</dimen>
 </resources>
