@@ -30,6 +30,11 @@
         </activity>
 
 
+        <activity
+            android:name="org.oucho.filepicker.FilePickerActivity"
+            android:label="@string/select_file"
+            android:theme="@style/AppThemeFilePicker"/>
+
         <service android:name=".PlayerService" />
 
 

@@ -173,7 +173,7 @@ public class PlayerService extends Service
    }
 
 
-   public int setVolume(float vol) {
+   private int setVolume(float vol) {
 
       player.setVolume(vol, vol);
       return done();
@@ -198,7 +198,7 @@ public class PlayerService extends Service
     }
 
 
-   public int play() {
+   private int play() {
        return play(url);
    }
 
@@ -307,7 +307,7 @@ public class PlayerService extends Service
        return ( check_url != null && URLUtil.isNetworkUrl(check_url) );
    }
 
-   public int stop() {
+   private int stop() {
        return stop(true);
    }
 

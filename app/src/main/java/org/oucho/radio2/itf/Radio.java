@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.oucho.radio2.db.RadiosDatabase;
+
 import java.util.ArrayList;
 
 public class Radio implements PlayableItem {

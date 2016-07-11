@@ -13,6 +13,14 @@
         <item name="actionOverflowButtonStyle">@style/OverflowButton</item>
     </style>
 
+
+    <style name="AppThemeFilePicker" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary_0</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <!-- Set Custom Icon for Overflow Button in ActionBar -->
     <style name="OverflowButton" parent="@style/Widget.AppCompat.ActionButton.Overflow">
         <item name="android:tint">@color/controls_tint_light</item>

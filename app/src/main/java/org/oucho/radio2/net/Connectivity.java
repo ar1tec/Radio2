@@ -24,8 +24,6 @@ public class Connectivity extends BroadcastReceiver {
 
    private static int previous_type = TYPE_NONE;
 
-   private int then = 0;
-
    private Handler handler;
 
    public Connectivity(Context a_context, PlayerService a_player) {
@@ -101,11 +99,13 @@ public class Connectivity extends BroadcastReceiver {
    public void onReceive(Context context, Intent intent) {
 
       int type = getType(intent);
+      int then = 0;
 
       boolean want_network_playing = State.isWantPlaying() && playerService.isNetworkUrl();
 
       if ( type == TYPE_NONE && previous_type != TYPE_NONE && want_network_playing )
          dropped_connection();
+
 
       if ( previous_type == TYPE_NONE && type != previous_type && Counter.still(then) )
          restart();

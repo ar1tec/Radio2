@@ -34,6 +34,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,26 +45,43 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.oucho.filepicker.FilePicker;
+import org.oucho.filepicker.FilePickerActivity;
+import org.oucho.filepicker.FilePickerParcelObject;
+import org.oucho.radio2.db.DatabaseSave;
+import org.oucho.radio2.db.XMLParser;
+import org.oucho.radio2.db.XmlValuesModel;
 import org.oucho.radio2.itf.ListsClickListener;
 import org.oucho.radio2.itf.PlayableItem;
 import org.oucho.radio2.itf.Radio;
 import org.oucho.radio2.itf.RadioAdapter;
-import org.oucho.radio2.itf.RadiosDatabase;
+import org.oucho.radio2.db.RadiosDatabase;
 import org.oucho.radio2.utils.AboutDialog;
 import org.oucho.radio2.utils.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
 import org.oucho.radio2.utils.SeekArc;
 import org.oucho.radio2.utils.State;
 import org.oucho.radio2.update.CheckUpdate;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 public class MainActivity extends AppCompatActivity
         implements
@@ -109,7 +127,7 @@ public class MainActivity extends AppCompatActivity
 
     private MediaPlayer soundChargement;
 
-    boolean bitrate = false;
+    private boolean bitrate = false;
 
 
 
@@ -628,9 +646,13 @@ public class MainActivity extends AppCompatActivity
     * *********************************************************************************************/
 
     private void editRadio(final Radio oldRadio) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
         int title = oldRadio==null ? R.string.addRadio : R.string.edit;
+
         builder.setTitle(getResources().getString(title));
+
         @SuppressLint("InflateParams")
         final View view = getLayoutInflater().inflate(R.layout.layout_editwebradio, null);
         builder.setView(view);
@@ -1062,104 +1084,184 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    /* ***********************************************
-     * Sauvegarde/restauration de la liste des radios
-     * ***********************************************/
-    private void importer() {
+    /* *********************************************************************************************
+     *
+     * Sauvegarde/restauration/importation des radios
+     *
+     * ********************************************************************************************/
 
-        if (Build.VERSION.SDK_INT >= 23) {
-            checkWritePermission();
-        }
-
-
-        try {
-
-            String source = Environment.getExternalStorageDirectory().toString() + "/Radio/WebRadioList.db";
-            String destination = String.valueOf(getDatabasePath(RadiosDatabase.DB_NAME));
-
-            File file = new File(source);
-
-            if (file.exists()) {
-
-                RadiosDatabase radiosDatabase = new RadiosDatabase();
-                radiosDatabase.importExport(source, destination);
-
-                updateListView();
-
-                Toast.makeText(context, getString(R.string.importer), Toast.LENGTH_SHORT).show();
-
-            } else {
-                Toast.makeText(context, getString(R.string.importer_erreur), Toast.LENGTH_SHORT).show();
-            }
-
-        } catch (IOException ignored) {}
-
-    }
+    private static final int FILE_PICKER_RESULT = 0;
 
     private void exporter() {
 
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 23
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
             checkWritePermission();
-        }
 
-        try {
+        } else {
 
-            String repDestination = Environment.getExternalStorageDirectory().toString() + "/Radio";
+            RadiosDatabase radiosDatabase = new RadiosDatabase();
 
-            File newRep = new File(repDestination);
+            String Destination = Environment.getExternalStorageDirectory().toString() + "/Radio";
+
+            File newRep = new File(Destination);
             if (!newRep.exists()) {
                 //noinspection ResultOfMethodCallIgnored
                 newRep.mkdir();
             }
 
-            String source = String.valueOf(getDatabasePath(RadiosDatabase.DB_NAME));
+            String path = Destination + "/" + RadiosDatabase.DB_NAME + ".xml";
 
-            String destination = repDestination + "/WebRadioList.db";
-
-            RadiosDatabase radiosDatabase = new RadiosDatabase();
-            radiosDatabase.importExport(source, destination);
+            DatabaseSave databaseSave = new DatabaseSave(radiosDatabase.getReadableDatabase(), path);
+            databaseSave.exportData();
 
             Toast.makeText(context, getString(R.string.exporter), Toast.LENGTH_SHORT).show();
+        }
 
-        } catch (IOException ignored) {}
     }
 
+    private void importer() {
+
+        if (Build.VERSION.SDK_INT >= 23
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            checkWritePermission();
+
+        } else {
+
+            String currentPath = Environment.getExternalStorageDirectory().toString() + "/Radio";
+
+            Intent intent = new Intent(getApplicationContext(), FilePickerActivity.class);
+            intent.putExtra(FilePicker.SET_ONLY_ONE_ITEM, true);
+            intent.putExtra(FilePicker.DISABLE_NEW_FOLDER_BUTTON, true);
+            intent.putExtra(FilePicker.DISABLE_SORT_BUTTON, true);
+            intent.putExtra(FilePicker.ENABLE_QUIT_BUTTON, true);
+            intent.putExtra(FilePicker.SET_CHOICE_TYPE, FilePicker.CHOICE_TYPE_FILES);
+            intent.putExtra(FilePicker.SET_START_DIRECTORY, currentPath);
+            startActivityForResult(intent, FILE_PICKER_RESULT);
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 
-    private void checkWritePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == FILE_PICKER_RESULT) {
+            if (data != null) {
 
-            DialogUtils.showPermissionDialog(this, getString(R.string.permission_write_external_storage),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(MainActivity.this,
-                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                    PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-                        }
-                    });
+                FilePickerParcelObject object = data.getParcelableExtra(FilePickerParcelObject.class.getCanonicalName());
+                StringBuilder buffer = new StringBuilder();
 
+                if (object.count > 0) {
+
+                    for (int i = 0; i < object.count; i++) {
+                        buffer.append(object.names.get(i));
+                        if (i < object.count - 1) buffer.append(", ");
+                    }
+                }
+
+                String XMLdata = readFile(object.path + buffer.toString());
+
+                readXML(XMLdata);
+
+            }
         }
     }
 
-    public static class DialogUtils {
 
-        public static void showPermissionDialog(Context context, String message, DialogInterface.OnClickListener listener) {
-            new AlertDialog.Builder(context)
-                    .setTitle(R.string.permission)
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.ok, listener)
-                    .show();
+    private String readFile(String fichier) {
+
+        String ret = "";
+
+        try {
+
+            FileInputStream inputStream = new FileInputStream(new File(fichier));
+
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String receiveString = "";
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ( (receiveString = bufferedReader.readLine()) != null ) {
+                stringBuilder.append(receiveString);
+            }
+
+            inputStream.close();
+            ret = stringBuilder.toString();
+
+        } catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
         }
 
-
+        return ret;
     }
 
 
-    /* *****************
+    private void readXML(String XMLData) {
+
+        List<XmlValuesModel> myData = null;
+
+        try {
+
+            /************** Read XML *************/
+
+            BufferedReader br = new BufferedReader(new StringReader(XMLData));
+            InputSource is = new InputSource(br);
+
+            /************  Parse XML **************/
+
+            XMLParser parser=new XMLParser();
+            SAXParserFactory factory=SAXParserFactory.newInstance();
+            SAXParser sp=factory.newSAXParser();
+            XMLReader reader=sp.getXMLReader();
+            reader.setContentHandler(parser);
+            reader.parse(is);
+
+            /************* Get Parse data in a ArrayList **********/
+            myData = parser.list;
+
+            if (myData != null) {
+
+               // String OutputData = "";
+
+                /*************** Get Data From ArrayList *********/
+
+                for (XmlValuesModel xmlRowData : myData) {
+
+                    if (xmlRowData != null) {
+
+                        String  url   = xmlRowData.getUrl();
+                        String  name   = xmlRowData.getName();
+
+                        Radio newRadio = new Radio(url, name);
+                        Radio.addRadio(newRadio);
+
+                    }
+                }
+
+            }
+
+            updateListView();
+
+            Toast.makeText(context, getString(R.string.importer), Toast.LENGTH_SHORT).show();
+
+        } catch(Exception e) {
+            Log.e("Jobs", "Exception parse xml :" + e);
+            Toast.makeText(context, getString(R.string.importer_erreur), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+    /* *********************************************************************************************
      * Arrêt de la radio
-     * *****************/
-
+     * ********************************************************************************************/
     public static void stop(Context context) {
 
         Intent player = new Intent(context, PlayerService.class);
@@ -1173,12 +1275,9 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    /* ********************************
-    * Réduction progressive du volume
-    * ********************************/
-
-
-
+    /* *********************************************************************************************
+     * Réduction progressive du volume
+     * ********************************************************************************************/
     private void baisseVolume(final int delay) {
 
         // définir si le delay est supérieur ou inférieur à 10mn
@@ -1303,4 +1402,33 @@ public class MainActivity extends AppCompatActivity
 
         return super.onKeyDown(keyCode, event);
     }
+
+
+    private void checkWritePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            DialogUtils.showPermissionDialog(this, getString(R.string.permission_write_external_storage),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                        }
+                    });
+        }
+    }
+
+    public static class DialogUtils {
+
+        public static void showPermissionDialog(Context context, String message, DialogInterface.OnClickListener listener) {
+            new AlertDialog.Builder(context)
+                    .setTitle(R.string.permission)
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.ok, listener)
+                    .show();
+        }
+
+    }
+
 }

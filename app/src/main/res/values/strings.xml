@@ -32,7 +32,7 @@
 
     <string name="about_message">
         \n
-        Radio 2.7.2, web radio pour android\n
+        Radio 2.8.0, web radio pour android\n
         \n
         Old Geek, 2016\n
         \n
@@ -71,10 +71,9 @@
 
     <string name="exporter">Liste sauvegardé avec succès</string>
 
-    <string name="importerMenu">Importer la liste des radios</string>
+    <string name="importerMenu">Importer une liste de radio</string>
     <string name="exporterMenu">Sauvegarder la liste des radios</string>
-
-
+    <string name="select_file">Sélectionner la sauvegarde</string>
 
     <!-- permission -->
     <string name="permission">Demande de permission</string>
