@@ -67,7 +67,7 @@
 
     <!-- import/export DB -->
     <string name="importer">Liste restauré avec succès</string>
-    <string name="importer_erreur">Erreur: fichier introuvable</string>
+    <string name="importer_erreur">Erreur: fichier incorrect</string>
 
     <string name="exporter">Liste sauvegardé avec succès</string>
 

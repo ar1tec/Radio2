@@ -217,8 +217,6 @@ public class MainActivity extends AppCompatActivity
 
         CheckUpdate.onStart(this);
 
-
-
     }
 
 
@@ -424,10 +422,6 @@ public class MainActivity extends AppCompatActivity
         mDrawerLayout.closeDrawers();
 
         switch (menuItem.getItemId()) {
-            case R.id.action_musique:
-                musique();
-                break;
-
             case R.id.action_export:
                 exporter();
                 break;
@@ -452,22 +446,6 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         return true;
-    }
-
-
-   /* *************************
-    * Lance l'application radio
-    * *************************/
-
-    private void musique() {
-
-        Context context = getApplicationContext();
-
-        PackageManager pm = context.getPackageManager();
-        Intent appStartIntent = pm.getLaunchIntentForPackage("org.oucho.musicplayer");
-        context.startActivity(appStartIntent);
-
-        killNotif();
     }
 
 
