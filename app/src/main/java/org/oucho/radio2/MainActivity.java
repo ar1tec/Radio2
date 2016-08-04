@@ -168,7 +168,15 @@ public class MainActivity extends AppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setBackgroundDrawable(colorDrawable);
-        actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>"));
+
+        if (android.os.Build.VERSION.SDK_INT >= 24) {
+
+            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>", Html.FROM_HTML_MODE_LEGACY));
+
+        } else {
+            //noinspection deprecation
+            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>"));
+        }
 
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

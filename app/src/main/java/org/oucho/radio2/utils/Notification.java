@@ -37,6 +37,7 @@ public class Notification {
         } else {
             builder.setSmallIcon(R.drawable.notification_sleeptimer);
         }
+
         builder.setOngoing(true);
 
         Boolean unlock;
