@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -107,6 +108,7 @@ public class MainActivity extends AppCompatActivity
 
     private static String etat_lecture = "";
     private static String nom_radio = "";
+    private static String imp_exp = "null";
 
     private RecyclerView radioView;
     private DrawerLayout mDrawerLayout;
@@ -1086,6 +1088,8 @@ public class MainActivity extends AppCompatActivity
 
             checkWritePermission();
 
+            imp_exp = "exporter";
+
         } else {
 
             RadiosDatabase radiosDatabase = new RadiosDatabase();
@@ -1115,6 +1119,8 @@ public class MainActivity extends AppCompatActivity
                 != PackageManager.PERMISSION_GRANTED) {
 
             checkWritePermission();
+
+            imp_exp = "importer";
 
         } else {
 
@@ -1398,8 +1404,7 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             ActivityCompat.requestPermissions(MainActivity.this,
-                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                    PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
                         }
                     });
         }
@@ -1415,6 +1420,33 @@ public class MainActivity extends AppCompatActivity
                     .show();
         }
 
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull  String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {
+
+            for (int i = 0; i < permissions.length; i++) {
+                String permission = permissions[i];
+                int grantResult = grantResults[i];
+
+                if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                    if (grantResult == PackageManager.PERMISSION_GRANTED) {
+
+                        if (imp_exp.equals("importer")) {
+                            importer();
+                        } else if (imp_exp.equals("exporter")) {
+                            exporter();
+                        }
+
+                    }
+                }
+            }
+        }
     }
 
 }
