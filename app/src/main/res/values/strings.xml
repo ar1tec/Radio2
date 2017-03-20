@@ -17,7 +17,7 @@
     <string name="drawer_close">close</string>
 
     <!-- nav header activity main -->
-    <string name="by">Old Geek, octobre 2016</string>
+    <string name="by">Old Geek, mars 2017</string>
 
 
     <string name="musique">Musique</string>
@@ -32,15 +32,14 @@
 
     <string name="about_message">
         \n
-        Radio 2.8.3, web radio pour android\n
+        Radio 2.8.5, web radio pour android\n
         \n
-        Old Geek, 2016\n
+        Old Geek, 2017\n
         \n
         Licence: aucune, profitez, partagez.\n
         \n
         \n
-        Code source\n
-        Musique: https://github.com/Old-Geek/Radio2\n
+        Code source: https://github.com/Old-Geek/Radio2\n
         \n
     </string>
 
