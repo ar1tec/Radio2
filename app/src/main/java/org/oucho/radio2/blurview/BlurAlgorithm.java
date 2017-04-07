@@ -3,7 +3,7 @@ package org.oucho.radio2.blurview;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
-public interface BlurAlgorithm {
+interface BlurAlgorithm {
     /**
      * @param bitmap     bitmap to be blurred
      * @param blurRadius blur radius

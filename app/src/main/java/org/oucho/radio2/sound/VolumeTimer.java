@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class VolumeTimer {
 
-    CountDownTimer minuteurVolume;
+    private CountDownTimer minuteurVolume;
 
     public void setVolume(Context contex, String volume) {
 

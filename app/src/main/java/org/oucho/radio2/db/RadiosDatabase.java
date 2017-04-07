@@ -14,8 +14,8 @@ import static org.oucho.radio2.db.DatabaseSave.copyFile;
 
 public class RadiosDatabase extends SQLiteOpenHelper {
 
-	public static final String DB_NAME = "WebRadio";
-	public static final String TABLE_NAME =  "WebRadio";
+	static final String DB_NAME = "WebRadio";
+	private static final String TABLE_NAME =  "WebRadio";
 	private static final int DB_VERSION = 2;
 	
 	public RadiosDatabase(Context context) {
@@ -33,7 +33,7 @@ public class RadiosDatabase extends SQLiteOpenHelper {
 	}
 
 
-	public boolean importExport(String source, String dest) throws IOException {
+	void importExport(String source, String dest) throws IOException {
 
 		// Close the SQLiteOpenHelper so it will commit the created empty database to internal storage.
 		close();
@@ -45,9 +45,7 @@ public class RadiosDatabase extends SQLiteOpenHelper {
 			copyFile(new FileInputStream(newDb), new FileOutputStream(oldDb));
 			// Access the copied database so SQLiteHelper will cache it and mark it as created.
 			getWritableDatabase().close();
-			return true;
 		}
-		return false;
 	}
 
 

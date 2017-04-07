@@ -73,7 +73,7 @@ public class DatabaseSave {
 
 
 
-    public static void copyFile(FileInputStream fromFile, FileOutputStream toFile) throws IOException {
+    static void copyFile(FileInputStream fromFile, FileOutputStream toFile) throws IOException {
         FileChannel fromChannel = null;
         FileChannel toChannel = null;
         try {

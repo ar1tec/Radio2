@@ -41,7 +41,7 @@ class BlockingBlurController implements BlurController {
      */
     private Bitmap internalBitmap;
 
-    final View blurView;
+    private final View blurView;
     private final ViewGroup rootView;
     private final Rect relativeViewBounds = new Rect();
 
@@ -56,7 +56,7 @@ class BlockingBlurController implements BlurController {
     };
 
     //Used to distinct parent draw() calls from Controller's draw() calls
-    boolean isMeDrawingNow;
+    private boolean isMeDrawingNow;
     private boolean isBlurEnabled = true;
 
     //must be set from message queue
@@ -107,7 +107,7 @@ class BlockingBlurController implements BlurController {
         return value - (value % ROUNDING_VALUE) + ROUNDING_VALUE;
     }
 
-    void init(int measuredWidth, int measuredHeight) {
+    private void init(int measuredWidth, int measuredHeight) {
         if (isZeroSized(measuredWidth, measuredHeight)) {
             blurView.setWillNotDraw(true);
             setBlurAutoUpdate(false);
@@ -123,7 +123,7 @@ class BlockingBlurController implements BlurController {
         return downScaleSize(measuredHeight) == 0 || downScaleSize(measuredWidth) == 0;
     }
 
-    void updateBlur() {
+    private void updateBlur() {
         isMeDrawingNow = true;
         blurView.invalidate();
     }

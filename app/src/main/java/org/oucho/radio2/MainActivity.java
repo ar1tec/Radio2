@@ -116,11 +116,11 @@ public class MainActivity extends AppCompatActivity
 
     private BlurView bottomBlurView;
 
-    VolumeTimer volume;
+    private VolumeTimer volume;
 
     private Context context;
 
-    SharedPreferences préférences;
+    private SharedPreferences préférences;
 
 
    /* **********************************************************************************************
@@ -689,7 +689,7 @@ public class MainActivity extends AppCompatActivity
         final ImageView editLogo = (ImageView) editView.findViewById(R.id.logo);
 
         editLogo.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {;
+            public void onClick(View v) {
                 addImg();
             }
         });
@@ -1355,20 +1355,20 @@ public class MainActivity extends AppCompatActivity
                 String permission = permissions[i];
                 int grantResult = grantResults[i];
 
-                if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && grantResult == PackageManager.PERMISSION_GRANTED) {
 
-                    if (grantResult == PackageManager.PERMISSION_GRANTED) {
-
-                        if (imp_exp.equals("importer")) {
+                    switch (imp_exp) {
+                        case "importer":
                             importer();
-                        } else if (imp_exp.equals("exporter")) {
+                            break;
+                        case "exporter":
                             exporter();
-                        } else if (imp_exp.equals("image")) {
+                            break;
+                        case "image":
                             addImg();
-
-                        }
-
+                            break;
                     }
+
                 }
             }
         }

@@ -5,7 +5,6 @@
     <string name="radio_name">Nom de la radio</string>
     <string name="url">URL</string>
 
-    <string name="image">modifier logo</string>
     <string name="edit">éditer</string>
     <string name="delete">supprimer</string>
 
@@ -20,9 +19,6 @@
 
     <!-- nav header activity main -->
     <string name="by">Old Geek, avril 2017</string>
-
-
-    <string name="musique">Musique</string>
 
     <string name="update">Mise à jour</string>
 

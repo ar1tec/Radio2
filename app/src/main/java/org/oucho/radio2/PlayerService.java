@@ -38,7 +38,7 @@ public class PlayerService extends Service
 
    private static SharedPreferences préférences = null;
 
-   private static Context context = null;
+   private Context context = null;
 
    private static final String default_url = null;
    private static final String default_name = null;
@@ -52,7 +52,7 @@ public class PlayerService extends Service
    private static Playlist playlist_task = null;
    private static AsyncTask<Integer,Void,Void> pause_task = null;
 
-   private static Connectivity connectivity = null;
+   private Connectivity connectivity = null;
    private static final int initial_failure_ttl = 5;
    private static int failure_ttl = 0;
 
@@ -186,10 +186,10 @@ public class PlayerService extends Service
    }
 
 
-   private int setVolume(float vol) {
+   private void setVolume(float vol) {
 
       player.setVolume(vol, vol);
-      return done();
+
    }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -252,7 +252,7 @@ public class PlayerService extends Service
       }
 
       if ( isNetworkUrl(url) )
-         WifiLocker.lock(context, APPLICATION_NAME);
+         WifiLocker.lock(context);
 
       playlist_task = new Playlist(this,url).start();
 
@@ -282,7 +282,7 @@ public class PlayerService extends Service
       WifiLocker.unlock();
 
       if ( isNetworkUrl(url) )
-         WifiLocker.lock(context, APPLICATION_NAME);
+         WifiLocker.lock(context);
 
       try {
 

@@ -24,7 +24,7 @@ public class BlurView extends FrameLayout {
     @ColorInt
     private static final int TRANSPARENT = 0x00000000;
 
-    BlurController blurController = createStubController();
+    private BlurController blurController = createStubController();
 
     @ColorInt
     private int overlayColor;
