@@ -113,50 +113,74 @@ public class PlayerService extends Service
 
       String action = intent.getStringExtra("action");
 
-      if (action.equals(STOP))
-          return stop();
-
+      if (action.equals(STOP)) {
+         stop();
+         return done();
+      }
       
-      if (action.equals(PAUSE))
-          return pause();
+      if (action.equals(PAUSE)) {
+         pause();
+         return done();
+      }
 
+      if (action.equals(RESTART)) {
+         restart();
+         return done();
+      }
 
-      if (action.equals(RESTART))
-          return restart();
+      if (action.equals(PLAY)) {
+         intentPlay(intent);
+      }
 
+      if (action.equals("vol1")) {
+         setVolume(0.1f);
+         return done();
+      }
 
-      if (action.equals(PLAY))
-          intentPlay(intent);
+      if (action.equals("vol2")) {
+         setVolume(0.2f);
+         return done();
+      }
 
-      if (action.equals("vol1"))
-         return setVolume(0.1f);
+      if (action.equals("vol3")) {
+         setVolume(0.3f);
+         return done();
+      }
 
-      if (action.equals("vol2"))
-         return setVolume(0.2f);
+      if (action.equals("vol4")) {
+         setVolume(0.4f);
+         return done();
+      }
 
-      if (action.equals("vol3"))
-         return setVolume(0.3f);
+      if (action.equals("vol5")) {
+         setVolume(0.5f);
+         return done();
+      }
 
-      if (action.equals("vol4"))
-         return setVolume(0.4f);
+      if (action.equals("vol6")) {
+         setVolume(0.6f);
+         return done();
+      }
 
-      if (action.equals("vol5"))
-         return setVolume(0.5f);
+      if (action.equals("vol7")) {
+         setVolume(0.7f);
+         return done();
+      }
 
-      if (action.equals("vol6"))
-         return setVolume(0.6f);
+      if (action.equals("vol8")) {
+         setVolume(0.8f);
+         return done();
+      }
 
-      if (action.equals("vol7"))
-         return setVolume(0.7f);
+      if (action.equals("vol9")) {
+         setVolume(0.9f);
+         return done();
+      }
 
-      if (action.equals("vol8"))
-         return setVolume(0.8f);
-
-      if (action.equals("vol9"))
-         return setVolume(0.9f);
-
-      if (action.equals("vol10"))
-         return setVolume(1.0f);
+      if (action.equals("vol10")) {
+         setVolume(1.0f);
+         return done();
+      }
 
       return done();
    }
