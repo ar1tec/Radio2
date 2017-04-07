@@ -1230,7 +1230,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-
         if (requestCode == FILE_PICKER_RESULT && data != null) {
 
 
@@ -1267,14 +1266,16 @@ public class MainActivity extends AppCompatActivity
 
                 if(imgFile.exists()){
 
-                    logoRadio = ImageFactory.getResizedBitmap(context, BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
+                    try {
+                        logoRadio = ImageFactory.getResizedBitmap(context, BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
 
-                    final ImageView logo = (ImageView) editView.findViewById(R.id.logo);
-                    final TextView text = (TextView) editView.findViewById(R.id.texte);
+                        final ImageView logo = (ImageView) editView.findViewById(R.id.logo);
+                        final TextView text = (TextView) editView.findViewById(R.id.texte);
 
-                    logo.setImageBitmap(logoRadio);
-                    logo.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
-                    text.setVisibility(View.INVISIBLE);
+                        logo.setImageBitmap(logoRadio);
+                        logo.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+                        text.setVisibility(View.INVISIBLE);
+                    } catch (NullPointerException ignored) {}
 
 
                 }
