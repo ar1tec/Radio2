@@ -1,4 +1,4 @@
-package org.oucho.radio2.utils;
+package org.oucho.radio2.receiver;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -8,8 +8,11 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 
 import org.oucho.radio2.PlayerService;
+import org.oucho.radio2.itf.RadioKeys;
+import org.oucho.radio2.utils.Notification;
+import org.oucho.radio2.utils.State;
 
-public class StopReceiver extends BroadcastReceiver {
+public class StopReceiver extends BroadcastReceiver implements RadioKeys {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -17,23 +20,21 @@ public class StopReceiver extends BroadcastReceiver {
 
         String etat = intent.getAction();
 
-        if ("org.oucho.radio2.STATE".equals(etat)) {
+        if (STATE.equals(etat)) {
 
             String nom_radio = intent.getStringExtra("name");
 
 
             if (nom_radio == null) {
 
-                String fichier_préférence = "org.oucho.radio2_preferences";
-
-                SharedPreferences préférences = context.getSharedPreferences(fichier_préférence, 0);
+                SharedPreferences préférences = context.getSharedPreferences(PREF_FILE, 0);
 
                 nom_radio = préférences.getString("name", "");
             }
 
             String action_lecteur = intent.getStringExtra("state");
 
-            Notification.updateNotification(context, nom_radio, action_lecteur);
+            Notification.updateNotification(context, nom_radio, action_lecteur, null);
         }
 
 

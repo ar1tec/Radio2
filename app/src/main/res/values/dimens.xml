@@ -9,4 +9,6 @@
     <dimen name="affichage_info">102dp</dimen>
 
     <dimen name="nav_header_height">160dp</dimen>
+
+    <dimen name="logo_full">120dp</dimen>
 </resources>

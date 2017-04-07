@@ -1,4 +1,4 @@
-package org.oucho.radio2.utils;
+package org.oucho.radio2.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;

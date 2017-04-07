@@ -10,6 +10,7 @@
 
     <android.support.v7.widget.CardView
         style="@style/CardView.Light"
+        android:id="@+id/fond"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
@@ -33,7 +34,19 @@
                 android:paddingLeft="10dp"
                 android:src="@drawable/radio"
                 android:tint="@color/appwidget_bg"
-                tools:ignore="ContentDescription" />
+                tools:ignore="ContentDescription"
+                android:visibility="visible"/>
+
+            <ImageView
+                android:id="@+id/logoViewRadio"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="10dp"
+                tools:ignore="ContentDescription"
+                android:visibility="invisible"/>
 
             <ImageButton
                 android:id="@+id/buttonMenu"
@@ -43,8 +56,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackground"
-                android:src="@drawable/ic_spinner_black_small"
-                android:tint="@color/appwidget_bg"
+                android:src="@drawable/ic_more_vert_grey_400_24dp"
                 card_view:ignore="ContentDescription" />
 
             <LinearLayout
@@ -61,9 +73,9 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:ellipsize="end"
-                    android:paddingLeft="8dp"
+                    android:paddingLeft="12dp"
                     android:paddingTop="12dp"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:text="TEST test"
                     android:textColor="@color/primary_text"
                     android:textSize="17sp"

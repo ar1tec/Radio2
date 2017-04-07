@@ -11,6 +11,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -24,7 +26,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -35,7 +36,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
+import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,43 +50,33 @@ import android.widget.Toast;
 import org.oucho.filepicker.FilePicker;
 import org.oucho.filepicker.FilePickerActivity;
 import org.oucho.filepicker.FilePickerParcelObject;
+import org.oucho.radio2.blurview.BlurView;
 import org.oucho.radio2.db.DatabaseSave;
-import org.oucho.radio2.db.XMLParser;
-import org.oucho.radio2.db.XmlValuesModel;
+import org.oucho.radio2.dialog.Permissions;
+import org.oucho.radio2.images.ImageFactory;
 import org.oucho.radio2.itf.ListsClickListener;
 import org.oucho.radio2.itf.PlayableItem;
 import org.oucho.radio2.itf.Radio;
 import org.oucho.radio2.itf.RadioAdapter;
-import org.oucho.radio2.db.RadiosDatabase;
-import org.oucho.radio2.utils.AboutDialog;
+import org.oucho.radio2.itf.RadioKeys;
+import org.oucho.radio2.sound.VolumeTimer;
+import org.oucho.radio2.update.CheckUpdate;
+import org.oucho.radio2.dialog.AboutDialog;
 import org.oucho.radio2.utils.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
 import org.oucho.radio2.utils.SeekArc;
 import org.oucho.radio2.utils.State;
-import org.oucho.radio2.update.CheckUpdate;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 public class MainActivity extends AppCompatActivity
         implements
+        RadioKeys,
         NavigationView.OnNavigationItemSelectedListener,
         View.OnClickListener {
 
@@ -95,20 +86,10 @@ public class MainActivity extends AppCompatActivity
     * Déclaration des variables
     * *********************************************************************************************/
 
-    private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
-
-    private static Context context;
-
-    private static final String PLAY = "play";
-    private static final String STOP = "stop";
-    private static final String PAUSE = "pause";
-    private static final String RESTART = "restart";
-
-    private static final String STATE = "org.oucho.radio2.STATE";
-
     private static String etat_lecture = "";
     private static String nom_radio = "";
     private static String imp_exp = "null";
+    private static String importType = "null";
 
     private RecyclerView radioView;
     private DrawerLayout mDrawerLayout;
@@ -125,12 +106,21 @@ public class MainActivity extends AppCompatActivity
 
     private Handler handler;
 
-    private CountDownTimer minuteurVolume;
-
     private MediaPlayer soundChargement;
 
     private boolean bitrate = false;
 
+    private Bitmap logoRadio;
+
+    private View editView;
+
+    private BlurView bottomBlurView;
+
+    VolumeTimer volume;
+
+    private Context context;
+
+    SharedPreferences préférences;
 
 
    /* **********************************************************************************************
@@ -142,23 +132,27 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        context = getApplicationContext();
+
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             final int mUIFlag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
 
             getWindow().getDecorView().setSystemUiVisibility(mUIFlag);
 
-            getWindow().setStatusBarColor(getResources().getColor(R.color.white));
+            getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.white));
         }
 
         setContentView(R.layout.activity_main);
 
-        context = getApplicationContext();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
         Etat_player_Receiver = new Etat_player();
+
+        volume = new VolumeTimer();
+
         IntentFilter filter = new IntentFilter(STATE);
         registerReceiver(Etat_player_Receiver, filter);
 
@@ -217,6 +211,7 @@ public class MainActivity extends AppCompatActivity
         radioView.setLayoutManager(layoutManager);
 
 
+        bottomBlurView = (BlurView) findViewById(R.id.bottomBlurView);
 
         this.findViewById(R.id.add).setOnClickListener(this);
         this.findViewById(R.id.stop).setOnClickListener(this);
@@ -233,14 +228,24 @@ public class MainActivity extends AppCompatActivity
 
         State.getState(context);
 
+        setupBlurView();
+
         CheckUpdate.onStart(this);
 
     }
 
+    private void setupBlurView() {
+        final float radiusBottom = 5f;
+
+        //set background, if your root layout doesn't have one
+        final Drawable windowBackground = getWindow().getDecorView().getBackground();
 
 
-    public static Context getContext() {
-        return context;
+        /// mDrawerLayout pour indiquer la racine du layout
+        final BlurView.ControllerSettings bottomViewSettings = bottomBlurView.setupWith(mDrawerLayout)
+                .windowBackground(windowBackground)
+                .blurRadius(radiusBottom);
+
     }
 
 
@@ -328,7 +333,7 @@ public class MainActivity extends AppCompatActivity
 
             String receiveIntent = intent.getAction();
 
-            if ("org.oucho.radio2.STATE".equals(receiveIntent)) {
+            if (STATE.equals(receiveIntent)) {
 
                 /* Statut player */
                 TextView status = (TextView) findViewById(R.id.etat);
@@ -368,12 +373,11 @@ public class MainActivity extends AppCompatActivity
 
         if (nom_radio == null) {
 
-            String fichier_préférence = "org.oucho.radio2_preferences";
-
-            SharedPreferences préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
-
             nom_radio = préférences.getString("name", "");
+
         }
+
+
 
         assert StationTextView != null;
         StationTextView.setText(nom_radio);
@@ -565,7 +569,8 @@ public class MainActivity extends AppCompatActivity
     private void updateListView() {
 
         ArrayList<Object> items = new ArrayList<>();
-        items.addAll(Radio.getRadios());
+        items.addAll(Radio.getRadios(context));
+
         radioView.setAdapter(new RadioAdapter(this, items, nom_radio, clickListener));
     }
 
@@ -607,12 +612,37 @@ public class MainActivity extends AppCompatActivity
 
         String name = radio.getName();
 
+        byte[] logo = radio.getLogo();
+
+        SharedPreferences.Editor edit = préférences.edit();
+
         Intent player = new Intent(this, PlayerService.class);
 
-        player.putExtra("action", "play");
+        player.putExtra("action", PLAY);
         player.putExtra("url", url);
         player.putExtra("name", name);
         startService(player);
+
+        if (logo != null) {
+
+            Bitmap logoBitmap = ImageFactory.getImage(radio.getLogo());
+            Notification.updateNotification(context, nom_radio, "Lecture", logoBitmap);
+
+            String encodedImage = Base64.encodeToString(logo, Base64.DEFAULT);
+
+            edit.putString("image_data",encodedImage);
+            edit.apply();
+
+        } else {
+
+            Notification.updateNotification(context, nom_radio, "Lecture",
+                    BitmapFactory.decodeResource(context.getResources(),
+            R.drawable.ic_radio_white_36dp));
+
+            edit.remove("image_data");
+            edit.apply();
+
+        }
 
     }
 
@@ -627,13 +657,14 @@ public class MainActivity extends AppCompatActivity
         builder.setMessage(getResources().getString(R.string.deleteRadioConfirm));
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Radio.deleteRadio(radio);
+                Radio.deleteRadio(context, radio);
                 updateListView();
             }
         });
         builder.setNegativeButton(R.string.cancel, null);
         builder.show();
     }
+
 
 
 
@@ -645,38 +676,66 @@ public class MainActivity extends AppCompatActivity
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        int title = oldRadio==null ? R.string.addRadio : R.string.edit;
+        int title = oldRadio == null ? R.string.addRadio : R.string.edit;
 
         builder.setTitle(getResources().getString(title));
 
-        @SuppressLint("InflateParams")
-        final View view = getLayoutInflater().inflate(R.layout.layout_editwebradio, null);
-        builder.setView(view);
 
-        final EditText editTextUrl = (EditText)view.findViewById(R.id.editTextUrl);
-        final EditText editTextName = (EditText)view.findViewById(R.id.editTextName);
+        editView = getLayoutInflater().inflate(R.layout.layout_editwebradio, null);
+        builder.setView(editView);
+
+        final EditText editTextUrl = (EditText) editView.findViewById(R.id.editTextUrl);
+        final EditText editTextName = (EditText) editView.findViewById(R.id.editTextName);
+        final ImageView editLogo = (ImageView) editView.findViewById(R.id.logo);
+
+        editLogo.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {;
+                addImg();
+            }
+        });
+
+
         if(oldRadio!=null) {
             editTextUrl.setText(oldRadio.getUrl());
             editTextName.setText(oldRadio.getName());
+
+            if (oldRadio.getImg() != null ) {
+
+                editLogo.setImageBitmap(ImageFactory.getImage(oldRadio.getImg()));
+
+                logoRadio = ImageFactory.getImage(oldRadio.getImg());
+
+            } else {
+
+                logoRadio = null;
+            }
         }
 
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+
                 String url = editTextUrl.getText().toString();
                 String name = editTextName.getText().toString();
+                byte[] img = null;
+
+                if (logoRadio != null) {
+                    img = ImageFactory.getBytes(logoRadio);
+                }
+
                 if("".equals(url) || "http://".equals(url)) {
                     Toast.makeText(context, R.string.errorInvalidURL, Toast.LENGTH_SHORT).show();
                     return;
                 }
+
                 if("".equals(name))
                     name = url;
 
                 if(oldRadio != null) {
-                    Radio.deleteRadio(oldRadio);
+                    Radio.deleteRadio(context, oldRadio);
                 }
 
-                Radio newRadio = new Radio(url, name);
-                Radio.addRadio(newRadio);
+                Radio newRadio = new Radio(url, name, img);
+                Radio.addRadio(context, newRadio);
 
                 updateListView();
             }
@@ -955,7 +1014,7 @@ public class MainActivity extends AppCompatActivity
 
         showTimeEcran();
 
-        baisseVolume(delay);
+        volume.baisser(context, mTask, delay);
     }
 
 
@@ -1061,9 +1120,9 @@ public class MainActivity extends AppCompatActivity
             mTask.cancel(true);
             timerEcran.cancel();
 
-            minuteurVolume.cancel();
+            volume.getMinuteur().cancel();
 
-            setVolume("vol10");
+            volume.setVolume(context, "vol10");
         }
 
         running = false;
@@ -1100,22 +1159,9 @@ public class MainActivity extends AppCompatActivity
 
         } else {
 
-            RadiosDatabase radiosDatabase = new RadiosDatabase();
+            DatabaseSave database = new DatabaseSave();
+            database.exportDB(context);
 
-            String Destination = Environment.getExternalStorageDirectory().toString() + "/Radio";
-
-            File newRep = new File(Destination);
-            if (!newRep.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                newRep.mkdir();
-            }
-
-            String path = Destination + "/" + RadiosDatabase.DB_NAME + ".xml";
-
-            DatabaseSave databaseSave = new DatabaseSave(radiosDatabase.getReadableDatabase(), path);
-            databaseSave.exportData();
-
-            Toast.makeText(context, getString(R.string.exporter), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -1132,6 +1178,8 @@ public class MainActivity extends AppCompatActivity
 
         } else {
 
+            importType = "fichier";
+
             String currentPath = Environment.getExternalStorageDirectory().toString() + "/Radio";
 
             Intent intent = new Intent(getApplicationContext(), FilePickerActivity.class);
@@ -1146,114 +1194,92 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    /* **********************************************************************************************
+    * Changer le logo de la radio
+    * *********************************************************************************************/
+
+    private void addImg() {
+
+        if (Build.VERSION.SDK_INT >= 23
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            checkWritePermission();
+
+            imp_exp = "image";
+
+        } else {
+
+            importType = "image";
+
+            String currentPath = Environment.getExternalStorageDirectory().toString() + "/";
+
+            Intent intent = new Intent(getApplicationContext(), FilePickerActivity.class);
+            intent.putExtra(FilePicker.SET_ONLY_ONE_ITEM, true);
+            intent.putExtra(FilePicker.SET_FILTER_LISTED, new String[] { "bmp", "gif", "jpeg", "jpg", "png" });
+            intent.putExtra(FilePicker.DISABLE_NEW_FOLDER_BUTTON, true);
+            intent.putExtra(FilePicker.DISABLE_SORT_BUTTON, true);
+            intent.putExtra(FilePicker.ENABLE_QUIT_BUTTON, true);
+            intent.putExtra(FilePicker.SET_CHOICE_TYPE, FilePicker.CHOICE_TYPE_FILES);
+            intent.putExtra(FilePicker.SET_START_DIRECTORY, currentPath);
+            startActivityForResult(intent, FILE_PICKER_RESULT);
+        }
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
 
-        if (requestCode == FILE_PICKER_RESULT) {
-            if (data != null) {
+        if (requestCode == FILE_PICKER_RESULT && data != null) {
 
-                FilePickerParcelObject object = data.getParcelableExtra(FilePickerParcelObject.class.getCanonicalName());
-                StringBuilder buffer = new StringBuilder();
 
-                if (object.count > 0) {
+            FilePickerParcelObject object = data.getParcelableExtra(FilePickerParcelObject.class.getCanonicalName());
+            StringBuilder buffer = new StringBuilder();
 
-                    for (int i = 0; i < object.count; i++) {
-                        buffer.append(object.names.get(i));
-                        if (i < object.count - 1) buffer.append(", ");
-                    }
+            if (object.count > 0) {
+
+                for (int i = 0; i < object.count; i++) {
+                    buffer.append(object.names.get(i));
+                    if (i < object.count - 1) buffer.append(", ");
                 }
-
-                String XMLdata = readFile(object.path + buffer.toString());
-
-                readXML(XMLdata);
-
-            }
-        }
-    }
-
-
-    private String readFile(String fichier) {
-
-        String ret = "";
-
-        try {
-
-            FileInputStream inputStream = new FileInputStream(new File(fichier));
-
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String receiveString = "";
-            StringBuilder stringBuilder = new StringBuilder();
-
-            while ( (receiveString = bufferedReader.readLine()) != null ) {
-                stringBuilder.append(receiveString);
             }
 
-            inputStream.close();
-            ret = stringBuilder.toString();
-
-        } catch (FileNotFoundException e) {
-            Log.e("login activity", "File not found: " + e.toString());
-        } catch (IOException e) {
-            Log.e("login activity", "Can not read file: " + e.toString());
-        }
-
-        return ret;
-    }
 
 
-    private void readXML(String XMLData) {
+            if ( importType.equals("fichier") ) {
 
-        List<XmlValuesModel> myData = null;
 
-        try {
+                String pathFile = object.path + buffer.toString();
 
-            /************** Read XML *************/
+                DatabaseSave database = new DatabaseSave();
 
-            BufferedReader br = new BufferedReader(new StringReader(XMLData));
-            InputSource is = new InputSource(br);
+                database.importDB(context, pathFile);
 
-            /************  Parse XML **************/
+                updateListView();
 
-            XMLParser parser=new XMLParser();
-            SAXParserFactory factory=SAXParserFactory.newInstance();
-            SAXParser sp=factory.newSAXParser();
-            XMLReader reader=sp.getXMLReader();
-            reader.setContentHandler(parser);
-            reader.parse(is);
 
-            /************* Get Parse data in a ArrayList **********/
-            myData = parser.list;
+            } else if (importType.equals("image")) {
 
-            if (myData != null) {
+                String pathImg = object.path + buffer.toString();
 
-               // String OutputData = "";
+                File imgFile = new  File(pathImg);
 
-                /*************** Get Data From ArrayList *********/
+                if(imgFile.exists()){
 
-                for (XmlValuesModel xmlRowData : myData) {
+                    logoRadio = ImageFactory.getResizedBitmap(context, BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
 
-                    if (xmlRowData != null) {
+                    final ImageView logo = (ImageView) editView.findViewById(R.id.logo);
+                    final TextView text = (TextView) editView.findViewById(R.id.texte);
 
-                        String  url   = xmlRowData.getUrl();
-                        String  name   = xmlRowData.getName();
+                    logo.setImageBitmap(logoRadio);
+                    logo.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+                    text.setVisibility(View.INVISIBLE);
 
-                        Radio newRadio = new Radio(url, name);
-                        Radio.addRadio(newRadio);
 
-                    }
                 }
 
             }
-
-            updateListView();
-
-            Toast.makeText(context, getString(R.string.importer), Toast.LENGTH_SHORT).show();
-
-        } catch(Exception e) {
-            Log.e("Jobs", "Exception parse xml :" + e);
-            Toast.makeText(context, getString(R.string.importer_erreur), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1272,102 +1298,6 @@ public class MainActivity extends AppCompatActivity
 
         Notification.setState(false);
         State.getState(context);
-    }
-
-
-    /* *********************************************************************************************
-     * Réduction progressive du volume
-     * ********************************************************************************************/
-    private void baisseVolume(final int delay) {
-
-        // définir si le delay est supérieur ou inférieur à 10mn
-
-        final short minutes = (short) ( ( (delay / 1000) % 3600) / 60);
-
-        final boolean tempsMinuterie = minutes > 10;
-
-        int cycle;
-
-        if (tempsMinuterie) {
-            cycle = 60000;
-        } else {
-            cycle = 1000;
-        }
-
-
-        minuteurVolume = new CountDownTimer(delay, cycle) {
-            @Override
-            public void onTick(long mseconds) {
-
-                long temps1 = ((mTask.getDelay(TimeUnit.MILLISECONDS) / 1000) % 3600) / 60 ;
-
-                long temps2 = mTask.getDelay(TimeUnit.MILLISECONDS) / 1000;
-
-                if (tempsMinuterie) {
-
-                    if (temps1 < 1) {
-                        setVolume("vol1");
-                    } else if (temps1 < 2) {
-                        setVolume("vol2");
-                    } else if (temps1 < 3) {
-                        setVolume("vol3");
-                    } else if (temps1 < 4) {
-                        setVolume("vol4");
-                    } else if (temps1 < 5) {
-                        setVolume("vol5");
-                    } else if (temps1 < 6) {
-                        setVolume("vol6");
-                    } else if (temps1 < 7) {
-                        setVolume("vol7");
-                    } else if (temps1 < 8) {
-                        setVolume("vol8");
-                    } else if (temps1 < 9) {
-                        setVolume("vol9");
-                    } else if (temps1 < 10) {
-                        setVolume("vol10");
-                    }
-
-                } else {
-
-                    if (temps2 < 6) {
-                        setVolume("vol1");
-                    } else if (temps2 < 12) {
-                        setVolume("vol2");
-                    } else if (temps2 < 18) {
-                        setVolume("vol3");
-                    } else if (temps2 < 24) {
-                        setVolume("vol4");
-                    } else if (temps2 < 30) {
-                        setVolume("vol5");
-                    } else if (temps2 < 36) {
-                        setVolume("vol6");
-                    } else if (temps2 < 42) {
-                        setVolume("vol7");
-                    } else if (temps2 < 48) {
-                        setVolume("vol8");
-                    } else if (temps2 < 54) {
-                        setVolume("vol9");
-                    } else if (temps2 < 60) {
-                        setVolume("vol10");
-                    }
-                }
-            }
-
-            @Override
-            public void onFinish() {
-            exit();
-            }
-
-        }.start();
-    }
-
-    private void setVolume(String volume) {
-
-        if (State.isPlaying() || State.isPaused()) {
-            Intent niveau = new Intent(getContext(), PlayerService.class);
-            niveau.putExtra("action", volume);
-            startService(niveau);
-        }
     }
 
 
@@ -1407,28 +1337,12 @@ public class MainActivity extends AppCompatActivity
     private void checkWritePermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-            DialogUtils.showPermissionDialog(this, getString(R.string.permission_write_external_storage),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(MainActivity.this,
-                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-                        }
-                    });
+            Permissions perm = new Permissions();
+            perm.check(context, MainActivity.this);
+
         }
     }
 
-    public static class DialogUtils {
-
-        public static void showPermissionDialog(Context context, String message, DialogInterface.OnClickListener listener) {
-            new AlertDialog.Builder(context)
-                    .setTitle(R.string.permission)
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.ok, listener)
-                    .show();
-        }
-
-    }
 
 
     @Override
@@ -1449,6 +1363,9 @@ public class MainActivity extends AppCompatActivity
                             importer();
                         } else if (imp_exp.equals("exporter")) {
                             exporter();
+                        } else if (imp_exp.equals("image")) {
+                            addImg();
+
                         }
 
                     }

@@ -41,4 +41,8 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <declare-styleable name="BlurView">
+        <attr name="blurOverlayColor" format="color"/>
+    </declare-styleable>
+
 </resources>

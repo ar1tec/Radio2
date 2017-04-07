@@ -1,6 +1,8 @@
 package org.oucho.radio2.itf;
 
+import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -11,11 +13,17 @@ import android.widget.TextView;
 
 import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.R;
+import org.oucho.radio2.images.ImageFactory;
 
 class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private final TextView text;
     private final ImageButton menu;
+
     private final ImageView image;
+    private final ImageView imageLogo;
+
+    private final CardView fond;
+
     private Radio radio;
     private final MainActivity activity;
     private final ListsClickListener clickListener;
@@ -23,10 +31,15 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
 
     public RadioViewHolder(View view, MainActivity activity, ListsClickListener clickListener) {
         super(view);
-        text = (TextView)view.findViewById(R.id.textViewRadio);
-        menu = (ImageButton)view.findViewById(R.id.buttonMenu);
+        text = (TextView) view.findViewById(R.id.textViewRadio);
+        menu = (ImageButton) view.findViewById(R.id.buttonMenu);
 
-        image = (ImageView)view.findViewById(R.id.imageViewRadio);
+        image = (ImageView) view.findViewById(R.id.imageViewRadio);
+
+        imageLogo = (ImageView) view.findViewById(R.id.logoViewRadio);
+
+        fond  = (CardView) view.findViewById(R.id.fond);
+
 
         this.activity = activity;
         this.clickListener = clickListener;
@@ -35,12 +48,28 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
         menu.setFocusable(false);
     }
 
-    public void update(Radio radio, String nomRadio) {
+    public void update(Context context, Radio radio, String nomRadio) {
+
         this.radio = radio;
+
         text.setText(radio.getTitle());
 
-        if (radio.getTitle().equals(nomRadio))
-            image.setColorFilter(ContextCompat.getColor(MainActivity.getContext(), R.color.colorAccent));
+        if (radio.getImg() != null) {
+            image.setVisibility(View.INVISIBLE);
+            imageLogo.setImageBitmap(ImageFactory.getImage(radio.getLogo()));
+            imageLogo.setVisibility(View.VISIBLE);
+
+        }
+
+        if (radio.getName().equals(nomRadio)  ) {
+
+            fond.setBackgroundColor(ContextCompat.getColor(context, R.color.fondItem));
+
+            if (radio.getImg() == null)
+            image.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent));
+
+        }
+
 
     }
 

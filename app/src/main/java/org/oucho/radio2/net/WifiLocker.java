@@ -13,7 +13,7 @@ public class WifiLocker {
    public static void lock(Context context, String app_name) {
 
       if ( manager == null )
-         manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+         manager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
       if ( manager != null && lock == null )
          lock = manager.createWifiLock(WifiManager.WIFI_MODE_FULL, app_name);

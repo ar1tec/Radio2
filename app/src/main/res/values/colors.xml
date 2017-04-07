@@ -19,5 +19,12 @@
 
     <color name="zzz">#980d47a1</color>
 
+    <color name="colorOverlay">#3fffffff</color>
+
+    <color name="transparent">#00ffffff</color>
+
+    <color name="fondItem">#3cec9e24</color>
+
+
 
 </resources>

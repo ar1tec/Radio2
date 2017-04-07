@@ -19,6 +19,7 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.webkit.URLUtil;
 
+import org.oucho.radio2.itf.RadioKeys;
 import org.oucho.radio2.net.Connectivity;
 import org.oucho.radio2.net.WifiLocker;
 import org.oucho.radio2.utils.Counter;
@@ -28,22 +29,16 @@ import org.oucho.radio2.utils.State;
 
 public class PlayerService extends Service
    implements
+        RadioKeys,
       OnInfoListener,
       OnErrorListener,
       OnPreparedListener,
       OnAudioFocusChangeListener,
       OnCompletionListener {
 
-   private static final String fichier_préférence = "org.oucho.radio2_preferences";
    private static SharedPreferences préférences = null;
 
    private static Context context = null;
-
-   private static String app_name = null;
-   private static String intent_play = null;
-   private static String intent_stop = null;
-   private static String intent_pause = null;
-   private static String intent_restart = null;
 
    private static final String default_url = null;
    private static final String default_name = null;
@@ -71,13 +66,7 @@ public class PlayerService extends Service
    public void onCreate() {
       context = getApplicationContext();
 
-      app_name = getString(R.string.app_name);
-      intent_play = "play";
-      intent_stop = "stop";
-      intent_pause = "pause";
-      intent_restart = "restart";
-
-      préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
+      préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
       url = préférences.getString("url", default_url);
       name = préférences.getString("name", default_name);
 
@@ -124,19 +113,19 @@ public class PlayerService extends Service
 
       String action = intent.getStringExtra("action");
 
-      if (action.equals(intent_stop))
+      if (action.equals(STOP))
           return stop();
 
       
-      if (action.equals(intent_pause))
+      if (action.equals(PAUSE))
           return pause();
 
 
-      if (action.equals(intent_restart))
+      if (action.equals(RESTART))
           return restart();
 
 
-      if (action.equals(intent_play))
+      if (action.equals(PLAY))
           intentPlay(intent);
 
       if (action.equals("vol1"))
@@ -239,7 +228,7 @@ public class PlayerService extends Service
       }
 
       if ( isNetworkUrl(url) )
-         WifiLocker.lock(context, app_name);
+         WifiLocker.lock(context, APPLICATION_NAME);
 
       playlist_task = new Playlist(this,url).start();
 
@@ -269,7 +258,7 @@ public class PlayerService extends Service
       WifiLocker.unlock();
 
       if ( isNetworkUrl(url) )
-         WifiLocker.lock(context, app_name);
+         WifiLocker.lock(context, APPLICATION_NAME);
 
       try {
 

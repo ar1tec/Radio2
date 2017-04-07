@@ -6,10 +6,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import org.oucho.radio2.PlayerService;
+import org.oucho.radio2.itf.RadioKeys;
 
-public class State {
+public class State implements RadioKeys {
 
-   private static final String intent_state = "org.oucho.radio2.STATE";
 
    public static final String STATE_STOP         = "Stop";
    public static final String STATE_ERROR        = "Erreur";
@@ -35,7 +35,7 @@ public class State {
 
       current_isNetworkUrl = isNetworkUrl;
 
-      Intent intent = new Intent(intent_state);
+      Intent intent = new Intent(STATE);
       intent.putExtra("state", current_state);
       intent.putExtra("url", PlayerService.url);
       intent.putExtra("name", PlayerService.name);

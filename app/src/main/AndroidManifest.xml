@@ -38,7 +38,7 @@
         <service android:name=".PlayerService" />
 
 
-        <receiver android:name=".utils.StopReceiver"
+        <receiver android:name=".receiver.StopReceiver"
             tools:ignore="ExportedReceiver">
 
             <intent-filter>

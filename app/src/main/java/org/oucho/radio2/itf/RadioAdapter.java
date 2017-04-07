@@ -42,7 +42,7 @@ public class RadioAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Object item = items.get(position);
 
-        ((RadioViewHolder) holder).update((Radio)item, nomRadio);
+        ((RadioViewHolder) holder).update(activity.getApplicationContext(), (Radio)item, nomRadio);
 
     }
 

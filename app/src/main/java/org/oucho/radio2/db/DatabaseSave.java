@@ -1,139 +1,98 @@
 package org.oucho.radio2.db;
 
-import java.io.BufferedOutputStream;
+import android.content.Context;
+import android.os.Environment;
+import android.widget.Toast;
+
+import org.oucho.radio2.R;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import java.nio.channels.FileChannel;
+
+import static org.oucho.radio2.db.RadiosDatabase.DB_NAME;
 
 public class DatabaseSave {
 
-    private final SQLiteDatabase mDb;
-    private Exporter mExporter;
 
-
-    public DatabaseSave(SQLiteDatabase db, String destXml) {
-        mDb = db;
-
-        try {
-            File myFile = new File(destXml);
-            //noinspection ResultOfMethodCallIgnored
-            myFile.createNewFile();
-
-            FileOutputStream fOut = new FileOutputStream(myFile);
-            BufferedOutputStream bos = new BufferedOutputStream(fOut);
-
-            mExporter = new Exporter(bos);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void exportData() {
+    public void importDB(Context context, String source) {
 
 
         try {
-            mExporter.enTete();
 
-            exportTable();
+            String destination = String.valueOf(context.getDatabasePath(DB_NAME));
 
-            mExporter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+            File file = new File(source);
 
-    private void exportTable() throws IOException {
+            if (file.exists()) {
 
-        String sql = "select * from " + RadiosDatabase.TABLE_NAME;
-        Cursor cur = mDb.rawQuery(sql, new String[0]);
-        int numcols = cur.getColumnCount();
-
-        cur.moveToFirst();
+                RadiosDatabase radiosDatabase = new RadiosDatabase(context);
+                radiosDatabase.importExport(source, destination);
 
 
-        while (cur.getPosition() < cur.getCount()) {
-            mExporter.startRadio();
+                Toast.makeText(context, context.getString(R.string.importer), Toast.LENGTH_SHORT).show();
 
-            String name;
-            String val;
-            for (int idx = 0; idx < numcols; idx++) {
-                name = cur.getColumnName(idx);
-                val = cur.getString(idx);
-                mExporter.addRadio(name, val);
+            } else {
+                Toast.makeText(context, context.getString(R.string.importer_erreur), Toast.LENGTH_SHORT).show();
             }
 
-            mExporter.endRadio();
-            cur.moveToNext();
-        }
+        } catch (IOException ignored) {}
 
-        mExporter.fin();
-
-        cur.close();
     }
 
 
 
-    class Exporter {
-
-        private static final String ENTETE = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n" + "<map>" + "\n" ;
-
-        private static final String START_RADIO = "<radio>" + "\n";
-
-        private static final String OPEN = "<";
-        private static final String CLOSE = ">";
-
-        private static final String END_RADIO = "</radio>" + "\n";
-
-        private static final String FIN = "</map>";
+    public void exportDB(Context context) {
 
 
-        private final BufferedOutputStream mbufferos;
+        try {
+
+            String repDestination = Environment.getExternalStorageDirectory().toString() + "/Radio";
+
+            File newRep = new File(repDestination);
+            if (!newRep.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                newRep.mkdir();
+            }
+
+            String source = String.valueOf(context.getDatabasePath(DB_NAME));
+
+            String destination = repDestination + "/WebRadioList.db";
+
+            RadiosDatabase database = new RadiosDatabase(context);
+
+            database.importExport(source, destination);
+
+            Toast.makeText(context, context.getString(R.string.exporter), Toast.LENGTH_SHORT).show();
+
+        } catch (IOException ignored) {}
+    }
 
 
-        public Exporter(BufferedOutputStream bos) {
-            mbufferos = bos;
-        }
 
 
-        public void enTete() throws IOException {
-
-                String stg = ENTETE;
-                mbufferos.write(stg.getBytes());
-        }
-
-
-        public void startRadio() throws IOException {
-
-                String stg = START_RADIO;
-                mbufferos.write(stg.getBytes());
-        }
-
-        public void endRadio() throws IOException {
-
-                String stg = END_RADIO;
-                mbufferos.write(stg.getBytes());
-        }
-
-        public void addRadio(String name, String val) throws IOException {
-
-                String stg = OPEN + name + CLOSE + val + OPEN + "/" + name + CLOSE + "\n";
-                mbufferos.write(stg.getBytes());
-        }
-
-        public void fin() throws IOException {
-
-            String stg = FIN;
-            mbufferos.write(stg.getBytes());
-        }
-
-        public void close() throws IOException {
-            if (mbufferos != null) {
-                mbufferos.close();
+    public static void copyFile(FileInputStream fromFile, FileOutputStream toFile) throws IOException {
+        FileChannel fromChannel = null;
+        FileChannel toChannel = null;
+        try {
+            fromChannel = fromFile.getChannel();
+            toChannel = toFile.getChannel();
+            fromChannel.transferTo(0, fromChannel.size(), toChannel);
+        } finally {
+            try {
+                if (fromChannel != null) {
+                    fromChannel.close();
+                }
+            } finally {
+                if (toChannel != null) {
+                    toChannel.close();
+                }
             }
         }
-
     }
+
 
 }
+
