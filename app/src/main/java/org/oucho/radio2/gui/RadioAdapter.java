@@ -1,4 +1,4 @@
-package org.oucho.radio2.itf;
+package org.oucho.radio2.gui;
 
 
 import android.annotation.SuppressLint;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.R;
+import org.oucho.radio2.db.Radio;
+import org.oucho.radio2.interfaces.ListsClickListener;
 
 import java.util.ArrayList;
 

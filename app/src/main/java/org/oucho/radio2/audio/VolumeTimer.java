@@ -1,17 +1,22 @@
-package org.oucho.radio2.sound;
+package org.oucho.radio2.audio;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
 
+import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.PlayerService;
+import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.update.AppUpdate;
 import org.oucho.radio2.utils.State;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 
-public class VolumeTimer {
+public class VolumeTimer implements RadioKeys {
 
     private CountDownTimer minuteurVolume;
 
@@ -25,7 +30,6 @@ public class VolumeTimer {
     }
 
     public void baisser(final Context context, final ScheduledFuture task, final int delay) {
-
 
             // définir si le delay est supérieur ou inférieur à 10mn
 
@@ -103,7 +107,9 @@ public class VolumeTimer {
                 @Override
                 public void onFinish() {
 
-                    //exit();
+                    Intent intent = new Intent();
+                    intent.setAction(QUIT);
+                    context.sendBroadcast(intent);
 
                 }
 

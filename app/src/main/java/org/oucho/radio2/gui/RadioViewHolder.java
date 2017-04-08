@@ -1,4 +1,4 @@
-package org.oucho.radio2.itf;
+package org.oucho.radio2.gui;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
@@ -13,7 +13,9 @@ import android.widget.TextView;
 
 import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.R;
+import org.oucho.radio2.db.Radio;
 import org.oucho.radio2.images.ImageFactory;
+import org.oucho.radio2.interfaces.ListsClickListener;
 
 class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private final TextView text;

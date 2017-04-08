@@ -18,9 +18,9 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.webkit.URLUtil;
 
-import org.oucho.radio2.itf.RadioKeys;
+import org.oucho.radio2.interfaces.RadioKeys;
 import org.oucho.radio2.net.Connectivity;
-import org.oucho.radio2.net.StreamProxy;
+import org.oucho.radio2.net.Proxy;
 import org.oucho.radio2.net.WifiLocker;
 import org.oucho.radio2.utils.Counter;
 import org.oucho.radio2.utils.Later;
@@ -62,7 +62,7 @@ public class PlayerService extends Service
 
    private Later stopSoonTask = null;
 
-   private StreamProxy proxy;
+   private Proxy proxy;
 
     @Override
    public void onCreate() {
@@ -292,15 +292,14 @@ public class PlayerService extends Service
          WifiLocker.lock(context);
 
 
-      Log.d("PWET", "listening to " + url);
       String playUrl = url;
-      // From 2.2 on (SDK ver 8), the local mediaplayer can handle Shoutcast
-      // streams natively. Let's detect that, and not proxy.
+
          if (proxy == null) {
-            proxy = new StreamProxy();
+            proxy = new Proxy();
             proxy.init();
             proxy.start();
          }
+
          playUrl = String.format("http://127.0.0.1:%d/%s", proxy.getPort(), url);
 
 

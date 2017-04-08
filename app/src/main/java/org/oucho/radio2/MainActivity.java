@@ -53,16 +53,16 @@ import org.oucho.filepicker.FilePickerParcelObject;
 import org.oucho.radio2.db.DatabaseSave;
 import org.oucho.radio2.dialog.Permissions;
 import org.oucho.radio2.images.ImageFactory;
-import org.oucho.radio2.itf.ListsClickListener;
-import org.oucho.radio2.itf.PlayableItem;
-import org.oucho.radio2.itf.Radio;
-import org.oucho.radio2.itf.RadioAdapter;
-import org.oucho.radio2.itf.RadioKeys;
-import org.oucho.radio2.sound.VolumeTimer;
+import org.oucho.radio2.interfaces.ListsClickListener;
+import org.oucho.radio2.interfaces.PlayableItem;
+import org.oucho.radio2.db.Radio;
+import org.oucho.radio2.gui.RadioAdapter;
+import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.audio.VolumeTimer;
 import org.oucho.radio2.update.CheckUpdate;
-import org.oucho.radio2.dialog.AboutDialog;
-import org.oucho.radio2.sound.GetAudioFocusTask;
-import org.oucho.radio2.utils.Notification;
+import org.oucho.radio2.dialog.About;
+import org.oucho.radio2.audio.GetAudioFocusTask;
+import org.oucho.radio2.gui.Notification;
 import org.oucho.radio2.utils.SeekArc;
 import org.oucho.radio2.utils.State;
 
@@ -102,6 +102,8 @@ public class MainActivity extends AppCompatActivity
     private TextView timeAfficheur;
 
     private Etat_player Etat_player_Receiver;
+
+    private Quit quitReceiver;
 
     private Handler handler;
 
@@ -147,20 +149,22 @@ public class MainActivity extends AppCompatActivity
         préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
         Etat_player_Receiver = new Etat_player();
-
-        volume = new VolumeTimer();
-
         IntentFilter filter = new IntentFilter(STATE);
         registerReceiver(Etat_player_Receiver, filter);
+
+        quitReceiver = new Quit();
+        IntentFilter filter2 = new IntentFilter(QUIT);
+        registerReceiver(quitReceiver, filter2);
+
+
+        volume = new VolumeTimer();
 
         Control_Volume niveau_Volume = new Control_Volume(this, new Handler());
         getApplicationContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
 
 
         int couleurTitre = ContextCompat.getColor(context, R.color.colorAccent);
-
         int couleurFond = ContextCompat.getColor(context, R.color.colorPrimary);
-
 
         String titre = context.getString(R.string.app_name);
 
@@ -340,6 +344,22 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private class Quit extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String receiveIntent = intent.getAction();
+
+            if (QUIT.equals(receiveIntent)) {
+
+                exit();
+
+            }
+        }
+
+    }
+
 
    /* *********************************
     * Affiche le nom de la radio active
@@ -455,7 +475,8 @@ public class MainActivity extends AppCompatActivity
     * *******/
 
 
-    private void exit() {
+    public void exit() {
+
 
         soundChargement.release();
 
@@ -469,6 +490,8 @@ public class MainActivity extends AppCompatActivity
         startService(player);
 
         unregisterReceiver(Etat_player_Receiver);
+        unregisterReceiver(quitReceiver);
+
 
         killNotif();
 
@@ -477,8 +500,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-   /* **********************************************************************************************
+    /* **********************************************************************************************
     * Gestion des clicks sur l'interface
     * *********************************************************************************************/
 
@@ -601,6 +623,7 @@ public class MainActivity extends AppCompatActivity
         player.putExtra("url", url);
         player.putExtra("name", name);
         startService(player);
+
 
         if (logo != null) {
 
@@ -1287,7 +1310,7 @@ public class MainActivity extends AppCompatActivity
 
     private void about() {
 
-        AboutDialog dialog = new AboutDialog();
+        About dialog = new About();
         dialog.show(getSupportFragmentManager(), "about");
     }
 

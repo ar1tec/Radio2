@@ -1,11 +1,10 @@
-package org.oucho.radio2.sound;
+package org.oucho.radio2.audio;
 
 import org.oucho.radio2.MainActivity;
 
 
 public class GetAudioFocusTask implements Runnable {
     private final MainActivity context;
-
 
     public GetAudioFocusTask(MainActivity context) {
         this.context = context;

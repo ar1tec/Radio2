@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import org.oucho.radio2.R;
+import org.oucho.radio2.interfaces.RadioKeys;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +15,7 @@ import java.nio.channels.FileChannel;
 
 import static org.oucho.radio2.db.RadiosDatabase.DB_NAME;
 
-public class DatabaseSave {
+public class DatabaseSave implements RadioKeys {
 
 
     public void importDB(Context context, String source) {

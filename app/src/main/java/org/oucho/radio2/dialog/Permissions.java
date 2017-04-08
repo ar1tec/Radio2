@@ -8,7 +8,7 @@ import android.content.DialogInterface;
 import android.support.v4.app.ActivityCompat;
 
 import org.oucho.radio2.R;
-import org.oucho.radio2.itf.RadioKeys;
+import org.oucho.radio2.interfaces.RadioKeys;
 
 public class Permissions implements RadioKeys {
 

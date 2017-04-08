@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import org.oucho.radio2.interfaces.RadioKeys;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,13 +14,13 @@ import java.io.IOException;
 
 import static org.oucho.radio2.db.DatabaseSave.copyFile;
 
-public class RadiosDatabase extends SQLiteOpenHelper {
+class RadiosDatabase extends SQLiteOpenHelper implements RadioKeys {
 
-	static final String DB_NAME = "WebRadio";
-	private static final String TABLE_NAME =  "WebRadio";
+
 	private static final int DB_VERSION = 2;
-	
-	public RadiosDatabase(Context context) {
+
+
+	RadiosDatabase(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
 	}
 	
@@ -41,13 +43,11 @@ public class RadiosDatabase extends SQLiteOpenHelper {
 		File oldDb = new File(dest);
 		if (newDb.exists()) {
 
-
 			copyFile(new FileInputStream(newDb), new FileOutputStream(oldDb));
 			// Access the copied database so SQLiteHelper will cache it and mark it as created.
 			getWritableDatabase().close();
 		}
 	}
-
 
 
 }

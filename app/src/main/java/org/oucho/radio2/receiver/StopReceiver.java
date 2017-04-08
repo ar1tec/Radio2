@@ -8,8 +8,8 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 
 import org.oucho.radio2.PlayerService;
-import org.oucho.radio2.itf.RadioKeys;
-import org.oucho.radio2.utils.Notification;
+import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.gui.Notification;
 import org.oucho.radio2.utils.State;
 
 public class StopReceiver extends BroadcastReceiver implements RadioKeys {

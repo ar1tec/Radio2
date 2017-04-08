@@ -1,4 +1,4 @@
-package org.oucho.radio2.utils;
+package org.oucho.radio2.gui;
 
 
 import android.app.NotificationManager;
@@ -14,7 +14,7 @@ import android.widget.RemoteViews;
 
 import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.R;
-import org.oucho.radio2.itf.RadioKeys;
+import org.oucho.radio2.interfaces.RadioKeys;
 
 import static android.content.Context.MODE_PRIVATE;
 

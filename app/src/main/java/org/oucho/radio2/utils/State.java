@@ -6,7 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import org.oucho.radio2.PlayerService;
-import org.oucho.radio2.itf.RadioKeys;
+import org.oucho.radio2.interfaces.RadioKeys;
 
 public class State implements RadioKeys {
 
