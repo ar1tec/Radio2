@@ -24,9 +24,9 @@ public void check(Context context, final Activity activity) {
                 });
     }
 
-    public static class DialogUtils {
+    private static class DialogUtils {
 
-        public static void showPermissionDialog(Context context, String message, DialogInterface.OnClickListener listener) {
+        private static void showPermissionDialog(Context context, String message, DialogInterface.OnClickListener listener) {
             new AlertDialog.Builder(context)
                     .setTitle(R.string.permission)
                     .setMessage(message)

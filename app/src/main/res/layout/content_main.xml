@@ -87,26 +87,21 @@
 
     </RelativeLayout>
 
-
+    <View
+        android:id="@+id/toolbar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="2.5dp"
+        android:background="@drawable/toolbar_dropshadow"
+        android:layout_marginTop="@dimen/affichage_info"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/affichage_info"
-        android:paddingBottom="@dimen/playerBar"
-        android:clipToPadding="false"
-        android:scrollbarStyle="outsideOverlay"/>
+        android:layout_marginBottom="@dimen/playerBar"
+        android:layout_marginTop="104dp"/>
 
-    <org.oucho.radio2.blurview.BlurView
-        android:id="@+id/bottomBlurView"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/playerBar"
-        android:elevation="4dp"
-        android:outlineProvider="bounds"
-        app:blurOverlayColor="@color/colorOverlay"
-        android:layout_alignParentBottom="true"
-        tools:targetApi="lollipop">
+
 
         <RelativeLayout
             android:id="@+id/bar"
@@ -117,6 +112,11 @@
             android:clipToPadding="false"
             android:elevation="8dp">
 
+            <View
+                android:id="@+id/playbar_shadow"
+                android:layout_width="match_parent"
+                android:layout_height="2.5dp"
+                android:background="@drawable/playbar_dropshadow"/>
 
             <ImageButton
                 android:id="@+id/stop"
@@ -169,7 +169,5 @@
                 tools:ignore="ContentDescription" />
 
         </RelativeLayout>
-
-    </org.oucho.radio2.blurview.BlurView>
 
 </RelativeLayout>

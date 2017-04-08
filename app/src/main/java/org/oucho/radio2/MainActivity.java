@@ -50,7 +50,6 @@ import android.widget.Toast;
 import org.oucho.filepicker.FilePicker;
 import org.oucho.filepicker.FilePickerActivity;
 import org.oucho.filepicker.FilePickerParcelObject;
-import org.oucho.radio2.blurview.BlurView;
 import org.oucho.radio2.db.DatabaseSave;
 import org.oucho.radio2.dialog.Permissions;
 import org.oucho.radio2.images.ImageFactory;
@@ -62,7 +61,7 @@ import org.oucho.radio2.itf.RadioKeys;
 import org.oucho.radio2.sound.VolumeTimer;
 import org.oucho.radio2.update.CheckUpdate;
 import org.oucho.radio2.dialog.AboutDialog;
-import org.oucho.radio2.utils.GetAudioFocusTask;
+import org.oucho.radio2.sound.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
 import org.oucho.radio2.utils.SeekArc;
 import org.oucho.radio2.utils.State;
@@ -113,8 +112,6 @@ public class MainActivity extends AppCompatActivity
     private Bitmap logoRadio;
 
     private View editView;
-
-    private BlurView bottomBlurView;
 
     private VolumeTimer volume;
 
@@ -211,8 +208,6 @@ public class MainActivity extends AppCompatActivity
         radioView.setLayoutManager(layoutManager);
 
 
-        bottomBlurView = (BlurView) findViewById(R.id.bottomBlurView);
-
         this.findViewById(R.id.add).setOnClickListener(this);
         this.findViewById(R.id.stop).setOnClickListener(this);
         this.findViewById(R.id.play).setOnClickListener(this);
@@ -228,23 +223,7 @@ public class MainActivity extends AppCompatActivity
 
         State.getState(context);
 
-        setupBlurView();
-
         CheckUpdate.onStart(this);
-
-    }
-
-    private void setupBlurView() {
-        final float radiusBottom = 5f;
-
-        //set background, if your root layout doesn't have one
-        final Drawable windowBackground = getWindow().getDecorView().getBackground();
-
-
-        /// mDrawerLayout pour indiquer la racine du layout
-        final BlurView.ControllerSettings bottomViewSettings = bottomBlurView.setupWith(mDrawerLayout)
-                .windowBackground(windowBackground)
-                .blurRadius(radiusBottom);
 
     }
 
@@ -872,7 +851,7 @@ public class MainActivity extends AppCompatActivity
 
     private void bitRate() {
         final int uid = android.os.Process.myUid();
-        final long received = TrafficStats.getUidRxBytes(uid) / 1024;
+        final long received = TrafficStats.getUidRxBytes(uid) / 1024; // ajout /2 pour le proxy
 
         handler = new Handler();
 
@@ -884,7 +863,7 @@ public class MainActivity extends AppCompatActivity
                 long current = TrafficStats.getUidRxBytes(uid) / 1024;
                 long total = current - received;
 
-                long ByteToBit = total * 8;
+                long ByteToBit = total * 4; // * 4 le proxy double le résultat
 
                 TextView BitRate = (TextView) findViewById(R.id.bitrate);
 

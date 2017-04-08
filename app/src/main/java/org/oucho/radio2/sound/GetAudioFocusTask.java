@@ -1,4 +1,4 @@
-package org.oucho.radio2.utils;
+package org.oucho.radio2.sound;
 
 import org.oucho.radio2.MainActivity;
 

@@ -4,10 +4,10 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
 
+    useLibrary 'org.apache.http.legacy'
+
     defaultConfig {
         applicationId "org.oucho.radio2"
-        renderscriptTargetApi 25
-        renderscriptSupportModeEnabled true
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 21
@@ -16,8 +16,8 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
         }
