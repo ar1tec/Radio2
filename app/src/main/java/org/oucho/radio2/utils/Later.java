@@ -17,7 +17,7 @@ public abstract class Later extends AsyncTask<Integer, Void, Void> {
    // secs == 0: délais pour default_seconds
    // otherwise: délais pour sec
 
-   public Later(int secs) {
+   protected Later(int secs) {
       super();
 
       int secondes  = secs;
@@ -28,7 +28,7 @@ public abstract class Later extends AsyncTask<Integer, Void, Void> {
       then = Counter.now();
    }
 
-   public Later() {
+   protected Later() {
       this(default_seconds);
    }
 

@@ -47,9 +47,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.oucho.filepicker.FilePicker;
-import org.oucho.filepicker.FilePickerActivity;
-import org.oucho.filepicker.FilePickerParcelObject;
+import org.oucho.radio2.filepicker.FilePicker;
+import org.oucho.radio2.filepicker.FilePickerActivity;
+import org.oucho.radio2.filepicker.FilePickerParcelObject;
 import org.oucho.radio2.db.DatabaseSave;
 import org.oucho.radio2.dialog.Permissions;
 import org.oucho.radio2.images.ImageFactory;
@@ -486,7 +486,7 @@ public class MainActivity extends AppCompatActivity
         stopTimer();
 
         Intent player = new Intent(this, PlayerService.class);
-        player.putExtra("action", STOP);
+        player.putExtra("action", ACTION_STOP);
         startService(player);
 
         unregisterReceiver(Etat_player_Receiver);
@@ -512,19 +512,19 @@ public class MainActivity extends AppCompatActivity
         switch (v.getId()) {
 
             case R.id.stop:
-                player.putExtra("action", STOP);
+                player.putExtra("action", ACTION_STOP);
                 startService(player);
                 break;
 
             case R.id.play:
                 switch (etat_lecture) {
                     case "Stop":
-                        player.putExtra("action", PLAY);
+                        player.putExtra("action", ACTION_PLAY);
                         startService(player);
                         break;
 
                     case "Pause":
-                        player.putExtra("action", RESTART);
+                        player.putExtra("action", ACTION_RESTART);
                         startService(player);
                         break;
 
@@ -537,12 +537,12 @@ public class MainActivity extends AppCompatActivity
 
                 switch (etat_lecture) {
                     case "Lecture":
-                        player.putExtra("action", PAUSE);
+                        player.putExtra("action", ACTION_PAUSE);
                         startService(player);
                         break;
 
                     case "Pause":
-                        player.putExtra("action", RESTART);
+                        player.putExtra("action", ACTION_RESTART);
                         startService(player);
                         break;
 
@@ -619,7 +619,7 @@ public class MainActivity extends AppCompatActivity
 
         Intent player = new Intent(this, PlayerService.class);
 
-        player.putExtra("action", PLAY);
+        player.putExtra("action", ACTION_PLAY);
         player.putExtra("url", url);
         player.putExtra("name", name);
         startService(player);
@@ -783,11 +783,11 @@ public class MainActivity extends AppCompatActivity
     * Volume observer
     * *********************************************************************************************/
 
-    public class Control_Volume extends ContentObserver {
+    private class Control_Volume extends ContentObserver {
         private int previousVolume;
         private final Context context;
 
-        public Control_Volume(Context c, Handler handler) {
+        private Control_Volume(Context c, Handler handler) {
             super(handler);
             context=c;
 
@@ -874,7 +874,7 @@ public class MainActivity extends AppCompatActivity
 
     private void bitRate() {
         final int uid = android.os.Process.myUid();
-        final long received = TrafficStats.getUidRxBytes(uid) / 1024; // ajout /2 pour le proxy
+        final long received = TrafficStats.getUidRxBytes(uid) / 1024;
 
         handler = new Handler();
 
@@ -886,7 +886,7 @@ public class MainActivity extends AppCompatActivity
                 long current = TrafficStats.getUidRxBytes(uid) / 1024;
                 long total = current - received;
 
-                long ByteToBit = total * 4; // * 4 le proxy double le résultat
+                long ByteToBit = total * 8;
 
                 TextView BitRate = (TextView) findViewById(R.id.bitrate);
 
@@ -1124,7 +1124,7 @@ public class MainActivity extends AppCompatActivity
 
             volume.getMinuteur().cancel();
 
-            volume.setVolume(context, "vol10");
+            volume.setVolume(context, 1.0f);
         }
 
         running = false;

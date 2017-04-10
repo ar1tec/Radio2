@@ -76,4 +76,51 @@
     <string name="permission">Demande de permission</string>
     <string name="permission_write_external_storage">Cette opération nécessite votre autorisation pour accéder à l\'espace de stockage.</string>
 
+
+
+    <string-array name="size_units">
+        <item>o</item>
+        <item>Ko</item>
+        <item>Mo</item>
+        <item>Go</item>
+        <item>To</item>
+        <item>Po</item>
+    </string-array>
+
+    <string name="empty_directory">Répertoire vide</string>
+    <string name="action_select_all">Tout sélectionner</string>
+    <string name="action_deselect">Dé-sélectionner</string>
+    <string name="action_invert_selection">Inverser la sélection</string>
+    <string name="new_folder">Nouveau répertoire</string>
+    <string name="folder_name_hint">Nom du répertoire</string>
+    <string name="folder_created">Répertoire créé avec succès</string>
+    <string name="folder_not_created">Erreur! Le répertoire n\'a pas été créé</string>
+    <string name="folder_already_exists">Le répertoire existe déjà</string>
+    <string name="sort">Trier</string>
+
+    <string-array name="sorting_types">
+        <item>Par nom, croissant</item>
+        <item>Par nom, décroissant</item>
+        <item>Par taille, croissant</item>
+        <item>Par taille, décroissant</item>
+        <item>Par date, croissant</item>
+        <item>Par date, décroissant</item>
+    </string-array>
+
+
+
+    <string name="type_archive">Archive</string>
+    <string name="type_certificate">Certificat</string>
+    <string name="type_directory">Répertoire</string>
+    <string name="type_document">Fichier</string>
+    <string name="type_drawing">Dessin</string>
+    <string name="type_excel">Tableur</string>
+    <string name="type_image">Image</string>
+    <string name="type_music">Musique</string>
+    <string name="type_video">Vidéo</string>
+    <string name="type_pdf">Document PDF</string>
+    <string name="type_power_point">Présentation</string>
+    <string name="type_word">Document</string>
+    <string name="type_apk">APK</string>
+
 </resources>

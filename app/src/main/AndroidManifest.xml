@@ -32,7 +32,7 @@
 
 
         <activity
-            android:name="org.oucho.filepicker.FilePickerActivity"
+            android:name="org.oucho.radio2.filepicker.FilePickerActivity"
             android:label="@string/select_file"
             android:theme="@style/AppThemeFilePicker"/>
 

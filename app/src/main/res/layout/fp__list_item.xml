@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        tools:ignore="UselessParent" >
+
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentTop="false"
+            android:layout_marginLeft="6dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerInside"
+            android:src="@android:drawable/stat_sys_download_done"
+            android:layout_alignParentBottom="false"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:id="@+id/filename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:text="@string/app_name"
+            android:textSize="15sp"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/filesize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/filename"
+            android:layout_below="@+id/filename"
+            android:text="@string/app_name"
+            android:textSize="12sp"
+            android:ellipsize="end"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:gravity="right" />
+
+        <TextView
+            android:id="@+id/filesize2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/filename"
+            android:layout_below="@+id/filename"
+            android:text="@string/app_name"
+            android:textSize="12sp"
+            android:ellipsize="end"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="50dp"
+            android:layout_alignParentRight="true"
+            android:gravity="right"
+            android:visibility="gone" />
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</LinearLayout>
