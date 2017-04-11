@@ -1,0 +1,131 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="app_name">Radio</string>
+
+    <string name="radio_name">Name der Station</string>
+    <string name="url">URL</string>
+
+    <string name="edit">Bearbeiten</string>
+    <string name="delete">Löschen</string>
+
+    <string name="deleteRadioConfirm">Diese Station löschen?</string>
+    <string name="addRadio">Station hinzufügen</string>
+    <string name="ok">OK</string>
+    <string name="errorInvalidURL">Ungültige URL</string>
+
+
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+
+    <!-- nav header activity main -->
+    <string name="by">Old Geek, avril 2017</string>
+
+    <string name="update">Aktualisierung</string>
+
+    <string name="about">Über</string>
+
+    <string name="exit">Exit</string>
+
+
+
+    <string name="about_message">
+        \n
+        Radio 2.10, Web-Radio für Android\n
+        \n
+        Old Geek, 2017\n
+        \n
+        Lizenz: keine - genießen und teilen.\n
+        \n
+        \n
+        Code source: https://github.com/Old-Geek/Radio2\n
+        \n
+    </string>
+
+
+    <!-- Timer -->
+    <string name="timer_info" formatted="false" tools:ignore="StringFormatInvalid">%02d:%02d</string>
+    <string name="start">Start</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="continuer">Fortfahren</string>
+    <string name="cancel_timer">Uhr abschalten</string>
+    <string name="impossible">0 impossible</string>
+
+
+    <!-- update -->
+    <string name="appupdater_update_available">Aktualisierung verfügbar</string>
+
+    <string name="appupdater_update_available_description_dialog">Neue Version %1$s verfügbar mit neuen Funktionen %2$s.</string>
+    <string name="appupdater_update_available_description_dialog_before_release_notes">La mise à jour %1$s est disponible.\n\nNOUVEAUTÉS:\n%2$s</string>
+    <string name="appupdater_update_available_description_snackbar">Neue Version %1$s verfügbar.</string>
+    <string name="appupdater_update_not_available">Keine neuere Version verfügbar</string>
+    <string name="appupdater_update_not_available_description">Dies ist die aktuelle Version von %s.</string>
+    <string name="appupdater_btn_update">Herunterladen</string>
+    <string name="appupdater_btn_dismiss">Später</string>
+
+    <!-- import/export DB -->
+    <string name="importer">Import erfolgreich</string>
+    <string name="importer_erreur">Einlesen fehlerhaft</string>
+
+    <string name="exporter">Export erfolgreich</string>
+
+    <string name="importerMenu">Stationsliste einlesen</string>
+    <string name="exporterMenu">Stationsliste exportieren</string>
+    <string name="select_file">Datei auswählen</string>
+
+    <!-- permission -->
+    <string name="permission">Erlaubnis-Anforderung</string>
+    <string name="permission_write_external_storage">Schreibzugriff auf externen Speicher</string>
+
+
+
+    <string-array name="size_units">
+        <item>o</item>
+        <item>Ko</item>
+        <item>Mo</item>
+        <item>Go</item>
+        <item>To</item>
+        <item>Po</item>
+    </string-array>
+
+    <string name="empty_directory">Leeres Verzeichnis</string>
+    <string name="action_select_all">Alles auswählen</string>
+    <string name="action_deselect">Nicht auswählen</string>
+    <string name="action_invert_selection">Auswahl umkehren</string>
+    <string name="new_folder">Neues Verzeichnis</string>
+    <string name="folder_name_hint">Verzeichnisname</string>
+    <string name="folder_created">Verzeichnis erfolgreich erzeugt</string>
+    <string name="folder_not_created">Fehler, Verzeichnis nicht angelegt</string>
+    <string name="folder_already_exists">Verzeichnis existiert bereits</string>
+    <string name="sort">Sortieren</string>
+
+    <string-array name="sorting_types">
+        <item>Name, aufsteigend</item>
+        <item>Name, absteigend</item>
+        <item>Größe, aufsteigend</item>
+        <item>Größe, absteigend</item>
+        <item>Datum, aufsteigend</item>
+        <item>Datum, absteigend</item>
+    </string-array>
+
+
+
+    <string name="type_archive">Archive</string>
+    <string name="type_certificate">Certificat</string>
+    <string name="type_directory">Verzeichnis</string>
+    <string name="type_document">Dokument</string>
+    <string name="type_drawing">Zeichnung</string>
+    <string name="type_excel">Excel</string>
+    <string name="type_image">Image</string>
+    <string name="type_music">Musik</string>
+    <string name="type_video">Video</string>
+    <string name="type_pdf">PDF</string>
+    <string name="type_power_point">Präsentation</string>
+    <string name="type_word">Dokument</string>
+    <string name="type_apk">APK</string>
+
+    <string name="add_logo">Tippen um ein Logo hinzuzufügen</string>
+    <string name="notif_touch">(Zum Öffnen tippen)</string>
+    <string name="notif_state">Abspielstatus</string>
+    <string name="station_name">Stationsname</string>
+
+</resources>

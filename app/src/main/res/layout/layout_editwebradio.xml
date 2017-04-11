@@ -51,7 +51,7 @@
             android:id="@+id/texte"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Touchez pour ajouter un logo"
+            android:text="@string/add_logo"
             android:visibility="visible"
             android:textAlignment="center"
             android:paddingTop="15dp" />

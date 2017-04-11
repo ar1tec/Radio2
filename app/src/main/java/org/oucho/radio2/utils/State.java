@@ -15,8 +15,8 @@ public class State implements RadioKeys {
    public static final String STATE_ERROR        = "Erreur";
    public static final String STATE_COMPLETE     = "Complété";
    public static final String STATE_PAUSE        = "Pause";
-   public static final String STATE_PLAY         = "Lecture";
-   public static final String STATE_BUFFER       = "Chargement...";
+   public static final String STATE_PLAY         = "Play";
+   public static final String STATE_BUFFER       = "Loading...";
    public static final String STATE_DUCK         = "\\_o< coin";
    public static final String STATE_DISCONNECTED = "Déconnecté";
 
@@ -59,13 +59,13 @@ public class State implements RadioKeys {
           return "Stop";
 
        if (is(STATE_PLAY))
-           return "Lecture";
+           return "Play";
 
        if (is(STATE_PAUSE))
            return "Pause";
 
        if (is(STATE_BUFFER))
-           return "Chargement...";
+           return "Loading...";
 
        if (is(STATE_DUCK))
            return "\\_o< coin";

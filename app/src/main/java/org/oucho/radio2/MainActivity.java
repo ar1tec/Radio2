@@ -80,74 +80,44 @@ public class MainActivity extends AppCompatActivity
         NavigationView.OnNavigationItemSelectedListener,
         View.OnClickListener {
 
-
-
-   /* **********************************************************************************************
-    * Déclaration des variables
-    * *********************************************************************************************/
-
-    private static String etat_lecture = "";
     private static String nom_radio = "";
+    private static String etat_lecture = "";
     private static String imp_exp = "null";
     private static String importType = "null";
 
-    private RecyclerView radioView;
-    private DrawerLayout mDrawerLayout;
-
+    private boolean bitrate = false;
     private static boolean running;
-
     private static ScheduledFuture mTask;
 
-    private CountDownTimer timerEcran;
-
-    private TextView timeAfficheur;
-
-    private Etat_player Etat_player_Receiver;
-
-    private Quit quitReceiver;
-
-    private Handler handler;
-
-    private MediaPlayer soundChargement;
-
-    private boolean bitrate = false;
-
-    private Bitmap logoRadio;
-
     private View editView;
-
+    private Handler handler;
+    private Bitmap logoRadio;
+    private Quit quitReceiver;
     private VolumeTimer volume;
+    private TextView timeAfficheur;
+    private RecyclerView radioView;
+    private CountDownTimer timerEcran;
+    private DrawerLayout mDrawerLayout;
+    private MediaPlayer soundChargement;
+    private SharedPreferences préférences;
+    private Etat_player Etat_player_Receiver;
 
     private Context context;
 
-    private SharedPreferences préférences;
-
-
-   /* **********************************************************************************************
-    * Création de l'activité
-    * *********************************************************************************************/
 
     @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = getApplicationContext();
-
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            final int mUIFlag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-
-            getWindow().getDecorView().setSystemUiVisibility(mUIFlag);
-
-            getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.white));
-        }
-
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        context = getApplicationContext();
         préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
+
+        setStatusBar();
+        setToolBarAndNavigationDrawer();
+
 
         Etat_player_Receiver = new Etat_player();
         IntentFilter filter = new IntentFilter(STATE);
@@ -157,61 +127,13 @@ public class MainActivity extends AppCompatActivity
         IntentFilter filter2 = new IntentFilter(QUIT);
         registerReceiver(quitReceiver, filter2);
 
-
         volume = new VolumeTimer();
-
         Control_Volume niveau_Volume = new Control_Volume(this, new Handler());
         getApplicationContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
 
-
-        int couleurTitre = ContextCompat.getColor(context, R.color.colorAccent);
-        int couleurFond = ContextCompat.getColor(context, R.color.colorPrimary);
-
-        String titre = context.getString(R.string.app_name);
-
-        ColorDrawable colorDrawable = new ColorDrawable(couleurFond);
-
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setBackgroundDrawable(colorDrawable);
-
-        if (android.os.Build.VERSION.SDK_INT >= 24) {
-
-            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>", Html.FROM_HTML_MODE_LEGACY));
-
-        } else {
-            //noinspection deprecation
-            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>"));
-        }
-
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        NavigationView mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-
-        assert mNavigationView != null;
-        mNavigationView.setNavigationItemSelectedListener(this);
-
-
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
-
-        };
-
-        mDrawerToggle.syncState();
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        final Drawable upArrow = ContextCompat.getDrawable(context, R.drawable.ic_menu_black_24dp);
-        upArrow.setColorFilter(ContextCompat.getColor(context, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
-        getSupportActionBar().setHomeAsUpIndicator(upArrow);
-
-
         radioView = (RecyclerView)findViewById(R.id.recyclerView);
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         radioView.setLayoutManager(layoutManager);
-
 
         this.findViewById(R.id.add).setOnClickListener(this);
         this.findViewById(R.id.stop).setOnClickListener(this);
@@ -225,22 +147,67 @@ public class MainActivity extends AppCompatActivity
         bitrate = true;
 
         volume();
-
         State.getState(context);
-
         CheckUpdate.onStart(this);
+    }
 
+    private void setStatusBar() {
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            final int mUIFlag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            getWindow().getDecorView().setSystemUiVisibility(mUIFlag);
+            getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.white));
+        }
+    }
+
+    private void setToolBarAndNavigationDrawer() {
+
+        int couleurTitre = ContextCompat.getColor(context, R.color.colorAccent);
+        int couleurFond = ContextCompat.getColor(context, R.color.colorPrimary);
+        String titre = context.getString(R.string.app_name);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ColorDrawable colorDrawable = new ColorDrawable(couleurFond);
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setBackgroundDrawable(colorDrawable);
+
+        if (android.os.Build.VERSION.SDK_INT >= 24) {
+            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>", Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>"));
+        }
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        NavigationView mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        assert mNavigationView != null;
+        mNavigationView.setNavigationItemSelectedListener(this);
+
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                toolbar,
+                R.string.drawer_open,
+                R.string.drawer_close) {};
+
+        mDrawerToggle.syncState();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        final Drawable upArrow = ContextCompat.getDrawable(context, R.drawable.ic_menu_black_24dp);
+        upArrow.setColorFilter(ContextCompat.getColor(context, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
     }
 
 
    /* **********************************************************************************************
     * Pause / résume / etc.
     * *********************************************************************************************/
-
-
-   /* ****************************************
-    * Passage en arrière plan de l'application
-    * ****************************************/
 
     @Override
     protected void onPause() {
@@ -252,13 +219,7 @@ public class MainActivity extends AppCompatActivity
             stopBitrate();
             bitrate = false;
         }
-
     }
-
-
-   /* ****************************************
-    * Passage au premier plan de l'application
-    * ****************************************/
 
     @Override
     protected void onResume() {
@@ -270,23 +231,15 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (State.isStopped()) {
-
             TextView status = (TextView) findViewById(R.id.etat);
-
             etat_lecture = "Stop";
             assert status != null;
             status.setText(etat_lecture);
         }
 
-
         if (running)
             showTimeEcran();
     }
-
-
-   /* ****************************
-    * Destruction de l'application
-    * ****************************/
 
     @Override
     protected void onDestroy() {
@@ -306,7 +259,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
    /* **********************************************************************************************
     *
     * Broadcast receiver
@@ -323,28 +275,23 @@ public class MainActivity extends AppCompatActivity
 
             if (STATE.equals(receiveIntent)) {
 
-                /* Statut player */
                 TextView status = (TextView) findViewById(R.id.etat);
 
                 etat_lecture = intent.getStringExtra("state");
+                nom_radio = intent.getStringExtra("name");
 
                 assert status != null;
                 status.setText(etat_lecture);
 
-                nom_radio = intent.getStringExtra("name");
-
                 updateNomRadio();
-
                 updateListView();
-
                 updatePlayPause();
 
-                if (etat_lecture.equals("Chargement...")) {
+                if (etat_lecture.equals("Loading...")) {
                     soundChargement.start();
                 } else if (soundChargement.isPlaying()) {
                     soundChargement.pause();
                 }
-
             }
         }
     }
@@ -356,13 +303,9 @@ public class MainActivity extends AppCompatActivity
 
             String receiveIntent = intent.getAction();
 
-            if (QUIT.equals(receiveIntent)) {
-
+            if (QUIT.equals(receiveIntent))
                 exit();
-
-            }
         }
-
     }
 
 
@@ -372,16 +315,10 @@ public class MainActivity extends AppCompatActivity
 
     private void updateNomRadio() {
 
-        /* Nom radio */
         TextView StationTextView = (TextView) findViewById(R.id.station);
 
-        if (nom_radio == null) {
-
+        if (nom_radio == null)
             nom_radio = préférences.getString("name", "");
-
-        }
-
-
 
         assert StationTextView != null;
         StationTextView.setText(nom_radio);
@@ -397,13 +334,9 @@ public class MainActivity extends AppCompatActivity
         ImageView equalizer = (ImageView) findViewById(R.id.icon_equalizer);
 
         if (State.isPlaying() || State.isPaused()) {
-
             equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
-
         } else {
-
             equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
-
         }
     }
 
@@ -425,7 +358,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-
             case R.id.set_timer:
                 if (!running) {
                     showDatePicker();
@@ -451,23 +383,18 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_export:
                 exporter();
                 break;
-
             case R.id.action_import:
                 importer();
                 break;
-
             case R.id.nav_update:
                 CheckUpdate.withInfo(this);
                 break;
-
             case R.id.nav_help:
                 about();
                 break;
-
             case R.id.nav_exit:
                 exit();
                 break;
-
             default:
                 break;
         }
@@ -481,8 +408,6 @@ public class MainActivity extends AppCompatActivity
 
 
     private void exit() {
-
-
         soundChargement.release();
 
         if (bitrate)
@@ -497,11 +422,8 @@ public class MainActivity extends AppCompatActivity
         unregisterReceiver(Etat_player_Receiver);
         unregisterReceiver(quitReceiver);
 
-
         killNotif();
-
         finish();
-
     }
 
 
@@ -515,24 +437,20 @@ public class MainActivity extends AppCompatActivity
         Intent player = new Intent(this, PlayerService.class);
 
         switch (v.getId()) {
-
             case R.id.stop:
                 player.putExtra("action", ACTION_STOP);
                 startService(player);
                 break;
-
             case R.id.play:
                 switch (etat_lecture) {
                     case "Stop":
                         player.putExtra("action", ACTION_PLAY);
                         startService(player);
                         break;
-
                     case "Pause":
                         player.putExtra("action", ACTION_RESTART);
                         startService(player);
                         break;
-
                     default:
                         break;
                 }
@@ -541,16 +459,14 @@ public class MainActivity extends AppCompatActivity
             case R.id.pause:
 
                 switch (etat_lecture) {
-                    case "Lecture":
+                    case "Play":
                         player.putExtra("action", ACTION_PAUSE);
                         startService(player);
                         break;
-
                     case "Pause":
                         player.putExtra("action", ACTION_RESTART);
                         startService(player);
                         break;
-
                     default:
                         break;
                 }
@@ -559,12 +475,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.add:
                 editRadio(null);
                 break;
-
             default:
                 break;
         }
     }
-
 
 
 
@@ -573,12 +487,10 @@ public class MainActivity extends AppCompatActivity
     * ********************************************************************************************/
 
     private void updateListView() {
-
         ArrayList<Object> items = new ArrayList<>();
         items.addAll(Radio.getRadios(context));
 
         radioView.setAdapter(new RadioAdapter(this, items, nom_radio, clickListener));
-
 
         // pas fichu de trouver une façon d'extraire directement de l'Object
         List<String> lst = new ArrayList<>();
@@ -591,12 +503,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         for (int i = 0; i < items.size(); i++) {
-
             if (lst.get(i).equals(url))
                 radioView.scrollToPosition( i );
-
         }
-
     }
 
 
@@ -633,9 +542,7 @@ public class MainActivity extends AppCompatActivity
     private void play(Radio radio) {
 
         String url = radio.getPlayableUri();
-
         String name = radio.getName();
-
         byte[] logo = radio.getLogo();
 
         SharedPreferences.Editor edit = préférences.edit();
@@ -647,20 +554,14 @@ public class MainActivity extends AppCompatActivity
         player.putExtra("name", name);
         startService(player);
 
-
         if (logo != null) {
-
             Bitmap logoBitmap = ImageFactory.getImage(radio.getLogo());
-            Notification.updateNotification(context, nom_radio, "Lecture", logoBitmap);
-
+            Notification.updateNotification(context, nom_radio, "Play", logoBitmap);
             String encodedImage = Base64.encodeToString(logo, Base64.DEFAULT);
-
             edit.putString("image_data",encodedImage);
             edit.apply();
-
         } else {
-
-            Notification.updateNotification(context, nom_radio, "Lecture",
+            Notification.updateNotification(context, nom_radio, "Play",
                     BitmapFactory.decodeResource(context.getResources(),
             R.drawable.ic_radio_white_36dp));
 
@@ -707,7 +608,6 @@ public class MainActivity extends AppCompatActivity
 
         builder.setTitle(getResources().getString(title));
 
-
         editView = getLayoutInflater().inflate(R.layout.layout_editwebradio, null);
         builder.setView(editView);
 
@@ -716,35 +616,27 @@ public class MainActivity extends AppCompatActivity
         final ImageView editLogo = (ImageView) editView.findViewById(R.id.logo);
         final TextView text = (TextView) editView.findViewById(R.id.texte);
 
-
         editLogo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 addImg();
             }
         });
 
-
         if(oldRadio!=null) {
             editTextUrl.setText(oldRadio.getUrl());
             editTextName.setText(oldRadio.getName());
 
             if (oldRadio.getImg() != null ) {
-
-
                 editLogo.setImageBitmap(logoRadio);
                 editLogo.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
                 text.setVisibility(View.INVISIBLE);
-
                 editLogo.setImageBitmap(ImageFactory.getImage(oldRadio.getImg()));
-
                 logoRadio = ImageFactory.getImage(oldRadio.getImg());
-
             }
         }
 
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
                 String url = editTextUrl.getText().toString();
                 String name = editTextName.getText().toString();
                 byte[] img = null;
@@ -767,14 +659,12 @@ public class MainActivity extends AppCompatActivity
 
                 Radio newRadio = new Radio(url, name, img);
                 Radio.addRadio(context, newRadio);
-
                 updateListView();
             }
         });
 
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
                 updateListView();
             }
         });
@@ -783,7 +673,6 @@ public class MainActivity extends AppCompatActivity
         AlertDialog dialog = builder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
-
     }
 
 
@@ -884,20 +773,14 @@ public class MainActivity extends AppCompatActivity
     * *********************************************************************************************/
 
     private void getBitRate() {
-
         handler = new Handler();
-
         handler.postDelayed(new Runnable() {
 
             public void run() {
-
                 bitRate();
-
                 handler.postDelayed(this, 2000);
-
             }
         }, 1);
-
     }
 
 
@@ -906,32 +789,25 @@ public class MainActivity extends AppCompatActivity
         final long received = TrafficStats.getUidRxBytes(uid) / 1024;
 
         handler = new Handler();
-
         handler.postDelayed(new Runnable() {
 
             @SuppressLint("SetTextI18n")
             public void run() {
-
                 long current = TrafficStats.getUidRxBytes(uid) / 1024;
                 long total = current - received;
-
                 long ByteToBit = total * 8;
-
                 TextView BitRate = (TextView) findViewById(R.id.bitrate);
 
                 if (ByteToBit <= 1024 ) {
-
                     String bitrate = String.valueOf(ByteToBit);
                     assert BitRate != null;
                     BitRate.setText(bitrate + " Kb/s");
-
                 } else {
                     long megaBit = ByteToBit / 1024;
                     String bitrate = String.valueOf(megaBit);
                     assert BitRate != null;
                     BitRate.setText(bitrate + " Mb/s");
                 }
-
             }
         }, 1000);
     }
@@ -943,7 +819,6 @@ public class MainActivity extends AppCompatActivity
             handler.removeCallbacksAndMessages(null);
             bitrate = false;
         }
-
     }
 
    /* **********************************************************************************************
@@ -954,16 +829,13 @@ public class MainActivity extends AppCompatActivity
 
         final String start = getString(R.string.start);
         final String cancel = getString(R.string.cancel);
-
-        @SuppressLint("InflateParams")
-        View view = getLayoutInflater().inflate(R.layout.date_picker_dialog, null);
-
         final SeekArc mSeekArc;
         final TextView mSeekArcProgress;
 
+        @SuppressLint("InflateParams")
+        View view = getLayoutInflater().inflate(R.layout.date_picker_dialog, null);
         mSeekArc = (SeekArc) view.findViewById(R.id.seekArc);
         mSeekArcProgress = (TextView) view.findViewById(R.id.seekArcProgress);
-
 
         mSeekArc.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
 
@@ -979,7 +851,6 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onProgressChanged(int progress) {
-
                 String minute;
 
                 if (progress <= 1){
@@ -1001,9 +872,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-
                 int mins = mSeekArc.getProgress();
-
                 startTimer(mins);
             }
         });
@@ -1028,7 +897,6 @@ public class MainActivity extends AppCompatActivity
     private void startTimer(final int minutes) {
 
         final String impossible = getString(R.string.impossible);
-
         final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         final int delay = (minutes * 60) * 1000;
 
@@ -1042,9 +910,7 @@ public class MainActivity extends AppCompatActivity
         Notification.setState(true);
         running = true;
         State.getState(context);
-
         showTimeEcran();
-
         volume.baisser(context, mTask, delay);
     }
 
@@ -1054,15 +920,14 @@ public class MainActivity extends AppCompatActivity
     * ***************************************/
 
     private void showTimerInfo() {
-
         final String continuer = getString(R.string.continuer);
         final String cancelTimer = getString(R.string.cancel_timer);
-
 
         if (mTask.getDelay(TimeUnit.MILLISECONDS) < 0) {
             stopTimer();
             return;
         }
+
         @SuppressLint("InflateParams")
         View view = getLayoutInflater().inflate(R.layout.timer_info_dialog, null);
 
@@ -1080,9 +945,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 stopTimer();
-
             }
-
         }).setView(view).create();
 
         new CountDownTimer(mTask.getDelay(TimeUnit.MILLISECONDS), 1000) {
@@ -1090,7 +953,6 @@ public class MainActivity extends AppCompatActivity
             public void onTick(long seconds) {
 
                 long secondes = seconds;
-
                 secondes = secondes / 1000;
 
                 String textTemps = String.format(getString(R.string.timer_info),  ((secondes % 3600) / 60), ((secondes % 3600) % 60));
@@ -1118,7 +980,6 @@ public class MainActivity extends AppCompatActivity
 
         assert timeAfficheur != null;
         timeAfficheur.setVisibility(View.VISIBLE);
-
 
         timerEcran = new CountDownTimer(mTask.getDelay(TimeUnit.MILLISECONDS), 1000) {
             @Override
@@ -1152,7 +1013,6 @@ public class MainActivity extends AppCompatActivity
             timerEcran.cancel();
 
             volume.getMinuteur().cancel();
-
             volume.setVolume(context, 1.0f);
         }
 
@@ -1162,10 +1022,8 @@ public class MainActivity extends AppCompatActivity
         State.getState(context);
 
         timeAfficheur = ((TextView) findViewById(R.id.time_ecran));
-
         assert timeAfficheur != null;
         timeAfficheur.setVisibility(View.INVISIBLE);
-
     }
 
 
@@ -1185,16 +1043,11 @@ public class MainActivity extends AppCompatActivity
                 != PackageManager.PERMISSION_GRANTED) {
 
             checkWritePermission();
-
             imp_exp = "exporter";
-
         } else {
-
             DatabaseSave database = new DatabaseSave();
             database.exportDB(context);
-
         }
-
     }
 
     private void importer() {
@@ -1204,13 +1057,9 @@ public class MainActivity extends AppCompatActivity
                 != PackageManager.PERMISSION_GRANTED) {
 
             checkWritePermission();
-
             imp_exp = "importer";
-
         } else {
-
             importType = "fichier";
-
             String currentPath = Environment.getExternalStorageDirectory().toString() + "/Radio";
 
             Intent intent = new Intent(getApplicationContext(), FilePickerActivity.class);
@@ -1222,7 +1071,6 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra(FilePicker.SET_START_DIRECTORY, currentPath);
             startActivityForResult(intent, FILE_PICKER_RESULT);
         }
-
     }
 
     /* **********************************************************************************************
@@ -1236,13 +1084,9 @@ public class MainActivity extends AppCompatActivity
                 != PackageManager.PERMISSION_GRANTED) {
 
             checkWritePermission();
-
             imp_exp = "image";
-
         } else {
-
             importType = "image";
-
             String currentPath = Environment.getExternalStorageDirectory().toString() + "/";
 
             Intent intent = new Intent(getApplicationContext(), FilePickerActivity.class);
@@ -1255,48 +1099,32 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra(FilePicker.SET_START_DIRECTORY, currentPath);
             startActivityForResult(intent, FILE_PICKER_RESULT);
         }
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == FILE_PICKER_RESULT && data != null) {
-
-
             FilePickerParcelObject object = data.getParcelableExtra(FilePickerParcelObject.class.getCanonicalName());
             StringBuilder buffer = new StringBuilder();
 
             if (object.count > 0) {
-
                 for (int i = 0; i < object.count; i++) {
                     buffer.append(object.names.get(i));
                     if (i < object.count - 1) buffer.append(", ");
                 }
             }
 
-
-
             if ( importType.equals("fichier") ) {
-
-
                 String pathFile = object.path + buffer.toString();
 
                 DatabaseSave database = new DatabaseSave();
-
                 database.importDB(context, pathFile);
-
                 updateListView();
-
-
             } else if (importType.equals("image")) {
-
                 String pathImg = object.path + buffer.toString();
-
                 File imgFile = new  File(pathImg);
-
                 if(imgFile.exists()){
-
                     try {
                         logoRadio = ImageFactory.getResizedBitmap(context, BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
 
@@ -1307,10 +1135,7 @@ public class MainActivity extends AppCompatActivity
                         logo.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
                         text.setVisibility(View.INVISIBLE);
                     } catch (NullPointerException ignored) {}
-
-
                 }
-
             }
         }
     }
@@ -1321,12 +1146,11 @@ public class MainActivity extends AppCompatActivity
      * Arrêt de la radio
      * ********************************************************************************************/
     public static void stop(Context context) {
+        running = false;
 
         Intent player = new Intent(context, PlayerService.class);
         player.putExtra("action", "stop");
         context.startService(player);
-
-        running = false;
 
         Notification.setState(false);
         State.getState(context);
@@ -1338,7 +1162,6 @@ public class MainActivity extends AppCompatActivity
      **********************************************************************************************/
 
     private void about() {
-
         About dialog = new About();
         dialog.show(getSupportFragmentManager(), "about");
     }

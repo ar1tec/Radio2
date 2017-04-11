@@ -2,16 +2,16 @@
 
     <string name="app_name">Radio</string>
 
-    <string name="radio_name">Nom de la radio</string>
+    <string name="radio_name">Name of station</string>
     <string name="url">URL</string>
 
-    <string name="edit">éditer</string>
-    <string name="delete">supprimer</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 
-    <string name="deleteRadioConfirm">Supprimer cette radio ?</string>
-    <string name="addRadio">Ajouter une radio</string>
+    <string name="deleteRadioConfirm">Delete this station?</string>
+    <string name="addRadio">Add radio</string>
     <string name="ok">OK</string>
-    <string name="errorInvalidURL">Veuillez entrer une adresse valide</string>
+    <string name="errorInvalidURL">Invalid URL</string>
 
 
     <string name="drawer_open">open</string>
@@ -20,11 +20,25 @@
     <!-- nav header activity main -->
     <string name="by">Old Geek, avril 2017</string>
 
-    <string name="update">Mise à jour</string>
+    <string name="update">Update</string>
 
-    <string name="about">A propos</string>
+    <string name="about">About</string>
 
-    <string name="exit">Quitter</string>
+    <string name="exit">Exit</string>
+
+    <string name="add_logo">Touch to add a logo</string>
+
+
+    <!-- notification -->
+    <string name="station_name">Station name</string>
+    <string name="notif_state">Play status</string>
+    <string name="notif_touch">(Tap to open)</string>
+
+
+    <string name="loading">Loading...</string>
+    <string name="play">Play</string>
+
+
 
 
 
@@ -34,7 +48,7 @@
         \n
         Old Geek, 2017\n
         \n
-        Licence: aucune, profitez, partagez.\n
+        License: none, use it, share it.\n
         \n
         \n
         Code source: https://github.com/Old-Geek/Radio2\n
@@ -44,37 +58,37 @@
 
     <!-- Timer -->
     <string name="timer_info" formatted="false" tools:ignore="StringFormatInvalid">%02d:%02d</string>
-    <string name="start">démarrer</string>
-    <string name="cancel">annuler</string>
-    <string name="continuer">continuer</string>
-    <string name="cancel_timer">annuler le timer</string>
+    <string name="start">Start</string>
+    <string name="cancel">Cancel</string>
+    <string name="continuer">Continue</string>
+    <string name="cancel_timer">Cancel timer</string>
     <string name="impossible">0 impossible</string>
 
 
     <!-- update -->
-    <string name="appupdater_update_available">Mise à jour disponible</string>
+    <string name="appupdater_update_available">Update available</string>
 
-    <string name="appupdater_update_available_description_dialog">La mise à jour %1$s est disponible. En téléchargeant cette version de l\'application, vous aurez accès aux dernières fonctionnalités et améliorations de %2$s.</string>
-    <string name="appupdater_update_available_description_dialog_before_release_notes">La mise à jour %1$s est disponible.\n\nNOUVEAUTÉS:\n%2$s</string>
-    <string name="appupdater_update_available_description_snackbar">Mise à jour %1$s disponible.</string>
-    <string name="appupdater_update_not_available">Aucune mise à jour disponible</string>
-    <string name="appupdater_update_not_available_description">Vous avez la dernière version disponible de %s.</string>
-    <string name="appupdater_btn_update">Télécharger</string>
-    <string name="appupdater_btn_dismiss">Plus tard</string>
+    <string name="appupdater_update_available_description_dialog">New version %1$s available. You will get new features %2$s.</string>
+    <string name="appupdater_update_available_description_dialog_before_release_notes">New version %1$s available.\n\nNEW:\n%2$s</string>
+    <string name="appupdater_update_available_description_snackbar">New version %1$s available.</string>
+    <string name="appupdater_update_not_available">No update available</string>
+    <string name="appupdater_update_not_available_description">This is already the latest version of %s.</string>
+    <string name="appupdater_btn_update">Update</string>
+    <string name="appupdater_btn_dismiss">Later</string>
 
     <!-- import/export DB -->
-    <string name="importer">Liste restauré avec succès</string>
-    <string name="importer_erreur">Erreur: fichier incorrect</string>
+    <string name="importer">Import successful</string>
+    <string name="importer_erreur">Import error</string>
 
-    <string name="exporter">Liste sauvegardé avec succès</string>
+    <string name="exporter">Export successful</string>
 
-    <string name="importerMenu">Importer une liste de radio</string>
-    <string name="exporterMenu">Sauvegarder la liste des radios</string>
-    <string name="select_file">Sélectionner la sauvegarde</string>
+    <string name="importerMenu">Import station list</string>
+    <string name="exporterMenu">Export station list</string>
+    <string name="select_file">Select file</string>
 
     <!-- permission -->
-    <string name="permission">Demande de permission</string>
-    <string name="permission_write_external_storage">Cette opération nécessite votre autorisation pour accéder à l\'espace de stockage.</string>
+    <string name="permission">Permission request</string>
+    <string name="permission_write_external_storage">Permission to write external storage</string>
 
 
 
@@ -87,40 +101,40 @@
         <item>Po</item>
     </string-array>
 
-    <string name="empty_directory">Répertoire vide</string>
-    <string name="action_select_all">Tout sélectionner</string>
-    <string name="action_deselect">Dé-sélectionner</string>
-    <string name="action_invert_selection">Inverser la sélection</string>
-    <string name="new_folder">Nouveau répertoire</string>
-    <string name="folder_name_hint">Nom du répertoire</string>
-    <string name="folder_created">Répertoire créé avec succès</string>
-    <string name="folder_not_created">Erreur! Le répertoire n\'a pas été créé</string>
-    <string name="folder_already_exists">Le répertoire existe déjà</string>
-    <string name="sort">Trier</string>
+    <string name="empty_directory">Empty directory</string>
+    <string name="action_select_all">Select all</string>
+    <string name="action_deselect">Deselect</string>
+    <string name="action_invert_selection">Invert selection</string>
+    <string name="new_folder">New folder</string>
+    <string name="folder_created">Folder created</string>
+    <string name="folder_not_created">Error! Folder not created</string>
+    <string name="folder_already_exists">Folder already exists</string>
+    <string name="sort">Sort</string>
 
     <string-array name="sorting_types">
-        <item>Par nom, croissant</item>
-        <item>Par nom, décroissant</item>
-        <item>Par taille, croissant</item>
-        <item>Par taille, décroissant</item>
-        <item>Par date, croissant</item>
-        <item>Par date, décroissant</item>
+        <item>Name, ascending</item>
+        <item>Name, descending</item>
+        <item>Size, ascending</item>
+        <item>Size, descending</item>
+        <item>Date, ascending</item>
+        <item>Date, descending</item>
     </string-array>
 
 
 
     <string name="type_archive">Archive</string>
     <string name="type_certificate">Certificat</string>
-    <string name="type_directory">Répertoire</string>
-    <string name="type_document">Fichier</string>
-    <string name="type_drawing">Dessin</string>
-    <string name="type_excel">Tableur</string>
+    <string name="type_directory">Directory</string>
+    <string name="type_document">Document</string>
+    <string name="type_drawing">Drawing</string>
+    <string name="type_excel">Excel</string>
     <string name="type_image">Image</string>
-    <string name="type_music">Musique</string>
-    <string name="type_video">Vidéo</string>
-    <string name="type_pdf">Document PDF</string>
-    <string name="type_power_point">Présentation</string>
+    <string name="type_music">Music</string>
+    <string name="type_video">Video</string>
+    <string name="type_pdf">PDF</string>
+    <string name="type_power_point">Presentation</string>
     <string name="type_word">Document</string>
     <string name="type_apk">APK</string>
+    <string name="folder_name_hint">Folder name</string>
 
 </resources>

@@ -59,7 +59,7 @@ public class Notification implements RadioKeys{
         builder.setOngoing(true);
 
         Boolean unlock;
-        unlock = "Lecture".equals(action);
+        unlock = "Play".equals(action);
         builder.setOngoing(unlock);
 
         android.app.Notification notification = builder.build();
@@ -70,14 +70,6 @@ public class Notification implements RadioKeys{
 
         if (logo != null)
             contentView.setImageViewBitmap(R.id.notif_ombre, logo);
-
-/*        } else {
-            contentView.setImageViewBitmap(R.id.notif_ombre,
-                    BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.ic_radio_white_36dp));
-        }*/
-
-
 
         notification.contentView = contentView;
 
