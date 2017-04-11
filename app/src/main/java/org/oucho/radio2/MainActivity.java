@@ -280,8 +280,19 @@ public class MainActivity extends AppCompatActivity
                 etat_lecture = intent.getStringExtra("state");
                 nom_radio = intent.getStringExtra("name");
 
+
+                // Traduction du texte
+                String trad;
+                if ("Play".equals(etat_lecture)) {
+                    trad = context.getResources().getString(R.string.play);
+                } else if ("Loading...".equals(etat_lecture)) {
+                    trad = context.getResources().getString(R.string.loading);;
+                } else {
+                    trad = etat_lecture;
+                }
+
                 assert status != null;
-                status.setText(etat_lecture);
+                status.setText(trad);
 
                 updateNomRadio();
                 updateListView();

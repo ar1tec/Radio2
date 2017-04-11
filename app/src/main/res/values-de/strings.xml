@@ -127,5 +127,7 @@
     <string name="notif_touch">(Zum Öffnen tippen)</string>
     <string name="notif_state">Abspielstatus</string>
     <string name="station_name">Stationsname</string>
+    <string name="loading">Laden...</string>
+    <string name="play">Play</string>
 
 </resources>

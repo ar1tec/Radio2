@@ -65,8 +65,18 @@ public class Notification implements RadioKeys{
         android.app.Notification notification = builder.build();
         RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
 
+        // Traduction du texte
+        String trad;
+        if ("Play".equals(action)) {
+            trad = context.getResources().getString(R.string.play);
+        } else if ("Loading...".equals(action)) {
+            trad = context.getResources().getString(R.string.loading);;
+        } else {
+            trad = action;
+        }
+
         contentView.setTextViewText(R.id.notif_name, nom_radio);
-        contentView.setTextViewText(R.id.notif_text, action);
+        contentView.setTextViewText(R.id.notif_text, trad);
 
         if (logo != null)
             contentView.setImageViewBitmap(R.id.notif_ombre, logo);
