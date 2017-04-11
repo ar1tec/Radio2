@@ -38,7 +38,6 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 
 import org.oucho.radio2.net.CustomHttpDataSource;
-import org.oucho.radio2.utils.LogHelper;
 import org.oucho.radio2.interfaces.RadioKeys;
 import org.oucho.radio2.net.Connectivity;
 import org.oucho.radio2.net.WifiLocker;
@@ -85,7 +84,6 @@ public class PlayerService extends Service
 
    private static String launch_url = null;
 
-   private Later start_buffering_task = null;
 
    private Later stopSoonTask = null;
 
@@ -96,7 +94,7 @@ public class PlayerService extends Service
 
    private String mUserAgent;
 
-   float currentVol = 1.0f;
+   private float currentVol = 1.0f;
 
 
    @Override
@@ -111,8 +109,6 @@ public class PlayerService extends Service
       connectivity = new Connectivity(context,this);
 
       mUserAgent = Util.getUserAgent(this, APPLICATION_NAME);
-
-       Log.v("PlayerService", "onCreate()" );
 
       createExoPlayer();
     }
@@ -150,7 +146,6 @@ public class PlayerService extends Service
    public int onStartCommand(Intent intent, int flags, int startId) {
 
       if ( intent == null ) {
-         LogHelper.v(LOG_TAG, "Null-Intent received. Stopping self.");
          return done();
       }
 
@@ -170,25 +165,15 @@ public class PlayerService extends Service
       if (action != null && action.equals(ACTION_PLAY)) {
          intentPlay(intent); // récupère les infos pour les variables url, name etc.
          startPlayback(url);
-
-         LogHelper.v(LOG_TAG, "Service received command: ACTION_PLAY");
-
-
       }
 
       if (action != null && action.equals(ACTION_STOP)) {
-
-         LogHelper.v(LOG_TAG, "Service received command: Stop");
-
          stopPlayback();
 
          return done();
       }
 
       if (action != null && action.equals(ACTION_PAUSE)) {
-
-         LogHelper.v(LOG_TAG, "Service received command: ACTION_PAUSE");
-
          pause();
          return done();
       }
@@ -211,12 +196,7 @@ public class PlayerService extends Service
 
 
    private void setVolume(float vol) {
-
-      Log.v("PlayerService", "setVolume to:" + String.valueOf(vol) );
-
-
       mExoPlayer.setVolume(vol);
-
    }
 
    @SuppressWarnings("UnusedReturnValue")
@@ -240,7 +220,6 @@ public class PlayerService extends Service
 
    /* Starts playback */
    private int startPlayback(String url) {
-      LogHelper.v(LOG_TAG, "Starting playback.");
 
       // set and save state
       stopPlayback(false);
@@ -250,8 +229,6 @@ public class PlayerService extends Service
 
 
       if ( isNetworkUrl(url) && ! Connectivity.isConnected(context) ) {
-
-         Log.d("PlayerService", "if ( isNetworkUrl(url) && ! Connectivity.isConnected(context) )");
 
          connectivity.dropped_connection();
          return done();
@@ -348,7 +325,6 @@ public class PlayerService extends Service
 
    /* Stops playback */
    private int stopPlayback(boolean update_state) {
-      LogHelper.v(LOG_TAG, "Stopping playback.");
 
       Counter.timePasses();
       launch_url = null;
@@ -396,7 +372,6 @@ public class PlayerService extends Service
 
       return done(State.STATE_PAUSE);
 
-
    }
 
 
@@ -441,23 +416,18 @@ public class PlayerService extends Service
          case STATE_BUFFERING:
             State.setState(context, State.STATE_BUFFER, isNetworkUrl());
             // The player is not able to immediately play from the current position.
-            LogHelper.v(LOG_TAG, "State of ExoPlayer has changed: BUFFERING");
             break;
 
          case STATE_ENDED:
             // The player has finished playing the media.
-            LogHelper.v(LOG_TAG, "State of ExoPlayer has changed: ENDED");
             break;
 
          case STATE_IDLE:
             // The player does not have a source to play, so it is neither buffering nor ready to play.
-            LogHelper.v(LOG_TAG, "State of ExoPlayer has changed: IDLE");
             break;
 
          case STATE_READY:
             // The player is able to immediately play from the current position.
-            LogHelper.v(LOG_TAG, "State of ExoPlayer has changed: READY");
-
             failure_ttl = initial_failure_ttl;
             State.setState(context, State.STATE_PLAY, isNetworkUrl());
 
@@ -476,12 +446,12 @@ public class PlayerService extends Service
       switch (error.type) {
          case TYPE_RENDERER:
             // error occurred in a Renderer. Playback state: ExoPlayer.STATE_IDLE
-            LogHelper.e(LOG_TAG, "An error occurred. Type RENDERER: " + error.getRendererException().toString());
+            Log.e(LOG_TAG, "An error occurred. Type RENDERER: " + error.getRendererException().toString());
             break;
 
          case TYPE_SOURCE:
             // error occurred loading data from a MediaSource. Playback state: ExoPlayer.STATE_IDLE
-            LogHelper.e(LOG_TAG, "An error occurred. Type SOURCE: " + error.getSourceException().toString());
+            Log.e(LOG_TAG, "An error occurred. Type SOURCE: " + error.getSourceException().toString());
 
             tryRecover();
 
@@ -489,11 +459,11 @@ public class PlayerService extends Service
 
          case TYPE_UNEXPECTED:
             // error was an unexpected RuntimeException. Playback state: ExoPlayer.STATE_IDLE
-            LogHelper.e(LOG_TAG, "An error occurred. Type UNEXPECTED: " + error.getUnexpectedException().toString());
+            Log.e(LOG_TAG, "An error occurred. Type UNEXPECTED: " + error.getUnexpectedException().toString());
             break;
 
          default:
-            LogHelper.w(LOG_TAG, "An error occurred. Type OTHER ERROR.");
+            Log.w(LOG_TAG, "An error occurred. Type OTHER ERROR.");
             tryRecover();
             break;
       }
@@ -511,7 +481,7 @@ public class PlayerService extends Service
       } else {
          state = "Media source is currently not being loaded.";
       }
-      LogHelper.v(LOG_TAG, "State of loading has changed: " + state);
+      Log.v(LOG_TAG, "State of loading has changed: " + state);
    }
 
 
@@ -526,8 +496,6 @@ public class PlayerService extends Service
 
 
    private void tryRecover() {
-
-      Log.d("PlayerService", "tryRecover()" );
 
       stop_soon();
 
@@ -552,8 +520,6 @@ public class PlayerService extends Service
          public void later() {
             stopSoonTask = null;
             stopPlayback();
-            Log.d("PlayerService", "stop_soon(), stopSoonTask" );
-
          }
       }.start();
    }
@@ -641,7 +607,7 @@ public class PlayerService extends Service
       TransferListener transferListener = new TransferListener() {
          @Override
          public void onTransferStart(Object source, DataSpec dataSpec) {
-            LogHelper.v(LOG_TAG, "onTransferStart\nSource: " + source.toString() + "\nDataSpec: " + dataSpec.toString());
+            Log.v(LOG_TAG, "onTransferStart\nSource: " + source.toString() + "\nDataSpec: " + dataSpec.toString());
          }
 
          @Override
@@ -651,7 +617,7 @@ public class PlayerService extends Service
 
          @Override
          public void onTransferEnd(Object source) {
-            LogHelper.v(LOG_TAG, "onTransferEnd\nSource: " + source.toString());
+            Log.v(LOG_TAG, "onTransferEnd\nSource: " + source.toString());
          }
       };
       // produce DataSource instances through which media data is loaded
@@ -691,15 +657,15 @@ public class PlayerService extends Service
 
       @Override
       protected Boolean doInBackground(Void... voids) {
-         String contentType = "";
-         URLConnection connection = null;
+         String contentType;
+         URLConnection connection;
          try {
             connection = new URL(url).openConnection();
             connection.connect();
             contentType = connection.getContentType();
-            LogHelper.v(LOG_TAG, "MIME type of stream: " + contentType);
+            Log.v(LOG_TAG, "MIME type of stream: " + contentType);
             if (contentType.contains("application/vnd.apple.mpegurl") || contentType.contains("application/x-mpegurl")) {
-               LogHelper.v(LOG_TAG, "HTTP Live Streaming detected.");
+               Log.v(LOG_TAG, "HTTP Live Streaming detected.");
                return true;
             } else {
                return false;

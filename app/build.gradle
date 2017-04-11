@@ -13,6 +13,9 @@ android {
         setProperty("archivesBaseName", "Radio_$versionName")
     }
     buildTypes {
+        debug {
+            debuggable true
+        }
         release {
             minifyEnabled true
             shrinkResources true

@@ -440,7 +440,7 @@ public class MainActivity extends AppCompatActivity
     * *********************************************************************************************/
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem menuItem) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         mDrawerLayout.closeDrawers();
 
         switch (menuItem.getItemId()) {
@@ -476,7 +476,7 @@ public class MainActivity extends AppCompatActivity
     * *******/
 
 
-    public void exit() {
+    private void exit() {
 
 
         soundChargement.release();
