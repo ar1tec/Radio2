@@ -480,16 +480,6 @@ public class FilePickerActivity extends AppCompatActivity {
 	private void updateTitle() {
 
 		mHeaderTitle.setText(mCurrentDirectory.getName());
-        //mHeaderTitle.setText(mCurrentDirectory.getPath());
-
-/*        ImageView updir = (ImageView) findViewById(R.id.menu_updir);
-
-
-        if (mCurrentDirectory.getName().equals("")){
-            updir.setVisibility(View.GONE);
-        } else {
-            updir.setVisibility(View.VISIBLE);
-        }*/
 	}
 
 	private void complete(FilePickerParcelObject object) {

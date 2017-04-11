@@ -64,44 +64,35 @@ public class PlayerService extends Service
         ExoPlayer.EventListener,
         OnAudioFocusChangeListener {
 
-   private static SharedPreferences préférences = null;
 
    private Context context = null;
+   private String mUserAgent;
+   private String launch_url = null;
 
-   private static final String default_url = null;
-   private static final String default_name = null;
-   public  static String name = null;
-   public  static String url = null;
-
-   private static AudioManager audio_manager = null;
-
-   private static Playlist playlist_task = null;
-   private static AsyncTask<Integer,Void,Void> pause_task = null;
-
-   private Connectivity connectivity = null;
-   private static final int initial_failure_ttl = 5;
-   private static int failure_ttl = 0;
-
-   private static String launch_url = null;
-
+   public static String url = null;
+   public static String name = null;
+   private final String default_url = null;
+   private final String default_name = null;
+   private final String LOG_TAG = PlayerService.class.getSimpleName();
 
    private Later stopSoonTask = null;
+   private Playlist playlist_task = null;
+   private Connectivity connectivity = null;
+   private SimpleExoPlayer mExoPlayer = null;
+   private AudioManager audio_manager = null;
+   private SharedPreferences préférences = null;
+   private AsyncTask<Integer,Void,Void> pause_task = null;
 
-   private SimpleExoPlayer mExoPlayer;
-
-   private static final String LOG_TAG = PlayerService.class.getSimpleName();
-
-
-   private String mUserAgent;
-
+   private int failure_ttl = 0;
+   private final int initial_failure_ttl = 5;
    private float currentVol = 1.0f;
-
 
    @Override
    public void onCreate() {
-      context = getApplicationContext();
 
+      context = getApplicationContext();
       préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
+
       url = préférences.getString("url", default_url);
       name = préférences.getString("name", default_name);
 
@@ -113,7 +104,8 @@ public class PlayerService extends Service
       createExoPlayer();
     }
 
-    public static String getUrl() {
+
+   public static String getUrl() {
        return url;
     }
 
@@ -122,15 +114,12 @@ public class PlayerService extends Service
 
       stopPlayback();
 
-
       if ( mExoPlayer != null ) {
-
          releaseExoPlayer();
       }
 
 
       if ( connectivity != null ) {
-
          connectivity.destroy();
          connectivity = null;
       }
@@ -139,7 +128,6 @@ public class PlayerService extends Service
 
       super.onDestroy();
    }
-
 
 
    @Override
@@ -161,7 +149,6 @@ public class PlayerService extends Service
       if ( intent.hasExtra("voldown") )
          voldown = intent.getFloatExtra("voldown", 1.0f);
 
-
       if (action != null && action.equals(ACTION_PLAY)) {
          intentPlay(intent); // récupère les infos pour les variables url, name etc.
          startPlayback(url);
@@ -169,7 +156,6 @@ public class PlayerService extends Service
 
       if (action != null && action.equals(ACTION_STOP)) {
          stopPlayback();
-
          return done();
       }
 
@@ -189,47 +175,18 @@ public class PlayerService extends Service
          return done();
       }
 
-
       return done();
    }
 
 
-
-   private void setVolume(float vol) {
-      mExoPlayer.setVolume(vol);
-   }
-
-   @SuppressWarnings("UnusedReturnValue")
-   private void intentPlay(Intent intent) {
-
-      if ( intent.hasExtra("url") )
-         url = intent.getStringExtra("url");
-
-      if ( intent.hasExtra("name") )
-         name = intent.getStringExtra("name");
-
-      Editor editor = préférences.edit();
-      editor.putString("url", url);
-      editor.putString("name", name);
-      editor.apply();
-
-      failure_ttl = initial_failure_ttl;
-
-   }
-
-
-   /* Starts playback */
    private int startPlayback(String url) {
 
-      // set and save state
       stopPlayback(false);
 
       if ( ! URLUtil.isValidUrl(url) )
          return stopPlayback();
 
-
       if ( isNetworkUrl(url) && ! Connectivity.isConnected(context) ) {
-
          connectivity.dropped_connection();
          return done();
       }
@@ -239,22 +196,16 @@ public class PlayerService extends Service
       if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED )
          return stopPlayback();
 
-
-
-      // stop running mExoPlayer - request focus and initialize media mExoPlayer
       if (mExoPlayer.getPlayWhenReady()) {
          mExoPlayer.setPlayWhenReady(false);
          mExoPlayer.stop();
       }
 
       if (url != null) {
-         // initialize player and start playback
          initializeExoPlayer();
          mExoPlayer.setPlayWhenReady(true);
-
       }
 
-      // acquire Wifi and wake locks
       if ( isNetworkUrl(url) )
          WifiLocker.lock(context);
 
@@ -269,6 +220,10 @@ public class PlayerService extends Service
    }
 
 
+   /***********************************************************************************************
+    * Play/Pause/restart...
+    **********************************************************************************************/
+
    @SuppressWarnings("UnusedReturnValue")
    public int playLaunch(String url) {
 
@@ -277,7 +232,6 @@ public class PlayerService extends Service
       if ( ! URLUtil.isValidUrl(url) )
          return stopPlayback();
 
-
       launch_url = url;
 
       WifiLocker.unlock();
@@ -285,45 +239,31 @@ public class PlayerService extends Service
       if ( isNetworkUrl(url) )
          WifiLocker.lock(context);
 
-
-
       try {
-
          mExoPlayer.setVolume(1.0f);
-         // stop running mExoPlayer - request focus and initialize media mExoPlayer
+
          if (mExoPlayer.getPlayWhenReady()) {
             mExoPlayer.setPlayWhenReady(false);
             mExoPlayer.stop();
          }
 
          if (url != null) {
-            // initialize player and start playback
             initializeExoPlayer();
             mExoPlayer.setPlayWhenReady(true);
-
          }
 
       } catch (Exception e) {
          return stopPlayback();
       }
 
-      //start_buffering();
       return done(State.STATE_BUFFER);
    }
 
-   public boolean isNetworkUrl() {
-      return isNetworkUrl(launch_url);
-   }
-
-   private boolean isNetworkUrl(String check_url) {
-      return ( check_url != null && URLUtil.isNetworkUrl(check_url) );
-   }
 
    private int stopPlayback() {
       return stopPlayback(true);
    }
 
-   /* Stops playback */
    private int stopPlayback(boolean update_state) {
 
       Counter.timePasses();
@@ -334,7 +274,6 @@ public class PlayerService extends Service
       mExoPlayer.stop();
 
       if ( playlist_task != null ) {
-
          playlist_task.cancel(true);
          playlist_task = null;
       }
@@ -343,13 +282,8 @@ public class PlayerService extends Service
          return done(State.STATE_STOP);
       else
          return done();
-
    }
 
-
-   /***********************************************************************************************
-    * Pause/restart...
-    **********************************************************************************************/
    private int pause() {
 
       if ( mExoPlayer == null || State.is(State.STATE_PAUSE) || ! State.isPlaying() )
@@ -359,10 +293,8 @@ public class PlayerService extends Service
          pause_task.cancel(true);
 
       pause_task = new Later() {
-
                  @Override
                  public void later() {
-
                     pause_task = null;
                     stopPlayback();
                  }
@@ -371,9 +303,7 @@ public class PlayerService extends Service
       mExoPlayer.setPlayWhenReady(false);
 
       return done(State.STATE_PAUSE);
-
    }
-
 
 
    private int restart() {
@@ -398,15 +328,74 @@ public class PlayerService extends Service
       if ( pause_task != null )
          pause_task.cancel(true); pause_task = null;
 
-
       mExoPlayer.setPlayWhenReady(true);
 
       return done(State.STATE_PLAY);
    }
 
 
+   @SuppressWarnings("UnusedReturnValue")
+   private void intentPlay(Intent intent) {
 
+      if ( intent.hasExtra("url") )
+         url = intent.getStringExtra("url");
 
+      if ( intent.hasExtra("name") )
+         name = intent.getStringExtra("name");
+
+      Editor editor = préférences.edit();
+      editor.putString("url", url);
+      editor.putString("name", name);
+      editor.apply();
+
+      failure_ttl = initial_failure_ttl;
+   }
+
+   public boolean isNetworkUrl() {
+      return isNetworkUrl(launch_url);
+   }
+
+   private boolean isNetworkUrl(String check_url) {
+      return ( check_url != null && URLUtil.isNetworkUrl(check_url) );
+   }
+
+   @Override
+   public void onAudioFocusChange(int change) {
+
+      if ( mExoPlayer != null )
+         switch (change) {
+
+            case AudioManager.AUDIOFOCUS_GAIN:
+               restart();
+               break;
+
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+            case AudioManager.AUDIOFOCUS_LOSS:
+               pause();
+               break;
+
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+               duck();
+               break;
+
+            default:
+               break;
+         }
+   }
+
+   @SuppressWarnings("UnusedReturnValue")
+   private int duck() {
+
+      if ( State.is(State.STATE_DUCK) || ! State.isPlaying() )
+         return done();
+
+      mExoPlayer.setVolume(0.1f);
+      return done(State.STATE_DUCK);
+   }
+
+   private void setVolume(float vol) {
+      mExoPlayer.setVolume(vol);
+   }
 
 
    @Override
@@ -436,7 +425,6 @@ public class PlayerService extends Service
          default:
             // default
             break;
-
       }
    }
 
@@ -467,32 +455,7 @@ public class PlayerService extends Service
             tryRecover();
             break;
       }
-
    }
-
-
-   @Override
-   public void onLoadingChanged(boolean isLoading) {
-
-      String state;
-      if (isLoading) {
-
-         state = "Media source is currently being loaded.";
-      } else {
-         state = "Media source is currently not being loaded.";
-      }
-      Log.v(LOG_TAG, "State of loading has changed: " + state);
-   }
-
-
-   @Override
-   public void onTimelineChanged(Timeline timeline, Object manifest) {}
-
-   @Override
-   public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {}
-
-   @Override
-   public void onPositionDiscontinuity() {}
 
 
    private void tryRecover() {
@@ -524,86 +487,45 @@ public class PlayerService extends Service
       }.start();
    }
 
+   @Override
+   public void onLoadingChanged(boolean isLoading) {
 
+      String state;
+      if (isLoading) {
 
-   /************************************************************************************************
-    * Reduce volume, for a short while, for a notification.
-    ***********************************************************************************************/
-
-    @SuppressWarnings("UnusedReturnValue")
-    private int duck() {
-
-        if ( State.is(State.STATE_DUCK) || ! State.isPlaying() )
-            return done();
-
-        mExoPlayer.setVolume(0.1f);
-        return done(State.STATE_DUCK);
-    }
-
-
-
-   private int done(String state) {
-
-      if ( state != null )
-         State.setState(context, state, isNetworkUrl());
-
-      return done();
+         state = "Media source is currently being loaded.";
+      } else {
+         state = "Media source is currently not being loaded.";
+      }
+      Log.v(LOG_TAG, "State of loading has changed: " + state);
    }
-
-   private int done() {
-       return START_NOT_STICKY;
-   }
-
 
 
    @Override
-   public void onAudioFocusChange(int change) {
-
-      if ( mExoPlayer != null )
-         switch (change) {
-
-            case AudioManager.AUDIOFOCUS_GAIN:
-               restart();
-               break;
-
-            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-            case AudioManager.AUDIOFOCUS_LOSS:
-               pause();
-               break;
-
-             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                 duck();
-                 break;
-
-             default: //do nothing
-                 break;
-         }
-   }
+   public void onTimelineChanged(Timeline timeline, Object manifest) {}
 
    @Override
-   public IBinder onBind(Intent intent) {
-       return null;
-   }
+   public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {}
 
-   /* Creates an instance of SimpleExoPlayer */
+   @Override
+   public void onPositionDiscontinuity() {}
+
+
    private void createExoPlayer() {
 
       if (mExoPlayer != null) {
          releaseExoPlayer();
       }
 
-      // create default TrackSelector
       TrackSelector trackSelector = new DefaultTrackSelector();
 
-      // create default LoadControl - double the buffer
       LoadControl loadControl = new DefaultLoadControl(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE * 2));
 
-      // create the player
       mExoPlayer = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector, loadControl);
    }
 
    private void prepareExoPLayer(boolean sourceIsHLS, String uriString) {
-      // create listener for DataSource.Factory
+
       TransferListener transferListener = new TransferListener() {
          @Override
          public void onTransferStart(Object source, DataSpec dataSpec) {
@@ -620,10 +542,11 @@ public class PlayerService extends Service
             Log.v(LOG_TAG, "onTransferEnd\nSource: " + source.toString());
          }
       };
-      // produce DataSource instances through which media data is loaded
+
       DataSource.Factory dataSourceFactory = new CustomHttpDataSource(mUserAgent, transferListener);
-      // create MediaSource
+
       MediaSource mediaSource;
+
       if (sourceIsHLS) {
          mediaSource = new HlsMediaSource(Uri.parse(uriString),
                  dataSourceFactory, 32, null, null);
@@ -632,27 +555,23 @@ public class PlayerService extends Service
          mediaSource = new ExtractorMediaSource(Uri.parse(url),
                  dataSourceFactory, extractorsFactory, 32, null, null, null); // todo attach listener here
       }
-      // prepare player with source.
+
       mExoPlayer.prepare(mediaSource);
    }
 
 
-   /* Releases the ExoPlayer */
    private void releaseExoPlayer() {
       mExoPlayer.release();
       mExoPlayer = null;
    }
 
 
-   /* Set up the media mExoPlayer */
    private void initializeExoPlayer() {
       PlayerService.InitializeExoPlayerHelper initializeExoPlayerHelper = new PlayerService.InitializeExoPlayerHelper();
       initializeExoPlayerHelper.execute();
    }
 
-   /**
-    * Inner class: Checks for HTTP Live Streaming (HLS) before playing
-    */
+
    private class InitializeExoPlayerHelper extends AsyncTask<Void, Void, Boolean> {
 
       @Override
@@ -678,16 +597,31 @@ public class PlayerService extends Service
 
       @Override
       protected void onPostExecute(Boolean sourceIsHLS) {
-         // get a stream uri string
+
          String uriString = url;
 
-         // prepare player
          prepareExoPLayer(sourceIsHLS, uriString);
-         // add listener
          mExoPlayer.addListener(PlayerService.this);
       }
 
    }
 
+
+   private int done(String state) {
+
+      if ( state != null )
+         State.setState(context, state, isNetworkUrl());
+
+      return done();
+   }
+
+   private int done() {
+      return START_NOT_STICKY;
+   }
+
+   @Override
+   public IBinder onBind(Intent intent) {
+      return null;
+   }
 
 }

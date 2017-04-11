@@ -7,12 +7,12 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 
 public class CustomHttpDataSource implements DataSource.Factory {
 
-
-    private final String userAgent;
-    private final TransferListener<? super DataSource> listener;
-    private final int connectTimeoutMillis;
-    private final int readTimeoutMillis;
-    private final boolean allowCrossProtocolRedirects;
+    // static pour GC
+    private static String userAgent;
+    private static TransferListener<? super DataSource> listener;
+    private static int connectTimeoutMillis;
+    private static int readTimeoutMillis;
+    private static boolean allowCrossProtocolRedirects;
 
 
 

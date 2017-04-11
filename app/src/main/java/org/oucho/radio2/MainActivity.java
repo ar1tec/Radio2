@@ -299,6 +299,10 @@ public class MainActivity extends AppCompatActivity
 
         soundChargement.release();
 
+        try {
+            unregisterReceiver(Etat_player_Receiver);
+            unregisterReceiver(quitReceiver);
+        } catch (IllegalArgumentException ignore) {}
     }
 
 
