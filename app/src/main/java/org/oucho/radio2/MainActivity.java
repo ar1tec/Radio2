@@ -68,6 +68,7 @@ import org.oucho.radio2.utils.State;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -217,9 +218,6 @@ public class MainActivity extends AppCompatActivity
         this.findViewById(R.id.play).setOnClickListener(this);
         this.findViewById(R.id.pause).setOnClickListener(this);
 
-        soundChargement = MediaPlayer.create(this, R.raw.connexion);
-        soundChargement.setLooping(true);
-
         getBitRate();
         bitrate = true;
 
@@ -228,6 +226,9 @@ public class MainActivity extends AppCompatActivity
         State.getState(context);
 
         CheckUpdate.onStart(this);
+
+        soundChargement = MediaPlayer.create(context, R.raw.connexion);
+        soundChargement.setLooping(true);
 
     }
 
@@ -337,7 +338,7 @@ public class MainActivity extends AppCompatActivity
                 if (etat_lecture.equals("Chargement...")) {
                     soundChargement.start();
                 } else if (soundChargement.isPlaying()) {
-                    soundChargement.pause();
+                    soundChargement.stop();
                 }
 
             }
@@ -573,8 +574,26 @@ public class MainActivity extends AppCompatActivity
         items.addAll(Radio.getRadios(context));
 
         radioView.setAdapter(new RadioAdapter(this, items, nom_radio, clickListener));
-    }
 
+
+        // pas fichu de trouver une façon d'extraire directement de l'Object
+        List<String> lst = new ArrayList<>();
+        lst.addAll(Radio.getListe(context));
+
+        String url = PlayerService.getUrl();
+
+        if (PlayerService.getUrl() == null) {
+            url = préférences.getString("url", null);
+        }
+
+        for (int i = 0; i < items.size(); i++) {
+
+            if (lst.get(i).equals(url))
+                radioView.scrollToPosition( i );
+
+        }
+
+    }
 
 
    /* *********************************************************************************************
@@ -676,6 +695,8 @@ public class MainActivity extends AppCompatActivity
 
     private void editRadio(final Radio oldRadio) {
 
+        logoRadio = null;
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         int title = oldRadio == null ? R.string.addRadio : R.string.edit;
@@ -689,6 +710,8 @@ public class MainActivity extends AppCompatActivity
         final EditText editTextUrl = (EditText) editView.findViewById(R.id.editTextUrl);
         final EditText editTextName = (EditText) editView.findViewById(R.id.editTextName);
         final ImageView editLogo = (ImageView) editView.findViewById(R.id.logo);
+        final TextView text = (TextView) editView.findViewById(R.id.texte);
+
 
         editLogo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -703,13 +726,15 @@ public class MainActivity extends AppCompatActivity
 
             if (oldRadio.getImg() != null ) {
 
+
+                editLogo.setImageBitmap(logoRadio);
+                editLogo.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+                text.setVisibility(View.INVISIBLE);
+
                 editLogo.setImageBitmap(ImageFactory.getImage(oldRadio.getImg()));
 
                 logoRadio = ImageFactory.getImage(oldRadio.getImg());
 
-            } else {
-
-                logoRadio = null;
             }
         }
 

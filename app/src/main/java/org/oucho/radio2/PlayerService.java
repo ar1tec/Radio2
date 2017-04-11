@@ -114,9 +114,11 @@ public class PlayerService extends Service
 
        Log.v("PlayerService", "onCreate()" );
 
-
       createExoPlayer();
+    }
 
+    public static String getUrl() {
+       return url;
     }
 
 
@@ -128,7 +130,6 @@ public class PlayerService extends Service
       if ( mExoPlayer != null ) {
 
          releaseExoPlayer();
-
       }
 
 
@@ -148,20 +149,16 @@ public class PlayerService extends Service
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
 
-
       if ( intent == null ) {
          LogHelper.v(LOG_TAG, "Null-Intent received. Stopping self.");
          return done();
       }
 
-
       if ( ! Counter.still(intent.getIntExtra("counter", Counter.now())) )
          return done();
 
-
       String action = null;
       float voldown = 0.0f;
-
 
       if ( intent.hasExtra("action") )
          action = intent.getStringExtra("action");
@@ -200,8 +197,6 @@ public class PlayerService extends Service
          restart();
          return done();
       }
-
-
 
       if (voldown != 0.0f && voldown != currentVol) {
          setVolume(voldown);
@@ -275,8 +270,6 @@ public class PlayerService extends Service
          mExoPlayer.stop();
       }
 
-      //if (url != null && requestFocus()) {
-
       if (url != null) {
          // initialize player and start playback
          initializeExoPlayer();
@@ -289,10 +282,6 @@ public class PlayerService extends Service
          WifiLocker.lock(context);
 
       playlist_task = new Playlist(this,url).start();
-
-
-      //start_buffering();
-
 
       Intent intent = new Intent();
       intent.setAction("org.oucho.musicplayer.STOP");
@@ -330,8 +319,6 @@ public class PlayerService extends Service
             mExoPlayer.stop();
          }
 
-         //if (url != null && requestFocus()) {
-
          if (url != null) {
             // initialize player and start playback
             initializeExoPlayer();
@@ -368,9 +355,6 @@ public class PlayerService extends Service
       audio_manager.abandonAudioFocus(this);
       WifiLocker.unlock();
 
-
-      // stop playback
-      //mExoPlayer.setPlayWhenReady(false); // todo empty buffer
       mExoPlayer.stop();
 
       if ( playlist_task != null ) {

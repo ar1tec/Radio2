@@ -9,6 +9,7 @@ import org.oucho.radio2.interfaces.PlayableItem;
 import org.oucho.radio2.interfaces.RadioKeys;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Radio implements PlayableItem, RadioKeys {
 	private final String url;
@@ -45,6 +46,25 @@ public class Radio implements PlayableItem, RadioKeys {
         db.close();
         cursor.close();
         return radios;
+	}
+
+
+	public static List<String> getListe(Context context) {
+		RadiosDatabase radiosDatabase = new RadiosDatabase(context);
+		SQLiteDatabase db = radiosDatabase.getReadableDatabase();
+
+		Cursor cursor = db.rawQuery("SELECT url FROM " + TABLE_NAME + " ORDER BY NAME", null);
+
+		List<String> lst = new ArrayList<>();
+
+		while (cursor.moveToNext()) {
+			String radio = cursor.getString(0);
+			lst.add(radio);
+		}
+
+		db.close();
+		cursor.close();
+		return lst;
 	}
 	
 	public static void addRadio(Context context, Radio radio) {
