@@ -218,6 +218,9 @@ public class MainActivity extends AppCompatActivity
         this.findViewById(R.id.play).setOnClickListener(this);
         this.findViewById(R.id.pause).setOnClickListener(this);
 
+        soundChargement = MediaPlayer.create(context, R.raw.connexion);
+        soundChargement.setLooping(true);
+
         getBitRate();
         bitrate = true;
 
@@ -226,9 +229,6 @@ public class MainActivity extends AppCompatActivity
         State.getState(context);
 
         CheckUpdate.onStart(this);
-
-        soundChargement = MediaPlayer.create(context, R.raw.connexion);
-        soundChargement.setLooping(true);
 
     }
 
@@ -338,7 +338,7 @@ public class MainActivity extends AppCompatActivity
                 if (etat_lecture.equals("Chargement...")) {
                     soundChargement.start();
                 } else if (soundChargement.isPlaying()) {
-                    soundChargement.stop();
+                    soundChargement.pause();
                 }
 
             }
