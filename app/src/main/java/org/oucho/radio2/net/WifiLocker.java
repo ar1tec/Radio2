@@ -3,6 +3,7 @@ package org.oucho.radio2.net;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.util.Log;
 
 import org.oucho.radio2.interfaces.RadioKeys;
 
@@ -32,12 +33,17 @@ public class WifiLocker implements RadioKeys {
          return;
 
       lock.acquire();
+
+      Log.i("WiFi Locker", "Locked");
    }
 
    public static void unlock() {
 
       if ( lock != null && lock.isHeld() )
          lock.release();
+
+      Log.i("WiFi Locker", "Unlocked");
+
 
    }
 }

@@ -37,6 +37,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,10 +48,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.oucho.radio2.xml.DatabaseSave;
+import org.oucho.radio2.db.RadiosDatabase;
+import org.oucho.radio2.xml.ReadXML;
+import org.oucho.radio2.xml.XMLParser;
+import org.oucho.radio2.xml.XmlValuesModel;
 import org.oucho.radio2.filepicker.FilePicker;
 import org.oucho.radio2.filepicker.FilePickerActivity;
 import org.oucho.radio2.filepicker.FilePickerParcelObject;
-import org.oucho.radio2.db.DatabaseSave;
 import org.oucho.radio2.dialog.Permissions;
 import org.oucho.radio2.images.ImageFactory;
 import org.oucho.radio2.interfaces.ListsClickListener;
@@ -65,14 +70,25 @@ import org.oucho.radio2.audio.GetAudioFocusTask;
 import org.oucho.radio2.gui.Notification;
 import org.oucho.radio2.utils.SeekArc;
 import org.oucho.radio2.utils.State;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 public class MainActivity extends AppCompatActivity
         implements
@@ -1056,8 +1072,25 @@ public class MainActivity extends AppCompatActivity
             checkWritePermission();
             imp_exp = "exporter";
         } else {
-            DatabaseSave database = new DatabaseSave();
-            database.exportDB(context);
+
+            RadiosDatabase radiosDatabase = new RadiosDatabase(context);
+
+            String Destination = Environment.getExternalStorageDirectory().toString() + "/Radio";
+
+            File newRep = new File(Destination);
+            if (!newRep.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                newRep.mkdir();
+            }
+
+            String path = Destination + "/" + RadiosDatabase.DB_NAME + ".xml";
+
+            DatabaseSave databaseSave = new DatabaseSave(radiosDatabase.getReadableDatabase(), path);
+            databaseSave.exportData();
+
+            Toast.makeText(context, getString(R.string.exporter), Toast.LENGTH_SHORT).show();
+
+
         }
     }
 
@@ -1127,11 +1160,17 @@ public class MainActivity extends AppCompatActivity
             }
 
             if ( importType.equals("fichier") ) {
-                String pathFile = object.path + buffer.toString();
 
-                DatabaseSave database = new DatabaseSave();
-                database.importDB(context, pathFile);
+                ReadXML readXML = new ReadXML();
+
+                String XMLdata = readXML.readFile(object.path + buffer.toString());
+
+                readXML.read(context, XMLdata);
+
+
                 updateListView();
+
+
             } else if (importType.equals("image")) {
                 String pathImg = object.path + buffer.toString();
                 File imgFile = new  File(pathImg);
@@ -1151,6 +1190,99 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+
+
+
+    private String readFile(String fichier) {
+
+        String ret = "";
+
+        try {
+
+            FileInputStream inputStream = new FileInputStream(new File(fichier));
+
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String receiveString = "";
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ( (receiveString = bufferedReader.readLine()) != null ) {
+                stringBuilder.append(receiveString);
+            }
+
+            inputStream.close();
+            ret = stringBuilder.toString();
+
+        } catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return ret;
+    }
+
+
+    private void readXML(String XMLData) {
+
+        List<XmlValuesModel> myData = null;
+
+        try {
+
+            /************** Read XML *************/
+
+            BufferedReader br = new BufferedReader(new StringReader(XMLData));
+            InputSource is = new InputSource(br);
+
+            /************  Parse XML **************/
+
+            XMLParser parser=new XMLParser();
+            SAXParserFactory factory=SAXParserFactory.newInstance();
+            SAXParser sp=factory.newSAXParser();
+            XMLReader reader=sp.getXMLReader();
+            reader.setContentHandler(parser);
+            reader.parse(is);
+
+            /************* Get Parse data in a ArrayList **********/
+            myData = parser.list;
+
+            if (myData != null) {
+
+                // String OutputData = "";
+
+                /*************** Get Data From ArrayList *********/
+
+                for (XmlValuesModel xmlRowData : myData) {
+
+                    if (xmlRowData != null) {
+
+                        String  url   = xmlRowData.getUrl();
+                        String  name   = xmlRowData.getName();
+                        String image = xmlRowData.getImage();
+                        byte[] img = null;
+
+
+                        if (image != null)
+                            img = Base64.decode(image, Base64.DEFAULT);
+
+                        Radio newRadio = new Radio(url, name, img);
+                        Radio.addRadio(context, newRadio);
+
+                    }
+                }
+
+            }
+
+            updateListView();
+
+            Toast.makeText(context, getString(R.string.importer), Toast.LENGTH_SHORT).show();
+
+        } catch(Exception e) {
+            Log.e("Jobs", "Exception parse xml :" + e);
+            Toast.makeText(context, getString(R.string.importer_erreur), Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
     /* *********************************************************************************************
