@@ -65,7 +65,7 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
 
         if (radio.getName().equals(nomRadio)  ) {
 
-            fond.setBackgroundColor(ContextCompat.getColor(context, R.color.fondItem));
+            fond.setBackgroundColor(ContextCompat.getColor(context, R.color.amber_100));
 
             if (radio.getImg() == null)
             image.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent));

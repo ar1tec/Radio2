@@ -127,7 +127,7 @@
                 android:layout_marginEnd="2dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="center"
-                android:src="@drawable/icon_stop"
+                android:src="@drawable/ic_stop_grey_600_48dp"
                 android:tint="@color/colorAccent"
                 android:layout_centerHorizontal="true"
                 tools:ignore="ContentDescription" />
@@ -136,11 +136,11 @@
                 android:id="@+id/play"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="40dp"
-                android:layout_marginStart="40dp"
+                android:layout_marginEnd="35dp"
+                android:layout_marginStart="35dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="center"
-                android:src="@drawable/musicplayer_play"
+                android:src="@drawable/ic_play_circle_filled_grey_600_48dp"
                 android:tint="@color/colorAccent"
                 android:layout_centerHorizontal="true"
                 tools:ignore="ContentDescription" />
@@ -149,25 +149,26 @@
                 android:id="@+id/pause"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_toEndOf="@+id/play"
+                android:layout_marginEnd="35dp"
+                android:layout_marginStart="35dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="center"
-                android:src="@drawable/icon_pause"
+                android:src="@drawable/ic_pause_circle_filled_grey_600_48dp"
                 android:tint="@color/colorAccent"
                 android:layout_centerHorizontal="true"
-                tools:ignore="ContentDescription"/>
+                tools:ignore="ContentDescription"
+                android:visibility="invisible"/>
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/add"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_toEndOf="@+id/play"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_add"
-                android:tint="@color/appwidget_bg"
                 android:scaleType="center"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="20dp"
-                tools:ignore="ContentDescription" />
+                android:src="@drawable/ic_add_circle_grey_500_36dp"
+                android:layout_centerHorizontal="true"
+                tools:ignore="ContentDescription"/>
 
         </RelativeLayout>
 

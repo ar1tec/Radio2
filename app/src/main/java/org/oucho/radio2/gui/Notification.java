@@ -39,7 +39,6 @@ public class Notification implements RadioKeys{
             byte[] b = Base64.decode(img, Base64.DEFAULT);
 
             logo = BitmapFactory.decodeByteArray(b, 0, b.length);
-
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -95,6 +94,5 @@ public class Notification implements RadioKeys{
         notificationManager.cancel(NOTIFY_ID);
 
     }
-
 
 }

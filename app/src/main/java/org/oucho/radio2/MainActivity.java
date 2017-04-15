@@ -118,6 +118,9 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences préférences;
     private Etat_player Etat_player_Receiver;
 
+    private ImageView play;
+    private ImageView pause;
+
     private Context context;
 
 
@@ -150,6 +153,9 @@ public class MainActivity extends AppCompatActivity
         radioView = (RecyclerView)findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         radioView.setLayoutManager(layoutManager);
+
+        play = (ImageView) findViewById(R.id.play);
+        pause = (ImageView) findViewById(R.id.pause);
 
         this.findViewById(R.id.add).setOnClickListener(this);
         this.findViewById(R.id.stop).setOnClickListener(this);
@@ -301,8 +307,27 @@ public class MainActivity extends AppCompatActivity
                 String trad;
                 if ("Play".equals(etat_lecture)) {
                     trad = context.getResources().getString(R.string.play);
+
+                    play.setVisibility(View.INVISIBLE);
+                    pause.setVisibility(View.VISIBLE);
+
+
+
                 } else if ("Loading...".equals(etat_lecture)) {
-                    trad = context.getResources().getString(R.string.loading);;
+                    trad = context.getResources().getString(R.string.loading);
+
+                } else if ("Pause".equals(etat_lecture)){
+                    trad = etat_lecture;
+
+                    play.setVisibility(View.VISIBLE);
+                    pause.setVisibility(View.INVISIBLE);
+
+                } else if ("Stop".equals(etat_lecture)){
+                    trad = etat_lecture;
+
+                    play.setVisibility(View.VISIBLE);
+                    pause.setVisibility(View.INVISIBLE);
+
                 } else {
                     trad = etat_lecture;
                 }

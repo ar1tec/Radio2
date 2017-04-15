@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/set_timer"
-        android:icon="@drawable/ic_sleep_timer"
+        android:icon="@drawable/ic_timer_grey_600_24dp"
         android:title="Timer"
         app:showAsAction="ifRoom"
         tools:ignore="PrivateResource" />
