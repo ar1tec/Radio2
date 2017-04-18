@@ -20,7 +20,7 @@ public class StopReceiver extends BroadcastReceiver implements RadioKeys {
 
         String etat = intent.getAction();
 
-        if (STATE.equals(etat)) {
+        if (INTENT_STATE.equals(etat)) {
 
             String nom_radio = intent.getStringExtra("name");
 

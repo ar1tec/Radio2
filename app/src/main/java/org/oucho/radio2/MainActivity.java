@@ -96,14 +96,14 @@ public class MainActivity extends AppCompatActivity
         NavigationView.OnNavigationItemSelectedListener,
         View.OnClickListener {
 
-    private static String nom_radio = "";
-    private static String etat_lecture = "";
-    private static String imp_exp = "null";
-    private static String importType = "null";
+    private String nom_radio;
+    private String etat_lecture;
+    private String imp_exp;
+    private String importType;
 
     private boolean bitrate = false;
     private static boolean running;
-    private static ScheduledFuture mTask;
+    private ScheduledFuture mTask;
 
     private View editView;
     private Handler handler;
@@ -139,11 +139,11 @@ public class MainActivity extends AppCompatActivity
 
 
         Etat_player_Receiver = new Etat_player();
-        IntentFilter filter = new IntentFilter(STATE);
+        IntentFilter filter = new IntentFilter(INTENT_STATE);
         registerReceiver(Etat_player_Receiver, filter);
 
         quitReceiver = new Quit();
-        IntentFilter filter2 = new IntentFilter(QUIT);
+        IntentFilter filter2 = new IntentFilter(INTENT_QUIT);
         registerReceiver(quitReceiver, filter2);
 
         volume = new VolumeTimer();
@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity
 
             String receiveIntent = intent.getAction();
 
-            if (STATE.equals(receiveIntent)) {
+            if (INTENT_STATE.equals(receiveIntent)) {
 
                 TextView status = (TextView) findViewById(R.id.etat);
 
@@ -355,7 +355,7 @@ public class MainActivity extends AppCompatActivity
 
             String receiveIntent = intent.getAction();
 
-            if (QUIT.equals(receiveIntent))
+            if (INTENT_QUIT.equals(receiveIntent))
                 exit();
         }
     }
@@ -1133,6 +1133,7 @@ public class MainActivity extends AppCompatActivity
 
             Intent intent = new Intent(getApplicationContext(), FilePickerActivity.class);
             intent.putExtra(FilePicker.SET_ONLY_ONE_ITEM, true);
+            intent.putExtra(FilePicker.SET_FILTER_LISTED, new String[] { "xml" });
             intent.putExtra(FilePicker.DISABLE_NEW_FOLDER_BUTTON, true);
             intent.putExtra(FilePicker.DISABLE_SORT_BUTTON, true);
             intent.putExtra(FilePicker.ENABLE_QUIT_BUTTON, true);
@@ -1216,100 +1217,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
-
-    private String readFile(String fichier) {
-
-        String ret = "";
-
-        try {
-
-            FileInputStream inputStream = new FileInputStream(new File(fichier));
-
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String receiveString = "";
-            StringBuilder stringBuilder = new StringBuilder();
-
-            while ( (receiveString = bufferedReader.readLine()) != null ) {
-                stringBuilder.append(receiveString);
-            }
-
-            inputStream.close();
-            ret = stringBuilder.toString();
-
-        } catch (FileNotFoundException e) {
-            Log.e("login activity", "File not found: " + e.toString());
-        } catch (IOException e) {
-            Log.e("login activity", "Can not read file: " + e.toString());
-        }
-
-        return ret;
-    }
-
-
-    private void readXML(String XMLData) {
-
-        List<XmlValuesModel> myData = null;
-
-        try {
-
-            /************** Read XML *************/
-
-            BufferedReader br = new BufferedReader(new StringReader(XMLData));
-            InputSource is = new InputSource(br);
-
-            /************  Parse XML **************/
-
-            XMLParser parser=new XMLParser();
-            SAXParserFactory factory=SAXParserFactory.newInstance();
-            SAXParser sp=factory.newSAXParser();
-            XMLReader reader=sp.getXMLReader();
-            reader.setContentHandler(parser);
-            reader.parse(is);
-
-            /************* Get Parse data in a ArrayList **********/
-            myData = parser.list;
-
-            if (myData != null) {
-
-                // String OutputData = "";
-
-                /*************** Get Data From ArrayList *********/
-
-                for (XmlValuesModel xmlRowData : myData) {
-
-                    if (xmlRowData != null) {
-
-                        String  url   = xmlRowData.getUrl();
-                        String  name   = xmlRowData.getName();
-                        String image = xmlRowData.getImage();
-                        byte[] img = null;
-
-
-                        if (image != null)
-                            img = Base64.decode(image, Base64.DEFAULT);
-
-                        Radio newRadio = new Radio(url, name, img);
-                        Radio.addRadio(context, newRadio);
-
-                    }
-                }
-
-            }
-
-            updateListView();
-
-            Toast.makeText(context, getString(R.string.importer), Toast.LENGTH_SHORT).show();
-
-        } catch(Exception e) {
-            Log.e("Jobs", "Exception parse xml :" + e);
-            Toast.makeText(context, getString(R.string.importer_erreur), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
     /* *********************************************************************************************
      * Arrêt de la radio
      * ********************************************************************************************/
@@ -1365,7 +1272,6 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-
 
 
     @Override

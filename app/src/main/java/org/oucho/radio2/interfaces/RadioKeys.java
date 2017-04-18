@@ -18,7 +18,7 @@ public interface RadioKeys {
     String ACTION_PAUSE = "pause";
     String ACTION_RESTART = "restart";
 
-    String STATE = "org.oucho.radio2.STATE";
-    String QUIT = "org.oucho.radio2.QUIT";
+    String INTENT_STATE = "org.oucho.radio2.INTENT_STATE";
+    String INTENT_QUIT = "org.oucho.radio2.INTENT_QUIT";
 
 }

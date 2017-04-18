@@ -87,8 +87,12 @@ public class PlayerService extends Service
    private final int initial_failure_ttl = 5;
    private float currentVol = 1.0f;
 
+   private final String TAG = "Player Service";
+
    @Override
    public void onCreate() {
+
+      Log.i(TAG, "onCreate");
 
       context = getApplicationContext();
       préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
@@ -112,6 +116,8 @@ public class PlayerService extends Service
 
    public void onDestroy() {
 
+      Log.i(TAG, "onDestroy");
+
       stopPlayback();
 
       if ( mExoPlayer != null ) {
@@ -132,6 +138,9 @@ public class PlayerService extends Service
 
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
+
+      Log.i(TAG, "onStartCommand");
+
 
       if ( intent == null ) {
          return done();
@@ -181,6 +190,8 @@ public class PlayerService extends Service
 
    private int startPlayback(String url) {
 
+      Log.i(TAG, "startPlayback");
+
       stopPlayback(false);
 
       if ( ! URLUtil.isValidUrl(url) )
@@ -196,15 +207,6 @@ public class PlayerService extends Service
       if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED )
          return stopPlayback();
 
-      if (mExoPlayer.getPlayWhenReady()) {
-         mExoPlayer.setPlayWhenReady(false);
-         mExoPlayer.stop();
-      }
-
-      if (url != null) {
-         initializeExoPlayer();
-         mExoPlayer.setPlayWhenReady(true);
-      }
 
       if ( isNetworkUrl(url) )
          WifiLocker.lock(context);
@@ -227,6 +229,9 @@ public class PlayerService extends Service
    @SuppressWarnings("UnusedReturnValue")
    public int playLaunch(String url) {
 
+      Log.i(TAG, "playLaunch");
+
+
       launch_url = null;
 
       if ( ! URLUtil.isValidUrl(url) )
@@ -234,10 +239,10 @@ public class PlayerService extends Service
 
       launch_url = url;
 
-      WifiLocker.unlock();
+      //WifiLocker.unlock();
 
-      if ( isNetworkUrl(url) )
-         WifiLocker.lock(context);
+      //if ( isNetworkUrl(url) )
+        // WifiLocker.lock(context);
 
       try {
          mExoPlayer.setVolume(1.0f);
@@ -265,6 +270,9 @@ public class PlayerService extends Service
    }
 
    private int stopPlayback(boolean update_state) {
+
+      Log.i(TAG, "playLaunch");
+
 
       Counter.timePasses();
       launch_url = null;

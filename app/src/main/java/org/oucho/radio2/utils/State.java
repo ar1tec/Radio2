@@ -35,7 +35,7 @@ public class State implements RadioKeys {
 
       current_isNetworkUrl = isNetworkUrl;
 
-      Intent intent = new Intent(STATE);
+      Intent intent = new Intent(INTENT_STATE);
       intent.putExtra("state", current_state);
       intent.putExtra("url", PlayerService.url);
       intent.putExtra("name", PlayerService.name);
