@@ -37,7 +37,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Base64;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,47 +47,34 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.oucho.radio2.xml.DatabaseSave;
+import org.oucho.radio2.audio.GetAudioFocusTask;
+import org.oucho.radio2.audio.VolumeTimer;
+import org.oucho.radio2.db.Radio;
 import org.oucho.radio2.db.RadiosDatabase;
-import org.oucho.radio2.xml.ReadXML;
-import org.oucho.radio2.xml.XMLParser;
-import org.oucho.radio2.xml.XmlValuesModel;
+import org.oucho.radio2.dialog.About;
+import org.oucho.radio2.dialog.Permissions;
 import org.oucho.radio2.filepicker.FilePicker;
 import org.oucho.radio2.filepicker.FilePickerActivity;
 import org.oucho.radio2.filepicker.FilePickerParcelObject;
-import org.oucho.radio2.dialog.Permissions;
+import org.oucho.radio2.gui.Notification;
+import org.oucho.radio2.gui.RadioAdapter;
 import org.oucho.radio2.images.ImageFactory;
 import org.oucho.radio2.interfaces.ListsClickListener;
 import org.oucho.radio2.interfaces.PlayableItem;
-import org.oucho.radio2.db.Radio;
-import org.oucho.radio2.gui.RadioAdapter;
 import org.oucho.radio2.interfaces.RadioKeys;
-import org.oucho.radio2.audio.VolumeTimer;
 import org.oucho.radio2.update.CheckUpdate;
-import org.oucho.radio2.dialog.About;
-import org.oucho.radio2.audio.GetAudioFocusTask;
-import org.oucho.radio2.gui.Notification;
 import org.oucho.radio2.utils.SeekArc;
 import org.oucho.radio2.utils.State;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+import org.oucho.radio2.xml.DatabaseSave;
+import org.oucho.radio2.xml.ReadXML;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 public class MainActivity extends AppCompatActivity
         implements
@@ -121,9 +107,6 @@ public class MainActivity extends AppCompatActivity
     private ImageView pause;
 
     private Context context;
-
-    private final String LOG_TAG = "Main Activity";
-
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -265,9 +248,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        Log.i(LOG_TAG, "onDestroy");
-
 
         if (bitrate)
             stopBitrate();
