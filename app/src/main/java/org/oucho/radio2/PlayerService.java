@@ -2,8 +2,10 @@ package org.oucho.radio2;
 
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.media.AudioManager;
@@ -37,6 +39,7 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 
+import org.oucho.radio2.gui.Notification;
 import org.oucho.radio2.net.CustomHttpDataSource;
 import org.oucho.radio2.interfaces.RadioKeys;
 import org.oucho.radio2.net.Connectivity;
@@ -57,6 +60,7 @@ import static com.google.android.exoplayer2.ExoPlayer.STATE_BUFFERING;
 import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
 import static com.google.android.exoplayer2.ExoPlayer.STATE_IDLE;
 import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
+import static org.oucho.radio2.utils.State.isPlaying;
 
 public class PlayerService extends Service
    implements
@@ -73,7 +77,6 @@ public class PlayerService extends Service
    public static String name = null;
    private final String default_url = null;
    private final String default_name = null;
-   private final String LOG_TAG = PlayerService.class.getSimpleName();
 
    private Later stopSoonTask = null;
    private Playlist playlist_task = null;
@@ -89,6 +92,9 @@ public class PlayerService extends Service
 
    private final String TAG = "Player Service";
 
+   private NotifUpdate notifUpdate_Receiver;
+
+
    @Override
    public void onCreate() {
 
@@ -100,6 +106,10 @@ public class PlayerService extends Service
       url = préférences.getString("url", default_url);
       name = préférences.getString("name", default_name);
 
+      notifUpdate_Receiver = new NotifUpdate();
+      IntentFilter filter = new IntentFilter(INTENT_STATE);
+      registerReceiver(notifUpdate_Receiver, filter);
+
       audio_manager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
       connectivity = new Connectivity(context,this);
 
@@ -109,12 +119,14 @@ public class PlayerService extends Service
     }
 
 
+
    public static String getUrl() {
        return url;
     }
 
 
    public void onDestroy() {
+      super.onDestroy();
 
       Log.i(TAG, "onDestroy");
 
@@ -124,23 +136,23 @@ public class PlayerService extends Service
          releaseExoPlayer();
       }
 
-
       if ( connectivity != null ) {
          connectivity.destroy();
          connectivity = null;
       }
 
-      WifiLocker.unlock();
+      if ( notifUpdate_Receiver != null )
+         unregisterReceiver(notifUpdate_Receiver);
 
-      super.onDestroy();
+      WifiLocker.unlock();
    }
+
 
 
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
 
       Log.i(TAG, "onStartCommand");
-
 
       if ( intent == null ) {
          return done();
@@ -207,7 +219,6 @@ public class PlayerService extends Service
       if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED )
          return stopPlayback();
 
-
       if ( isNetworkUrl(url) )
          WifiLocker.lock(context);
 
@@ -231,7 +242,6 @@ public class PlayerService extends Service
 
       Log.i(TAG, "playLaunch");
 
-
       launch_url = null;
 
       if ( ! URLUtil.isValidUrl(url) )
@@ -245,6 +255,7 @@ public class PlayerService extends Service
         // WifiLocker.lock(context);
 
       try {
+
          mExoPlayer.setVolume(1.0f);
 
          if (mExoPlayer.getPlayWhenReady()) {
@@ -294,7 +305,7 @@ public class PlayerService extends Service
 
    private int pause() {
 
-      if ( mExoPlayer == null || State.is(State.STATE_PAUSE) || ! State.isPlaying() )
+      if ( mExoPlayer == null || State.is(State.STATE_PAUSE) || ! isPlaying() )
          return done();
 
       if ( pause_task != null )
@@ -359,6 +370,45 @@ public class PlayerService extends Service
       failure_ttl = initial_failure_ttl;
    }
 
+   private class NotifUpdate extends BroadcastReceiver {
+
+      @Override
+      public void onReceive(Context context, Intent intent) {
+
+         String receiveIntent = intent.getAction();
+
+         if (INTENT_STATE.equals(receiveIntent)) {
+
+            String etat_lecture = intent.getStringExtra("state");
+
+            // Traduction du texte
+            String trad;
+            if ("Play".equals(etat_lecture)) {
+               trad = context.getResources().getString(R.string.play);
+               Notification.updateNotification(context, name, trad, null);
+
+            } else if ("Loading...".equals(etat_lecture)) {
+               trad = context.getResources().getString(R.string.loading);
+               Notification.updateNotification(context, name, trad, null);
+
+            } else if ("Pause".equals(etat_lecture)){
+               trad = etat_lecture;
+               Notification.updateNotification(context, name, trad, null);
+
+            } else if ("Stop".equals(etat_lecture)){
+               trad = etat_lecture;
+               Notification.updateNotification(context, name, trad, null);
+
+            } else {
+               trad = etat_lecture;
+               Notification.updateNotification(context, name, trad, null);
+            }
+
+         }
+      }
+   }
+
+
    public boolean isNetworkUrl() {
       return isNetworkUrl(launch_url);
    }
@@ -394,7 +444,7 @@ public class PlayerService extends Service
    @SuppressWarnings("UnusedReturnValue")
    private int duck() {
 
-      if ( State.is(State.STATE_DUCK) || ! State.isPlaying() )
+      if ( State.is(State.STATE_DUCK) || ! isPlaying() )
          return done();
 
       mExoPlayer.setVolume(0.1f);
@@ -442,12 +492,12 @@ public class PlayerService extends Service
       switch (error.type) {
          case TYPE_RENDERER:
             // error occurred in a Renderer. Playback state: ExoPlayer.STATE_IDLE
-            Log.e(LOG_TAG, "An error occurred. Type RENDERER: " + error.getRendererException().toString());
+            Log.e(TAG, "An error occurred. Type RENDERER: " + error.getRendererException().toString());
             break;
 
          case TYPE_SOURCE:
             // error occurred loading data from a MediaSource. Playback state: ExoPlayer.STATE_IDLE
-            Log.e(LOG_TAG, "An error occurred. Type SOURCE: " + error.getSourceException().toString());
+            Log.e(TAG, "An error occurred. Type SOURCE: " + error.getSourceException().toString());
 
             tryRecover();
 
@@ -455,11 +505,11 @@ public class PlayerService extends Service
 
          case TYPE_UNEXPECTED:
             // error was an unexpected RuntimeException. Playback state: ExoPlayer.STATE_IDLE
-            Log.e(LOG_TAG, "An error occurred. Type UNEXPECTED: " + error.getUnexpectedException().toString());
+            Log.e(TAG, "An error occurred. Type UNEXPECTED: " + error.getUnexpectedException().toString());
             break;
 
          default:
-            Log.w(LOG_TAG, "An error occurred. Type OTHER ERROR.");
+            Log.w(TAG, "An error occurred. Type OTHER ERROR.");
             tryRecover();
             break;
       }
@@ -505,7 +555,7 @@ public class PlayerService extends Service
       } else {
          state = "Media source is currently not being loaded.";
       }
-      Log.v(LOG_TAG, "State of loading has changed: " + state);
+      Log.v(TAG, "State of loading has changed: " + state);
    }
 
 
@@ -537,7 +587,7 @@ public class PlayerService extends Service
       TransferListener transferListener = new TransferListener() {
          @Override
          public void onTransferStart(Object source, DataSpec dataSpec) {
-            Log.v(LOG_TAG, "onTransferStart\nSource: " + source.toString() + "\nDataSpec: " + dataSpec.toString());
+            Log.v(TAG, "onTransferStart\nSource: " + source.toString() + "\nDataSpec: " + dataSpec.toString());
          }
 
          @Override
@@ -547,7 +597,7 @@ public class PlayerService extends Service
 
          @Override
          public void onTransferEnd(Object source) {
-            Log.v(LOG_TAG, "onTransferEnd\nSource: " + source.toString());
+            Log.v(TAG, "onTransferEnd\nSource: " + source.toString());
          }
       };
 
@@ -590,9 +640,9 @@ public class PlayerService extends Service
             connection = new URL(url).openConnection();
             connection.connect();
             contentType = connection.getContentType();
-            Log.v(LOG_TAG, "MIME type of stream: " + contentType);
+            Log.v(TAG, "MIME type of stream: " + contentType);
             if (contentType.contains("application/vnd.apple.mpegurl") || contentType.contains("application/x-mpegurl")) {
-               Log.v(LOG_TAG, "HTTP Live Streaming detected.");
+               Log.v(TAG, "HTTP Live Streaming detected.");
                return true;
             } else {
                return false;

@@ -22,9 +22,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class Notification implements RadioKeys{
 
     private static final int NOTIFY_ID = 32;
-
     private static boolean timer = false;
-
     public static void setState(boolean onOff){
         timer = onOff;
     }

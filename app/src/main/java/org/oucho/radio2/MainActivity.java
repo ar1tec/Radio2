@@ -123,6 +123,8 @@ public class MainActivity extends AppCompatActivity
 
     private Context context;
 
+    private final String LOG_TAG = "Main Activity";
+
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -147,8 +149,6 @@ public class MainActivity extends AppCompatActivity
         registerReceiver(quitReceiver, filter2);
 
         volume = new VolumeTimer();
-        Control_Volume niveau_Volume = new Control_Volume(this, new Handler());
-        getApplicationContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
 
         radioView = (RecyclerView)findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -195,6 +195,10 @@ public class MainActivity extends AppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setBackgroundDrawable(colorDrawable);
+
+        Control_Volume niveau_Volume = new Control_Volume(this, new Handler());
+        getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
+
 
         if (android.os.Build.VERSION.SDK_INT >= 24) {
             actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>", Html.FROM_HTML_MODE_LEGACY));
@@ -267,10 +271,12 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
 
+        Log.i(LOG_TAG, "onDestroy");
+
+
         if (bitrate)
             stopBitrate();
 
-        killNotif();
 
         soundChargement.release();
 
@@ -278,6 +284,9 @@ public class MainActivity extends AppCompatActivity
             unregisterReceiver(Etat_player_Receiver);
             unregisterReceiver(quitReceiver);
         } catch (IllegalArgumentException ignore) {}
+
+        killNotif();
+
     }
 
 
@@ -302,7 +311,6 @@ public class MainActivity extends AppCompatActivity
                 etat_lecture = intent.getStringExtra("state");
                 nom_radio = intent.getStringExtra("name");
 
-
                 // Traduction du texte
                 String trad;
                 if ("Play".equals(etat_lecture)) {
@@ -310,8 +318,6 @@ public class MainActivity extends AppCompatActivity
 
                     play.setVisibility(View.INVISIBLE);
                     pause.setVisibility(View.VISIBLE);
-
-
 
                 } else if ("Loading...".equals(etat_lecture)) {
                     trad = context.getResources().getString(R.string.loading);
@@ -488,6 +494,7 @@ public class MainActivity extends AppCompatActivity
 
         Intent player = new Intent(this, PlayerService.class);
 
+
         switch (v.getId()) {
             case R.id.stop:
                 player.putExtra("action", ACTION_STOP);
@@ -610,6 +617,7 @@ public class MainActivity extends AppCompatActivity
             Bitmap logoBitmap = ImageFactory.getImage(radio.getLogo());
             Notification.updateNotification(context, nom_radio, "Play", logoBitmap);
             String encodedImage = Base64.encodeToString(logo, Base64.DEFAULT);
+
             edit.putString("image_data",encodedImage);
             edit.apply();
         } else {
@@ -619,9 +627,7 @@ public class MainActivity extends AppCompatActivity
 
             edit.remove("image_data");
             edit.apply();
-
         }
-
     }
 
 
