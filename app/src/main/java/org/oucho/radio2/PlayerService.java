@@ -151,8 +151,6 @@ public class PlayerService extends Service
    @Override
    public int onStartCommand(Intent intent, int flags, int startId) {
 
-      Log.i(TAG, "onStartCommand");
-
       if ( intent == null ) {
          return done();
       }
@@ -220,6 +218,8 @@ public class PlayerService extends Service
 
       if ( isNetworkUrl(url) )
          WifiLocker.lock(context);
+
+
 
       playlist_task = new Playlist(this,url).start();
 

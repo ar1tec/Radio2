@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity
     private View editView;
     private Handler handler;
     private Bitmap logoRadio;
-    private Quit quitReceiver;
     private VolumeTimer volume;
     private TextView timeAfficheur;
     private RecyclerView radioView;
@@ -143,10 +142,6 @@ public class MainActivity extends AppCompatActivity
         Etat_player_Receiver = new Etat_player();
         IntentFilter filter = new IntentFilter(INTENT_STATE);
         registerReceiver(Etat_player_Receiver, filter);
-
-        quitReceiver = new Quit();
-        IntentFilter filter2 = new IntentFilter(INTENT_QUIT);
-        registerReceiver(quitReceiver, filter2);
 
         volume = new VolumeTimer();
 
@@ -282,7 +277,6 @@ public class MainActivity extends AppCompatActivity
 
         try {
             unregisterReceiver(Etat_player_Receiver);
-            unregisterReceiver(quitReceiver);
         } catch (IllegalArgumentException ignore) {}
 
         killNotif();
@@ -308,8 +302,12 @@ public class MainActivity extends AppCompatActivity
 
                 TextView status = (TextView) findViewById(R.id.etat);
 
+                boolean plop = intent.getBooleanExtra(ACTION_QUIT, false);
                 etat_lecture = intent.getStringExtra("state");
                 nom_radio = intent.getStringExtra("name");
+
+                if (plop)
+                    finish();
 
                 // Traduction du texte
                 String trad;
@@ -351,24 +349,14 @@ public class MainActivity extends AppCompatActivity
                 updateListView();
                 updatePlayPause();
 
-                if (etat_lecture.equals("Loading...")) {
-                    soundChargement.start();
-                } else if (soundChargement.isPlaying()) {
-                    soundChargement.pause();
-                }
+                try {
+                    if (etat_lecture.equals("Loading...")) {
+                        soundChargement.start();
+                    } else if (soundChargement.isPlaying()) {
+                        soundChargement.pause();
+                    }
+                } catch (NullPointerException ignore) {}
             }
-        }
-    }
-
-    private class Quit extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            String receiveIntent = intent.getAction();
-
-            if (INTENT_QUIT.equals(receiveIntent))
-                exit();
         }
     }
 
@@ -484,7 +472,6 @@ public class MainActivity extends AppCompatActivity
         startService(player);
 
         unregisterReceiver(Etat_player_Receiver);
-        unregisterReceiver(quitReceiver);
 
         killNotif();
         finish();

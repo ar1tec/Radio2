@@ -104,11 +104,10 @@ public class VolumeTimer implements RadioKeys {
                 public void onFinish() {
 
                     Intent intent = new Intent();
-                    intent.setAction(INTENT_QUIT);
+                    intent.setAction(INTENT_STATE);
+                    intent.putExtra(ACTION_QUIT, true);
                     context.sendBroadcast(intent);
-
                 }
-
             }.start();
 
     }

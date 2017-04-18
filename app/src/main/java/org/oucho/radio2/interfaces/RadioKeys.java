@@ -12,13 +12,12 @@ public interface RadioKeys {
 
     String PREF_FILE = "org.oucho.radio2_preferences";
 
-
     String ACTION_PLAY = "play";
     String ACTION_STOP = "stop";
     String ACTION_PAUSE = "pause";
     String ACTION_RESTART = "restart";
+    String ACTION_QUIT = "quit";
 
     String INTENT_STATE = "org.oucho.radio2.INTENT_STATE";
-    String INTENT_QUIT = "org.oucho.radio2.INTENT_QUIT";
 
 }
