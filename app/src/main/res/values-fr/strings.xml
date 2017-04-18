@@ -129,5 +129,7 @@
     <string name="notif_touch">(Touchez pour ouvrir)</string>
     <string name="loading">Chargement...</string>
     <string name="play">Lecture</string>
+    <string name="disconnected">Déconnecté</string>
+    <string name="completed">Complété</string>
 
 </resources>

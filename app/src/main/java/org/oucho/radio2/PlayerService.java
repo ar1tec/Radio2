@@ -119,7 +119,6 @@ public class PlayerService extends Service
     }
 
 
-
    public static String getUrl() {
        return url;
     }
@@ -248,11 +247,6 @@ public class PlayerService extends Service
          return stopPlayback();
 
       launch_url = url;
-
-      //WifiLocker.unlock();
-
-      //if ( isNetworkUrl(url) )
-        // WifiLocker.lock(context);
 
       try {
 
@@ -389,6 +383,14 @@ public class PlayerService extends Service
 
             } else if ("Loading...".equals(etat_lecture)) {
                trad = context.getResources().getString(R.string.loading);
+               Notification.updateNotification(context, name, trad, null);
+
+            } else if ("Disconnected".equals(etat_lecture)){
+               trad = context.getResources().getString(R.string.disconnected);
+               Notification.updateNotification(context, name, trad, null);
+
+            } else if ("Completed".equals(etat_lecture)){
+               trad = context.getResources().getString(R.string.disconnected);
                Notification.updateNotification(context, name, trad, null);
 
             } else if ("Pause".equals(etat_lecture)){

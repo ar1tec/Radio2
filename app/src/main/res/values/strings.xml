@@ -37,6 +37,10 @@
 
     <string name="loading">Loading...</string>
     <string name="play">Play</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="completed">Completed</string>
+
+
 
 
 

@@ -322,6 +322,12 @@ public class MainActivity extends AppCompatActivity
                 } else if ("Loading...".equals(etat_lecture)) {
                     trad = context.getResources().getString(R.string.loading);
 
+                } else if ("Disconnected".equals(etat_lecture)){
+                    trad = context.getResources().getString(R.string.disconnected);
+
+                } else if ("Completed".equals(etat_lecture)){
+                    trad = context.getResources().getString(R.string.disconnected);
+
                 } else if ("Pause".equals(etat_lecture)){
                     trad = etat_lecture;
 

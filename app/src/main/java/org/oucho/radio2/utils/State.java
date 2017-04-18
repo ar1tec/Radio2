@@ -12,13 +12,13 @@ public class State implements RadioKeys {
 
 
    public static final String STATE_STOP         = "Stop";
-   public static final String STATE_ERROR        = "Erreur";
-   public static final String STATE_COMPLETE     = "Complété";
+   public static final String STATE_ERROR        = "Error";
    public static final String STATE_PAUSE        = "Pause";
    public static final String STATE_PLAY         = "Play";
    public static final String STATE_BUFFER       = "Loading...";
+    public static final String STATE_COMPLETED     = "Completed";
    public static final String STATE_DUCK         = "\\_o< coin";
-   public static final String STATE_DISCONNECTED = "Déconnecté";
+   public static final String STATE_DISCONNECTED = "Disconnected";
 
 
     private static String current_state = STATE_STOP;
@@ -70,14 +70,14 @@ public class State implements RadioKeys {
        if (is(STATE_DUCK))
            return "\\_o< coin";
 
-       if (is(STATE_COMPLETE))
-           return "Complété";
+       if (is(STATE_COMPLETED))
+           return "Completed";
 
       if (is(STATE_ERROR))
-          return "Erreur";
+          return "Error";
 
       if (is(STATE_DISCONNECTED))
-          return "Déconnecté";
+          return "Disconnected";
 
       // Should not happen.
       return "Unknown";
@@ -88,7 +88,7 @@ public class State implements RadioKeys {
    }
 
    public static boolean isStopped() {
-       return State.is(STATE_STOP) || State.is(STATE_ERROR) || State.is(STATE_COMPLETE);
+       return State.is(STATE_STOP) || State.is(STATE_ERROR) || State.is(STATE_COMPLETED);
    }
 
     public static boolean isPaused() {
