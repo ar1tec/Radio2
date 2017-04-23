@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity
     private ScheduledFuture mTask;
 
     private View editView;
-    private Handler handler;
+    private Handler handler = new Handler();
     private Bitmap logoRadio;
     private VolumeTimer volume;
     private TextView timeAfficheur;
@@ -703,7 +703,6 @@ public class MainActivity extends AppCompatActivity
     * *********************************************************************************************/
 
     private void killNotif() {
-        final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
 
             @SuppressLint("SetTextI18n")
@@ -794,7 +793,6 @@ public class MainActivity extends AppCompatActivity
     * *********************************************************************************************/
 
     private void getBitRate() {
-        handler = new Handler();
         handler.postDelayed(new Runnable() {
 
             public void run() {
@@ -809,7 +807,6 @@ public class MainActivity extends AppCompatActivity
         final int uid = android.os.Process.myUid();
         final long received = TrafficStats.getUidRxBytes(uid) / 1024;
 
-        handler = new Handler();
         handler.postDelayed(new Runnable() {
 
             @SuppressLint("SetTextI18n")
