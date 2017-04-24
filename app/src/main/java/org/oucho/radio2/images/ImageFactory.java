@@ -1,9 +1,11 @@
 package org.oucho.radio2.images;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.util.Base64;
 
 import org.oucho.radio2.R;
 
@@ -58,5 +60,40 @@ public class ImageFactory {
     public static Bitmap getImage(byte[] image) {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
+
+    // convert from string to bitmap
+    public static Bitmap stringToBitmap(String image) {
+
+        byte[] img = Base64.decode(image, Base64.DEFAULT);
+
+        return getImage(img);
+    }
+
+
+    // convert from byte array to string
+    public static String byteToString(byte[] logo) {
+
+        return bitmapToString(getImage(logo));
+    }
+
+    // convert from bitmap to string
+    public static String bitmapToString(Bitmap image) {
+
+        //Bitmap one = BitmapFactory.decodeResource(image);
+        byte[] two = getBytes(image);
+
+        return Base64.encodeToString(two, Base64.DEFAULT);
+    }
+
+    // convert from drawable to string
+    public static String drawableResourceToBitmap(Context context, int drawable) {
+
+        Bitmap one = BitmapFactory.decodeResource(context.getResources(), drawable);
+        byte[] two = getBytes(one);
+
+        return Base64.encodeToString(two, Base64.DEFAULT);
+    }
+
+
 
 }

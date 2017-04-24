@@ -1,6 +1,8 @@
 package org.oucho.radio2;
 
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,13 +10,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.IBinder;
+import android.support.v7.app.NotificationCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.URLUtil;
+import android.widget.RemoteViews;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -39,7 +47,7 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 
-import org.oucho.radio2.gui.Notification;
+import org.oucho.radio2.images.ImageFactory;
 import org.oucho.radio2.net.CustomHttpDataSource;
 import org.oucho.radio2.interfaces.RadioKeys;
 import org.oucho.radio2.net.Connectivity;
@@ -93,6 +101,12 @@ public class PlayerService extends Service
    private final String TAG = "Player Service";
 
    private NotifUpdate notifUpdate_Receiver;
+
+
+   private static final int NOTIFY_ID = 32;
+   private static boolean timer = false;
+
+
 
 
    @Override
@@ -286,15 +300,28 @@ public class PlayerService extends Service
 
       mExoPlayer.stop();
 
+
       if ( playlist_task != null ) {
          playlist_task.cancel(true);
          playlist_task = null;
       }
 
-      if ( update_state )
+      Handler handler = new Handler();
+      handler.postDelayed(new Runnable() {
+       public void run() {
+
+          removeNotification(context);
+         }
+      }, 500);
+
+
+
+      if ( update_state ) {
          return done(State.STATE_STOP);
-      else
+      } else {
          return done();
+      }
+
    }
 
    private int pause() {
@@ -362,52 +389,6 @@ public class PlayerService extends Service
       editor.apply();
 
       failure_ttl = initial_failure_ttl;
-   }
-
-   private class NotifUpdate extends BroadcastReceiver {
-
-      @Override
-      public void onReceive(Context context, Intent intent) {
-
-         String receiveIntent = intent.getAction();
-
-         if (INTENT_STATE.equals(receiveIntent)) {
-
-            String etat_lecture = intent.getStringExtra("state");
-
-            // Traduction du texte
-            String trad;
-            if ("Play".equals(etat_lecture)) {
-               trad = context.getResources().getString(R.string.play);
-               Notification.updateNotification(context, name, trad, null);
-
-            } else if ("Loading...".equals(etat_lecture)) {
-               trad = context.getResources().getString(R.string.loading);
-               Notification.updateNotification(context, name, trad, null);
-
-            } else if ("Disconnected".equals(etat_lecture)){
-               trad = context.getResources().getString(R.string.disconnected);
-               Notification.updateNotification(context, name, trad, null);
-
-            } else if ("Completed".equals(etat_lecture)){
-               trad = context.getResources().getString(R.string.disconnected);
-               Notification.updateNotification(context, name, trad, null);
-
-            } else if ("Pause".equals(etat_lecture)){
-               trad = etat_lecture;
-               Notification.updateNotification(context, name, trad, null);
-
-            } else if ("Stop".equals(etat_lecture)){
-               trad = etat_lecture;
-               Notification.updateNotification(context, name, trad, null);
-
-            } else {
-               trad = etat_lecture;
-               Notification.updateNotification(context, name, trad, null);
-            }
-
-         }
-      }
    }
 
 
@@ -561,6 +542,7 @@ public class PlayerService extends Service
    }
 
 
+
    @Override
    public void onTimelineChanged(Timeline timeline, Object manifest) {}
 
@@ -682,6 +664,186 @@ public class PlayerService extends Service
    @Override
    public IBinder onBind(Intent intent) {
       return null;
+   }
+
+
+
+
+   private class NotifUpdate extends BroadcastReceiver {
+
+      @Override
+      public void onReceive(Context context, Intent intent) {
+
+         String receiveIntent = intent.getAction();
+
+         Log.i("Player Service","NotifUpdate, onReceive: " + receiveIntent);
+
+
+         if (INTENT_UPDATENOTIF.equals(receiveIntent)) {
+
+            String etat = intent.getStringExtra("state");
+            String nom = intent.getStringExtra("name");
+            String logo = intent.getStringExtra("logo");
+            Bitmap logoBitmap = null;
+
+            Log.i("Player Service","NotifUpdate, onReceive, INTENT_UPDATENOTIF");
+
+            if (logo != null) {
+               logoBitmap = ImageFactory.stringToBitmap(logo);
+            }
+
+            updateNotification(nom, etat, logoBitmap);
+
+         }
+
+
+
+         if (INTENT_STATE.equals(receiveIntent)) {
+
+            String etat_lecture = intent.getStringExtra("state");
+
+            Log.i("Player Service","NotifUpdate, onReceive, INTENT_STATE traduction: " + etat_lecture);
+
+
+            // Traduction du texte
+            String trad;
+            if ("Play".equals(etat_lecture)) {
+               trad = context.getResources().getString(R.string.play);
+               updateNotification(name, trad, null);
+
+            } else if ("Loading...".equals(etat_lecture)) {
+               trad = context.getResources().getString(R.string.loading);
+               updateNotification(name, trad, null);
+
+            } else if ("Disconnected".equals(etat_lecture)){
+               trad = context.getResources().getString(R.string.disconnected);
+               updateNotification(name, trad, null);
+
+            } else if ("Completed".equals(etat_lecture)){
+               trad = context.getResources().getString(R.string.disconnected);
+               updateNotification(name, trad, null);
+
+            } else if ("Pause".equals(etat_lecture)){
+               trad = etat_lecture;
+               updateNotification(name, trad, null);
+
+            } else if ("Stop".equals(etat_lecture)){
+               trad = etat_lecture;
+               updateNotification(name, trad, null);
+
+            } else {
+               trad = etat_lecture;
+               updateNotification(name, trad, null);
+            }
+
+         }
+      }
+   }
+
+   public static void setStateTimer(boolean onOff){
+      timer = onOff;
+   }
+
+
+
+   private static boolean sIsServiceForeground = false;
+
+
+   public void updateNotification(String nom_radio, String action, Bitmap logo) {
+
+      Log.i("Player Service","updateNotification");
+
+
+      SharedPreferences préférences = context.getSharedPreferences(PREF_FILE, MODE_PRIVATE);
+
+      String img = préférences.getString("image_data", "");
+
+      if( logo == null && !img.equalsIgnoreCase("") ){
+         byte[] b = Base64.decode(img, Base64.DEFAULT);
+
+         logo = BitmapFactory.decodeByteArray(b, 0, b.length);
+      }
+
+      NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+
+      Intent i = new Intent(context, MainActivity.class);
+      i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+      PendingIntent intent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+
+      builder.setContentIntent(intent);
+
+      if (!timer) {
+         builder.setSmallIcon(R.drawable.notification);
+      } else {
+         builder.setSmallIcon(R.drawable.notification_sleeptimer);
+      }
+
+      builder.setOngoing(true);
+
+      Boolean unlock;
+      unlock = "Play".equals(action);
+      builder.setOngoing(unlock);
+
+      android.app.Notification notification = builder.build();
+      RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
+
+      // Traduction du texte
+      String trad;
+      if ("Play".equals(action)) {
+         trad = context.getResources().getString(R.string.play);
+      } else if ("Loading...".equals(action)) {
+         trad = context.getResources().getString(R.string.loading);;
+      } else {
+         trad = action;
+      }
+
+      contentView.setTextViewText(R.id.notif_name, nom_radio);
+      contentView.setTextViewText(R.id.notif_text, trad);
+
+      if (logo != null)
+         contentView.setImageViewBitmap(R.id.notif_ombre, logo);
+
+      notification.contentView = contentView;
+
+      boolean startForeground = isPlaying();
+
+      if (startForeground) {
+
+         Log.i("Player Service", "updateNotification, if (startForeground)");
+
+         startForeground(NOTIFY_ID, notification);
+
+      } else {
+
+         if (sIsServiceForeground) {
+
+            Log.i("Player Service", "updateNotification, if (sIsServiceForeground)");
+
+            stopForeground(false);
+
+         }
+
+         Log.i("Player Service", "updateNotification, else");
+
+         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+         notificationManager.notify(NOTIFY_ID, notification);
+      }
+
+      sIsServiceForeground = startForeground;
+
+   }
+
+
+
+   public void removeNotification(Context context) {
+
+      Log.i("Player Service","removeNotification");
+
+      //stopForeground(false);
+
+      NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+      notificationManager.cancel(NOTIFY_ID);
+
    }
 
 }

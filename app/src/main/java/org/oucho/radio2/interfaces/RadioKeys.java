@@ -20,4 +20,5 @@ public interface RadioKeys {
 
     String INTENT_STATE = "org.oucho.radio2.INTENT_STATE";
 
+    String INTENT_UPDATENOTIF = "org.oucho.radio2.INTENT_STATE";
 }

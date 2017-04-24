@@ -36,7 +36,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,7 +55,6 @@ import org.oucho.radio2.dialog.Permissions;
 import org.oucho.radio2.filepicker.FilePicker;
 import org.oucho.radio2.filepicker.FilePickerActivity;
 import org.oucho.radio2.filepicker.FilePickerParcelObject;
-import org.oucho.radio2.gui.Notification;
 import org.oucho.radio2.gui.RadioAdapter;
 import org.oucho.radio2.images.ImageFactory;
 import org.oucho.radio2.interfaces.ListsClickListener;
@@ -217,8 +215,6 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
 
-        killNotif();
-
         if (bitrate) {
             stopBitrate();
             bitrate = false;
@@ -252,14 +248,11 @@ public class MainActivity extends AppCompatActivity
         if (bitrate)
             stopBitrate();
 
-
         soundChargement.release();
 
         try {
             unregisterReceiver(Etat_player_Receiver);
         } catch (IllegalArgumentException ignore) {}
-
-        killNotif();
 
     }
 
@@ -443,7 +436,6 @@ public class MainActivity extends AppCompatActivity
 
         unregisterReceiver(Etat_player_Receiver);
 
-        killNotif();
         finish();
     }
 
@@ -577,16 +569,29 @@ public class MainActivity extends AppCompatActivity
         startService(player);
 
         if (logo != null) {
-            Bitmap logoBitmap = ImageFactory.getImage(radio.getLogo());
-            Notification.updateNotification(context, nom_radio, "Play", logoBitmap);
-            String encodedImage = Base64.encodeToString(logo, Base64.DEFAULT);
+
+            String encodedImage = ImageFactory.byteToString(logo);
+
+            Intent intent = new Intent();
+            intent.setAction(INTENT_UPDATENOTIF);
+            intent.putExtra("name", nom_radio);
+            intent.putExtra("state", "Play");
+            intent.putExtra("logo", encodedImage);
+            sendBroadcast(intent);
 
             edit.putString("image_data",encodedImage);
             edit.apply();
+
         } else {
-            Notification.updateNotification(context, nom_radio, "Play",
-                    BitmapFactory.decodeResource(context.getResources(),
-            R.drawable.ic_radio_white_36dp));
+
+            String encodedImage = ImageFactory.drawableResourceToBitmap(context, R.drawable.ic_radio_white_36dp);
+
+            Intent intent = new Intent();
+            intent.setAction(INTENT_UPDATENOTIF);
+            intent.putExtra("name", nom_radio);
+            intent.putExtra("state", "Play");
+            intent.putExtra("logo", encodedImage);
+            sendBroadcast(intent);
 
             edit.remove("image_data");
             edit.apply();
@@ -695,26 +700,6 @@ public class MainActivity extends AppCompatActivity
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
     }
-
-
-
-   /* **********************************************************************************************
-    * Fermeture notification
-    * *********************************************************************************************/
-
-    private void killNotif() {
-        handler.postDelayed(new Runnable() {
-
-            @SuppressLint("SetTextI18n")
-            public void run() {
-
-                if (!State.isPlaying())
-                    Notification.removeNotification(context);
-
-            }
-        }, 500);
-    }
-
 
 
    /* **********************************************************************************************
@@ -925,7 +910,7 @@ public class MainActivity extends AppCompatActivity
 
         mTask = scheduler.schedule(new GetAudioFocusTask(this), delay, TimeUnit.MILLISECONDS);
 
-        Notification.setState(true);
+        PlayerService.setStateTimer(true);
         running = true;
         State.getState(context);
         showTimeEcran();
@@ -1036,7 +1021,7 @@ public class MainActivity extends AppCompatActivity
 
         running = false;
 
-        Notification.setState(false);
+        PlayerService.setStateTimer(false);
         State.getState(context);
 
         timeAfficheur = ((TextView) findViewById(R.id.time_ecran));
@@ -1193,7 +1178,7 @@ public class MainActivity extends AppCompatActivity
         player.putExtra("action", "stop");
         context.startService(player);
 
-        Notification.setState(false);
+        PlayerService.setStateTimer(false);
         State.getState(context);
     }
 
@@ -1263,7 +1248,6 @@ public class MainActivity extends AppCompatActivity
                             addImg();
                             break;
                     }
-
                 }
             }
         }
