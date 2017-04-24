@@ -103,6 +103,7 @@ public class PlayerService extends Service
    private NotifUpdate notifUpdate_Receiver;
 
 
+   private static boolean sIsServiceForeground = false;
    private static final int NOTIFY_ID = 32;
    private static boolean timer = false;
 
@@ -678,32 +679,26 @@ public class PlayerService extends Service
 
          Log.i("Player Service","NotifUpdate, onReceive: " + receiveIntent);
 
-
          if (INTENT_UPDATENOTIF.equals(receiveIntent)) {
+            Log.i("Player Service","NotifUpdate, onReceive, INTENT_UPDATENOTIF");
 
             String etat = intent.getStringExtra("state");
             String nom = intent.getStringExtra("name");
             String logo = intent.getStringExtra("logo");
             Bitmap logoBitmap = null;
 
-            Log.i("Player Service","NotifUpdate, onReceive, INTENT_UPDATENOTIF");
-
             if (logo != null) {
                logoBitmap = ImageFactory.stringToBitmap(logo);
             }
 
             updateNotification(nom, etat, logoBitmap);
-
          }
-
-
 
          if (INTENT_STATE.equals(receiveIntent)) {
 
             String etat_lecture = intent.getStringExtra("state");
 
             Log.i("Player Service","NotifUpdate, onReceive, INTENT_STATE traduction: " + etat_lecture);
-
 
             // Traduction du texte
             String trad;
@@ -735,7 +730,6 @@ public class PlayerService extends Service
                trad = etat_lecture;
                updateNotification(name, trad, null);
             }
-
          }
       }
    }
@@ -743,10 +737,6 @@ public class PlayerService extends Service
    public static void setStateTimer(boolean onOff){
       timer = onOff;
    }
-
-
-
-   private static boolean sIsServiceForeground = false;
 
 
    public void updateNotification(String nom_radio, String action, Bitmap logo) {
@@ -839,11 +829,8 @@ public class PlayerService extends Service
 
       Log.i("Player Service","removeNotification");
 
-      //stopForeground(false);
-
       NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
       notificationManager.cancel(NOTIFY_ID);
-
    }
 
 }
