@@ -59,7 +59,6 @@
                 card_view:ignore="ContentDescription" />
 
             <LinearLayout
-                android:id="@+id/playlist_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@id/imageViewRadio"

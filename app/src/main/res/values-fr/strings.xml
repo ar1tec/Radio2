@@ -110,8 +110,6 @@
 
 
     <string name="type_archive">Archive</string>
-    <string name="type_certificate">Certificat</string>
-    <string name="type_directory">Répertoire</string>
     <string name="type_document">Fichier</string>
     <string name="type_drawing">Dessin</string>
     <string name="type_excel">Tableur</string>
@@ -125,7 +123,6 @@
 
     <string name="add_logo">Touchez pour ajouter un logo</string>
     <string name="station_name">Nom de la radio à l\'écoute</string>
-    <string name="notif_state">état du lecteur</string>
     <string name="notif_touch">(Touchez pour ouvrir)</string>
     <string name="loading">Chargement...</string>
     <string name="play">Lecture</string>

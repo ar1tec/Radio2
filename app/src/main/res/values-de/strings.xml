@@ -110,8 +110,6 @@
 
 
     <string name="type_archive">Archive</string>
-    <string name="type_certificate">Certificat</string>
-    <string name="type_directory">Verzeichnis</string>
     <string name="type_document">Dokument</string>
     <string name="type_drawing">Zeichnung</string>
     <string name="type_excel">Excel</string>
@@ -125,7 +123,6 @@
 
     <string name="add_logo">Tippen um ein Logo hinzuzufügen</string>
     <string name="notif_touch">(Zum Öffnen tippen)</string>
-    <string name="notif_state">Abspielstatus</string>
     <string name="station_name">Stationsname</string>
     <string name="loading">Laden...</string>
     <string name="play">Play</string>

@@ -596,7 +596,7 @@ public class PlayerService extends Service
       } else {
          ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
          mediaSource = new ExtractorMediaSource(Uri.parse(url),
-                 dataSourceFactory, extractorsFactory, 32, null, null, null); // todo attach listener here
+                 dataSourceFactory, extractorsFactory, 32, null, null, null);
       }
 
       mExoPlayer.prepare(mediaSource);

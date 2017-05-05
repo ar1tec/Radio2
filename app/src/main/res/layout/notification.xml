@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:id="@+id/notification_layout"
     android:background="@color/controls_bg_dark"
     android:gravity="left|top"
     tools:ignore="Overdraw">

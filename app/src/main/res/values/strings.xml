@@ -31,7 +31,6 @@
 
     <!-- notification -->
     <string name="station_name">Station name</string>
-    <string name="notif_state">Play status</string>
     <string name="notif_touch">(Tap to open)</string>
 
 
@@ -127,8 +126,6 @@
 
 
     <string name="type_archive">Archive</string>
-    <string name="type_certificate">Certificat</string>
-    <string name="type_directory">Directory</string>
     <string name="type_document">Document</string>
     <string name="type_drawing">Drawing</string>
     <string name="type_excel">Excel</string>
