@@ -26,10 +26,12 @@ import android.widget.RemoteViews;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -48,9 +50,9 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 
 import org.oucho.radio2.images.ImageFactory;
-import org.oucho.radio2.net.CustomHttpDataSource;
 import org.oucho.radio2.interfaces.RadioKeys;
 import org.oucho.radio2.net.Connectivity;
+import org.oucho.radio2.net.CustomHttpDataSource;
 import org.oucho.radio2.net.WifiLocker;
 import org.oucho.radio2.utils.Counter;
 import org.oucho.radio2.utils.Later;
@@ -560,11 +562,20 @@ public class PlayerService extends Service
          releaseExoPlayer();
       }
 
+
+      DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(this,
+              null, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+
       TrackSelector trackSelector = new DefaultTrackSelector();
 
       LoadControl loadControl = new DefaultLoadControl(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE * 2));
 
-      mExoPlayer = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector, loadControl);
+      mExoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+   }
+
+   @Override
+   public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
    }
 
    private void prepareExoPLayer(boolean sourceIsHLS, String uriString) {
