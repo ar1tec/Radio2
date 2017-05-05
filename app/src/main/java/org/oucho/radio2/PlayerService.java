@@ -552,15 +552,18 @@ public class PlayerService extends Service
    @Override
    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {}
 
-   @Override
-   public void onPositionDiscontinuity() {}
+    @Override
+    public void onPositionDiscontinuity() {}
+
+    @Override
+    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {}
 
 
-   private void createExoPlayer() {
+    private void createExoPlayer() {
 
-      if (mExoPlayer != null) {
-         releaseExoPlayer();
-      }
+        if (mExoPlayer != null) {
+            releaseExoPlayer();
+        }
 
 
       DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(this,
@@ -573,10 +576,6 @@ public class PlayerService extends Service
       mExoPlayer = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
    }
 
-   @Override
-   public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-
-   }
 
    private void prepareExoPLayer(boolean sourceIsHLS, String uriString) {
 
