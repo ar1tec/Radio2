@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setHomeButtonEnabled(true);
 
         final Drawable upArrow = ContextCompat.getDrawable(context, R.drawable.ic_menu_black_24dp);
-        upArrow.setColorFilter(ContextCompat.getColor(context, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
+        upArrow.setColorFilter(ContextCompat.getColor(context, R.color.grey_600), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
     }
 
@@ -1014,6 +1014,7 @@ public class MainActivity extends AppCompatActivity
         if (running) {
             mTask.cancel(true);
             timerEcran.cancel();
+            timerEcran = null;
 
             volume.getMinuteur().cancel();
             volume.setVolume(context, 1.0f);

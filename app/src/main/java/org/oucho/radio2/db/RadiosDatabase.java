@@ -9,7 +9,6 @@ import org.oucho.radio2.interfaces.RadioKeys;
 
 public class RadiosDatabase extends SQLiteOpenHelper implements RadioKeys {
 
-
 	private static final int DB_VERSION = 2;
 
 	public RadiosDatabase(Context context) {

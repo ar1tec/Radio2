@@ -15,7 +15,7 @@ import javax.xml.parsers.SAXParserFactory;
 class RssParser {
     private URL rssUrl;
 
-    public RssParser(String url) {
+    RssParser(String url) {
         try {
             this.rssUrl = new URL(url);
         } catch (MalformedURLException e) {
@@ -23,7 +23,7 @@ class RssParser {
         }
     }
 
-    public Update parse() {
+    Update parse() {
         SAXParserFactory factory = SAXParserFactory.newInstance();
 
         try {
@@ -45,7 +45,7 @@ class RssParser {
     }
 
 
-    static class RssHandler extends DefaultHandler {
+    private static class RssHandler extends DefaultHandler {
 
         private Update update;
         private StringBuilder builder;

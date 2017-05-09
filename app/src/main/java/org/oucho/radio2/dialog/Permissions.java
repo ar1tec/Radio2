@@ -35,5 +35,4 @@ public void check(Context context, final Activity activity) {
         }
     }
 
-
 }

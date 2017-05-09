@@ -10,7 +10,7 @@ class Version implements Comparable<Version> {
         return this.version;
     }
 
-    public Version(String version) {
+    Version(String version) {
         final String TAG = "AppUpdate";
         if (version == null)
             Log.e(TAG, "Version can not be null");

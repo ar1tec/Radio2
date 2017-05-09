@@ -12,11 +12,11 @@ public class State implements RadioKeys {
 
 
    public static final String STATE_STOP         = "Stop";
-   public static final String STATE_ERROR        = "Error";
+   private static final String STATE_ERROR        = "Error";
    public static final String STATE_PAUSE        = "Pause";
    public static final String STATE_PLAY         = "Play";
    public static final String STATE_BUFFER       = "Loading...";
-    public static final String STATE_COMPLETED     = "Completed";
+   private static final String STATE_COMPLETED     = "Completed";
    public static final String STATE_DUCK         = "\\_o< coin";
    public static final String STATE_DISCONNECTED = "Disconnected";
 

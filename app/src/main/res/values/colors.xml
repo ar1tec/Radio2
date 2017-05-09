@@ -1,28 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary_0">#474b4e</color>
+
     <color name="colorPrimary">#00000000</color>
     <color name="colorPrimaryDark">#333638</color>
     <color name="colorAccent">#FFAB00</color>
 
-    <color name="controls_bg_dark">#ff212121</color>
+    <color name="grey_900">#ff212121</color>
+    <color name="grey_800">#424242</color>
+    <color name="grey_600">#757575</color>
+    <color name="grey_300">#E0E0E0</color>
 
-    <color name="controls_tint_light">#606060</color>
+    <color name="blue_900">#980d47a1</color>
 
-    <color name="primary_text">#212121</color>
-    <color name="secondary_text">#727272</color>
-
-    <color name="appwidget_bg">#CCCCCC</color>
+    <color name="amber_50">#96fff8e1</color>
 
     <color name="white">#ffffff</color>
     <color name="white_10">#89ffffff</color>
 
-    <color name="zzz">#980d47a1</color>
-
     <color name="transparent">#00ffffff</color>
-
-    <color name="amber_100">#96ffecb3</color>
-
-    <color name="header_divider_color">#45484e</color>
 
 </resources>

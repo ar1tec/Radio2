@@ -32,7 +32,7 @@
                 android:layout_centerVertical="true"
                 android:paddingLeft="10dp"
                 android:src="@drawable/radio"
-                android:tint="@color/appwidget_bg"
+                android:tint="@color/grey_300"
                 tools:ignore="ContentDescription"
                 android:visibility="visible"/>
 
@@ -75,7 +75,7 @@
                     android:paddingTop="12dp"
                     android:maxLines="1"
                     android:text="TEST test"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/grey_800"
                     android:textSize="17sp"
                     android:gravity="center_vertical"
                     card_view:ignore="HardcodedText" />

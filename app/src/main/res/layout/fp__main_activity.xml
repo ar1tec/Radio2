@@ -76,7 +76,7 @@
             android:layout_alignWithParentIfMissing="true"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/menu_ok1"
-            android:background="@color/header_divider_color" />
+            android:background="@color/grey_800" />
 
         <ImageButton
             android:id="@+id/menu_new_folder"
@@ -125,7 +125,7 @@
             android:layout_height="24dp"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/menu_ok2"
-            android:background="@color/header_divider_color" />
+            android:background="@color/grey_800" />
 
         <ImageButton
             android:id="@+id/menu_invert"
@@ -176,7 +176,7 @@
             android:layout_height="24dp"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/menu_cancel2"
-            android:background="@color/header_divider_color" />
+            android:background="@color/grey_800" />
     </RelativeLayout>
 
     <View
@@ -185,7 +185,7 @@
         android:layout_height="0.5dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="48dp"
-        android:background="@color/header_divider_color" />
+        android:background="@color/grey_800" />
 
     <ListView
         android:id="@+id/listview"

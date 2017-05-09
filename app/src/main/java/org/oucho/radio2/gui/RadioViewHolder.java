@@ -31,7 +31,7 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
     private final ListsClickListener clickListener;
 
 
-    public RadioViewHolder(View view, MainActivity activity, ListsClickListener clickListener) {
+    RadioViewHolder(View view, MainActivity activity, ListsClickListener clickListener) {
         super(view);
         text = (TextView) view.findViewById(R.id.textViewRadio);
         menu = (ImageButton) view.findViewById(R.id.buttonMenu);
@@ -65,15 +65,14 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
 
         if (radio.getName().equals(nomRadio)  ) {
 
-            fond.setBackgroundColor(ContextCompat.getColor(context, R.color.amber_100));
+            fond.setBackgroundColor(ContextCompat.getColor(context, R.color.amber_50));
 
             if (radio.getImg() == null)
             image.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent));
 
         }
-
-
     }
+
 
     @Override
     public void onClick(View view) {

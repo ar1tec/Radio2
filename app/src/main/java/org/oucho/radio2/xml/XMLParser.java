@@ -7,10 +7,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XMLParser extends DefaultHandler {
+class XMLParser extends DefaultHandler {
 
 
-    public List<XmlValuesModel> list=null;
+    List<XmlValuesModel> list=null;
 
     private XmlValuesModel radioValues = null;
 
@@ -66,7 +66,7 @@ public class XMLParser extends DefaultHandler {
     public void characters(char[] ch, int start, int length)
             throws SAXException {
 
-        /******  Read the characters and append them to the buffer  ******/
+        /* *****  Read the characters and append them to the buffer  ***** */
         String tempString=new String(ch, start, length);
         builder.append(tempString);
     }

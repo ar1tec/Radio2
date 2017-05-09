@@ -82,7 +82,7 @@ public class DatabaseSave {
 
 
 
-    class Exporter {
+    private class Exporter {
 
         private static final String ENTETE = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n" + "<map>" + "\n" ;
         private static final String START_RADIO = "<radio>" + "\n";
@@ -91,23 +91,25 @@ public class DatabaseSave {
 
         private final BufferedOutputStream mbufferos;
 
-        public Exporter(BufferedOutputStream bos) {
+        private String stg;
+
+        Exporter(BufferedOutputStream bos) {
             mbufferos = bos;
         }
 
-        public void enTete() throws IOException {
+        void enTete() throws IOException {
 
-            String stg = ENTETE;
+            stg = ENTETE;
             mbufferos.write(stg.getBytes());
         }
 
-        public void startRadio() throws IOException {
+        void startRadio() throws IOException {
 
-            String stg = START_RADIO;
+            stg = START_RADIO;
             mbufferos.write(stg.getBytes());
         }
 
-        public void addRadio(String name, String url, String image) throws IOException {
+        void addRadio(String name, String url, String image) throws IOException {
 
             String stg = "<name>" + name + "</name>"+ "\n"
                     + "<url>" + url + "</url>"+ "\n"
@@ -116,19 +118,19 @@ public class DatabaseSave {
             mbufferos.write(stg.getBytes());
         }
 
-        public void endRadio() throws IOException {
+        void endRadio() throws IOException {
 
-            String stg = END_RADIO;
+            stg = END_RADIO;
             mbufferos.write(stg.getBytes());
         }
 
-        public void fin() throws IOException {
+        void fin() throws IOException {
 
-            String stg = FIN;
+            stg = FIN;
             mbufferos.write(stg.getBytes());
         }
 
-        public void close() throws IOException {
+        void close() throws IOException {
             if (mbufferos != null) {
                 mbufferos.close();
             }

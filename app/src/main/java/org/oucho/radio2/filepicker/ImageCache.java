@@ -3,7 +3,7 @@ package org.oucho.radio2.filepicker;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
 
-public class ImageCache {
+class ImageCache {
 
     private static ImageCache instance;
 
@@ -28,7 +28,7 @@ public class ImageCache {
         };
     }
 
-    public static ImageCache getInstance() {
+    static ImageCache getInstance() {
 
         if (instance == null) {
 
@@ -38,13 +38,13 @@ public class ImageCache {
         return instance;
     }
 
-    public void put(String key, Bitmap bitmap) {
+    void put(String key, Bitmap bitmap) {
         if (get(key) == null) {
             mMemoryCache.put(key, bitmap);
         }
     }
 
-    public Bitmap get(String key) {
+    Bitmap get(String key) {
 
         return mMemoryCache.get(key);
     }

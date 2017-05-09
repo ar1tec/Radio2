@@ -7,7 +7,7 @@ import android.util.Log;
 
 import org.oucho.radio2.R;
 
-public class AppUpdate {
+class AppUpdate {
     private final Context context;
     private Display display;
     private String xmlUrl;
@@ -17,7 +17,7 @@ public class AppUpdate {
     private final String btnUpdate;
     private final String titleNoUpdate;
 
-    public AppUpdate(Context context) {
+    AppUpdate(Context context) {
         this.context = context;
         this.display = Display.DIALOG;
         this.showAppUpdated = false;
@@ -29,18 +29,18 @@ public class AppUpdate {
         this.btnDismiss = context.getResources().getString(R.string.appupdater_btn_dismiss);
     }
 
-    public AppUpdate setDisplay(Display display) {
+    AppUpdate setDisplay(Display display) {
         this.display = display;
         return this;
     }
 
     @SuppressWarnings("SameParameterValue")
-    public AppUpdate setUpdateXML(@NonNull String xmlUrl) {
+    AppUpdate setUpdateXML(@NonNull String xmlUrl) {
         this.xmlUrl = xmlUrl;
         return this;
     }
 
-    public AppUpdate showAppUpdated() {
+    AppUpdate showAppUpdated() {
         this.showAppUpdated = true;
         return this;
     }

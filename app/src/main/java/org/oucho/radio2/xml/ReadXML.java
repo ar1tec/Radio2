@@ -62,12 +62,12 @@ public class ReadXML {
 
         try {
 
-            /************** Read XML *************/
+            /* ************* Read XML *************/
 
             BufferedReader br = new BufferedReader(new StringReader(XMLData));
             InputSource is = new InputSource(br);
 
-            /************  Parse XML **************/
+            /* ***********  Parse XML **************/
 
             XMLParser parser=new XMLParser();
             SAXParserFactory factory=SAXParserFactory.newInstance();
@@ -76,12 +76,12 @@ public class ReadXML {
             reader.setContentHandler(parser);
             reader.parse(is);
 
-            /************* Get Parse data in a ArrayList **********/
+            /* ************ Get Parse data in a ArrayList **********/
             myData = parser.list;
 
             if (myData != null) {
 
-                /*************** Get Data From ArrayList *********/
+                /* ************** Get Data From ArrayList *********/
 
                 for (XmlValuesModel xmlRowData : myData) {
 

@@ -60,7 +60,7 @@ public class FileTypeUtils {
         }
     }
 
-    public static FileType getFileType(File file) {
+    static FileType getFileType(File file) {
 
         FileType fileType = fileTypeExtensions.get(getExtension(file.getName()));
         if (fileType != null) {

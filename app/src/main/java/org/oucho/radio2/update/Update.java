@@ -2,34 +2,34 @@ package org.oucho.radio2.update;
 
 import java.net.URL;
 
-public class Update {
+class Update {
     private String version;
     private String releaseNotes;
     private URL apk;
 
-    public Update() {}
+    Update() {}
 
-    public String getLatestVersion() {
+    String getLatestVersion() {
         return version;
     }
 
-    public void setLatestVersion(String latestVersion) {
+    void setLatestVersion(String latestVersion) {
         this.version = latestVersion;
     }
 
-    public String getReleaseNotes() {
+    String getReleaseNotes() {
         return releaseNotes;
     }
 
-    public void setReleaseNotes(String releaseNotes) {
+    void setReleaseNotes(String releaseNotes) {
         this.releaseNotes = releaseNotes;
     }
 
-    public URL getUrlToDownload() {
+    URL getUrlToDownload() {
         return apk;
     }
 
-    public void setUrlToDownload(URL apk) {
+    void setUrlToDownload(URL apk) {
         this.apk = apk;
     }
 }

@@ -13,7 +13,6 @@ import org.oucho.radio2.R;
 
 public class About extends DialogFragment {
 
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

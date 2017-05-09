@@ -78,7 +78,6 @@ public class PlayerService extends Service
         ExoPlayer.EventListener,
         OnAudioFocusChangeListener {
 
-
    private Context context = null;
    private String mUserAgent;
    private String launch_url = null;
@@ -104,12 +103,9 @@ public class PlayerService extends Service
 
    private NotifUpdate notifUpdate_Receiver;
 
-
    private static boolean sIsServiceForeground = false;
    private static final int NOTIFY_ID = 32;
    private static boolean timer = false;
-
-
 
 
    @Override

@@ -11,7 +11,7 @@ class CheckAsync {
         private final String xmlUrl;
         private final AppUpdate.LibraryListener listener;
 
-        public LatestAppVersion(Context context, String xmlUrl, AppUpdate.LibraryListener listener) {
+        LatestAppVersion(Context context, String xmlUrl, AppUpdate.LibraryListener listener) {
             this.context = context;
             this.xmlUrl = xmlUrl;
             this.listener = listener;

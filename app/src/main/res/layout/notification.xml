@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/controls_bg_dark"
+    android:background="@color/grey_900"
     android:gravity="left|top"
     tools:ignore="Overdraw">
 

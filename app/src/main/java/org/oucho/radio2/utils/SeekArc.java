@@ -78,7 +78,7 @@ public class SeekArc extends View {
 		Log.d(TAG, "Initialising SeekArc");
 		float density = context.getResources().getDisplayMetrics().density;
 
-		int arcColor = ContextCompat.getColor(context, R.color.appwidget_bg);
+		int arcColor = ContextCompat.getColor(context, R.color.grey_300);
 		int progressColor = ContextCompat.getColor(context, R.color.colorAccent);
 		int thumbHalfheight;
 		int thumbHalfWidth;

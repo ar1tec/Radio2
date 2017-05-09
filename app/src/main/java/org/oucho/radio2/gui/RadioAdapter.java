@@ -31,7 +31,6 @@ public class RadioAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.nomRadio = nomRadio;
     }
 
-
     @SuppressLint("InflateParams")
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
