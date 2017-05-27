@@ -128,5 +128,6 @@
     <string name="play">Play</string>
     <string name="completed">Completed</string>
     <string name="disconnected">Disconnected</string>
+    <string name="action_music">Musik</string>
 
 </resources>

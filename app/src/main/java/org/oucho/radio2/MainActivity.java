@@ -84,8 +84,11 @@ public class MainActivity extends AppCompatActivity
     private String etat_lecture;
     private String imp_exp;
     private String importType;
+    private String app_music = "org.oucho.musicplayer";
 
     private boolean bitrate = false;
+    private boolean musicIsInstalled = false;
+
     private static boolean running;
     private ScheduledFuture mTask;
 
@@ -99,6 +102,7 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayout;
     private MediaPlayer soundChargement;
     private SharedPreferences préférences;
+    private NavigationView mNavigationView;
     private Etat_player Etat_player_Receiver;
 
     private ImageView play;
@@ -164,6 +168,9 @@ public class MainActivity extends AppCompatActivity
         int couleurFond = ContextCompat.getColor(context, R.color.colorPrimary);
         String titre = context.getString(R.string.app_name);
 
+        musicIsInstalled = checkMusicPlayer(app_music);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -184,10 +191,12 @@ public class MainActivity extends AppCompatActivity
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        NavigationView mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
 
         assert mNavigationView != null;
         mNavigationView.setNavigationItemSelectedListener(this);
+
+        setNavigationMenu();
 
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -206,7 +215,28 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
     }
 
+    private void setNavigationMenu() {
 
+        if (musicIsInstalled) {
+            mNavigationView.inflateMenu(R.menu.navigation_music);
+
+        } else {
+
+            mNavigationView.inflateMenu(R.menu.navigation);
+        }
+
+    }
+
+    private boolean checkMusicPlayer(String packagename) {
+        PackageManager packageManager = getPackageManager();
+
+        try {
+            packageManager.getPackageInfo(packagename, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
    /* **********************************************************************************************
     * Pause / résume / etc.
     * *********************************************************************************************/
@@ -395,6 +425,10 @@ public class MainActivity extends AppCompatActivity
         mDrawerLayout.closeDrawers();
 
         switch (menuItem.getItemId()) {
+            case R.id.action_music:
+                Intent music = getPackageManager().getLaunchIntentForPackage(app_music);
+                startActivity(music);
+                break;
             case R.id.action_export:
                 exporter();
                 break;

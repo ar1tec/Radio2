@@ -128,5 +128,6 @@
     <string name="play">Lecture</string>
     <string name="disconnected">Déconnecté</string>
     <string name="completed">Complété</string>
+    <string name="action_music">Musique</string>
 
 </resources>

@@ -13,6 +13,8 @@
     <string name="ok">OK</string>
     <string name="errorInvalidURL">Invalid URL</string>
 
+    <string name="action_music">Music</string>
+
 
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
@@ -38,12 +40,6 @@
     <string name="play">Play</string>
     <string name="disconnected">Disconnected</string>
     <string name="completed">Completed</string>
-
-
-
-
-
-
 
     <string name="about_message">
         \n
