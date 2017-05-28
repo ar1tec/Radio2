@@ -84,9 +84,11 @@ public class MainActivity extends AppCompatActivity
     private String imp_exp;
     private String importType;
     private String app_music = "org.oucho.musicplayer";
+    private String app_clementine = "org.oucho.clementine";
 
     private boolean bitrate = false;
     private boolean musicIsInstalled = false;
+    private boolean clementineIsInstalled = false;
 
     private static boolean running;
     private ScheduledFuture mTask;
@@ -156,7 +158,8 @@ public class MainActivity extends AppCompatActivity
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        musicIsInstalled = checkMusicPlayer(app_music);
+        musicIsInstalled = checkApp(app_music);
+        clementineIsInstalled = checkApp(app_clementine);
 
         setNavigationMenu();
 
@@ -195,17 +198,19 @@ public class MainActivity extends AppCompatActivity
 
     private void setNavigationMenu() {
 
-        if (musicIsInstalled) {
+        if (musicIsInstalled && clementineIsInstalled) {
+            mNavigationView.inflateMenu(R.menu.navigation_music_clementine);
+        } else if (musicIsInstalled) {
             mNavigationView.inflateMenu(R.menu.navigation_music);
-
+        } else if (clementineIsInstalled) {
+            mNavigationView.inflateMenu(R.menu.navigation_clementine);
         } else {
-
             mNavigationView.inflateMenu(R.menu.navigation);
         }
 
     }
 
-    private boolean checkMusicPlayer(String packagename) {
+    private boolean checkApp(String packagename) {
         PackageManager packageManager = getPackageManager();
 
         try {
@@ -320,6 +325,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_music:
                 Intent music = getPackageManager().getLaunchIntentForPackage(app_music);
                 startActivity(music);
+                break;
+            case R.id.action_clementine:
+                Intent clementine = getPackageManager().getLaunchIntentForPackage(app_clementine);
+                startActivity(clementine);
                 break;
             case R.id.action_export:
                 exporter();

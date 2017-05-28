@@ -14,6 +14,7 @@
     <string name="errorInvalidURL">Invalid URL</string>
 
     <string name="action_music">Music</string>
+    <string name="action_clementine">Clementine</string>
 
 
     <string name="navigation_drawer_open">open</string>
