@@ -128,7 +128,6 @@ public class MainActivity extends AppCompatActivity
         préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
 
-
         int couleurTitre = ContextCompat.getColor(context, R.color.colorAccent);
         int couleurFond = ContextCompat.getColor(context, R.color.colorPrimary);
         String titre = context.getString(R.string.app_name);
