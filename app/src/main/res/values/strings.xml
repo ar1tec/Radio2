@@ -16,8 +16,8 @@
     <string name="action_music">Music</string>
 
 
-    <string name="drawer_open">open</string>
-    <string name="drawer_close">close</string>
+    <string name="navigation_drawer_open">open</string>
+    <string name="navigation_drawer_close">close</string>
 
     <!-- nav header activity main -->
     <string name="by">Old Geek, may 2017</string>

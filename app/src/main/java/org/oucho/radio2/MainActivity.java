@@ -13,9 +13,7 @@ import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.TrafficStats;
@@ -75,10 +73,11 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity
-        implements
-        RadioKeys,
+        implements RadioKeys,
         NavigationView.OnNavigationItemSelectedListener,
         View.OnClickListener {
+
+    private static final int FILE_PICKER_RESULT = 0;
 
     private String nom_radio;
     private String etat_lecture;
@@ -110,19 +109,59 @@ public class MainActivity extends AppCompatActivity
 
     private Context context;
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        context = getApplicationContext();
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            final int mUIFlag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            getWindow().getDecorView().setSystemUiVisibility(mUIFlag);
+            getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.white));
+        }
+
         setContentView(R.layout.activity_main);
 
-        context = getApplicationContext();
         préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
-        setStatusBar();
-        setToolBarAndNavigationDrawer();
 
+
+        int couleurTitre = ContextCompat.getColor(context, R.color.colorAccent);
+        int couleurFond = ContextCompat.getColor(context, R.color.colorPrimary);
+        String titre = context.getString(R.string.app_name);
+
+        ColorDrawable colorDrawable = new ColorDrawable(couleurFond);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setBackgroundDrawable(colorDrawable);
+
+        if (android.os.Build.VERSION.SDK_INT >= 24) {
+            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>", Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>"));
+        }
+
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.setDrawerListener(toggle);
+        toggle.syncState();
+
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+
+        musicIsInstalled = checkMusicPlayer(app_music);
+
+        setNavigationMenu();
+
+        Control_Volume niveau_Volume = new Control_Volume(this, new Handler());
+        getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
 
         Etat_player_Receiver = new Etat_player();
         IntentFilter filter = new IntentFilter(INTENT_STATE);
@@ -153,67 +192,6 @@ public class MainActivity extends AppCompatActivity
         CheckUpdate.onStart(this);
     }
 
-    private void setStatusBar() {
-
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            final int mUIFlag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-            getWindow().getDecorView().setSystemUiVisibility(mUIFlag);
-            getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.white));
-        }
-    }
-
-    private void setToolBarAndNavigationDrawer() {
-
-        int couleurTitre = ContextCompat.getColor(context, R.color.colorAccent);
-        int couleurFond = ContextCompat.getColor(context, R.color.colorPrimary);
-        String titre = context.getString(R.string.app_name);
-
-        musicIsInstalled = checkMusicPlayer(app_music);
-
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        ColorDrawable colorDrawable = new ColorDrawable(couleurFond);
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setBackgroundDrawable(colorDrawable);
-
-        Control_Volume niveau_Volume = new Control_Volume(this, new Handler());
-        getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
-
-
-        if (android.os.Build.VERSION.SDK_INT >= 24) {
-            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>", Html.FROM_HTML_MODE_LEGACY));
-        } else {
-            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>"));
-        }
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-
-        assert mNavigationView != null;
-        mNavigationView.setNavigationItemSelectedListener(this);
-
-        setNavigationMenu();
-
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
-                this,
-                mDrawerLayout,
-                toolbar,
-                R.string.drawer_open,
-                R.string.drawer_close) {};
-
-        mDrawerToggle.syncState();
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        final Drawable upArrow = ContextCompat.getDrawable(context, R.drawable.ic_menu_black_24dp);
-        upArrow.setColorFilter(ContextCompat.getColor(context, R.color.grey_600), PorterDuff.Mode.SRC_ATOP);
-        getSupportActionBar().setHomeAsUpIndicator(upArrow);
-    }
 
     private void setNavigationMenu() {
 
@@ -237,7 +215,8 @@ public class MainActivity extends AppCompatActivity
             return false;
         }
     }
-   /* **********************************************************************************************
+
+       /* **********************************************************************************************
     * Pause / résume / etc.
     * *********************************************************************************************/
 
@@ -286,8 +265,85 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
 
-   /* **********************************************************************************************
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            moveTaskToBack(true);
+
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.set_timer:
+                if (!running) {
+                    showDatePicker();
+                } else {
+                    showTimerInfo();
+                }
+                return true;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+         mDrawerLayout.closeDrawer(GravityCompat.START);
+
+        switch (menuItem.getItemId()) {
+            case R.id.action_music:
+                Intent music = getPackageManager().getLaunchIntentForPackage(app_music);
+                startActivity(music);
+                break;
+            case R.id.action_export:
+                exporter();
+                break;
+            case R.id.action_import:
+                importer();
+                break;
+            case R.id.nav_update:
+                CheckUpdate.withInfo(this);
+                break;
+            case R.id.nav_help:
+                about();
+                break;
+            case R.id.nav_exit:
+                exit();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+
+       /* **********************************************************************************************
     *
     * Broadcast receiver
     *
@@ -386,71 +442,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-   /* *********************************************************************************************
-    * Menu
-    * ********************************************************************************************/
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.set_timer:
-                if (!running) {
-                    showDatePicker();
-                } else {
-                    showTimerInfo();
-                }
-                return true;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-   /* **********************************************************************************************
-    * Navigation Drawer
-    * *********************************************************************************************/
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        mDrawerLayout.closeDrawers();
-
-        switch (menuItem.getItemId()) {
-            case R.id.action_music:
-                Intent music = getPackageManager().getLaunchIntentForPackage(app_music);
-                startActivity(music);
-                break;
-            case R.id.action_export:
-                exporter();
-                break;
-            case R.id.action_import:
-                importer();
-                break;
-            case R.id.nav_update:
-                CheckUpdate.withInfo(this);
-                break;
-            case R.id.nav_help:
-                about();
-                break;
-            case R.id.nav_exit:
-                exit();
-                break;
-            default:
-                break;
-        }
-        return true;
-    }
-
-
    /* *******
     * Quitter
     * *******/
@@ -474,7 +465,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    /* **********************************************************************************************
+        /* **********************************************************************************************
     * Gestion des clicks sur l'interface
     * *********************************************************************************************/
 
@@ -530,7 +521,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
-   /* *********************************************************************************************
+       /* *********************************************************************************************
     * Mise à jour de la vue de la liste des radios
     * ********************************************************************************************/
 
@@ -557,104 +548,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-   /* *********************************************************************************************
-    * Click radio et menu radio
-    * ********************************************************************************************/
-
-    private final ListsClickListener clickListener = new ListsClickListener() {
-
-        @Override
-        public void onPlayableItemClick(PlayableItem item) {
-            play((Radio)item);
-        }
-
-        @Override
-        public void onPlayableItemMenuClick(PlayableItem item, int menuId) {
-            switch(menuId) {
-                case R.id.menu_edit:
-                    editRadio((Radio)item);
-                    break;
-                case R.id.menu_delete:
-                    deleteRadio((Radio)item);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
-   /* **********************************************************************************************
-    * Lecture de la radio
-    * *********************************************************************************************/
-
-    private void play(Radio radio) {
-
-        String url = radio.getPlayableUri();
-        String name = radio.getName();
-        byte[] logo = radio.getLogo();
-
-        SharedPreferences.Editor edit = préférences.edit();
-
-        Intent player = new Intent(this, PlayerService.class);
-
-        player.putExtra("action", ACTION_PLAY);
-        player.putExtra("url", url);
-        player.putExtra("name", name);
-        startService(player);
-
-        if (logo != null) {
-
-            String encodedImage = ImageFactory.byteToString(logo);
-
-            Intent intent = new Intent();
-            intent.setAction(INTENT_UPDATENOTIF);
-            intent.putExtra("name", nom_radio);
-            intent.putExtra("state", "Play");
-            intent.putExtra("logo", encodedImage);
-            sendBroadcast(intent);
-
-            edit.putString("image_data",encodedImage);
-            edit.apply();
-
-        } else {
-
-            String encodedImage = ImageFactory.drawableResourceToBitmap(context, R.drawable.ic_radio_white_36dp);
-
-            Intent intent = new Intent();
-            intent.setAction(INTENT_UPDATENOTIF);
-            intent.putExtra("name", nom_radio);
-            intent.putExtra("state", "Play");
-            intent.putExtra("logo", encodedImage);
-            sendBroadcast(intent);
-
-            edit.remove("image_data");
-            edit.apply();
-        }
-    }
-
-
-
-   /* **********************************************************************************************
-    * Suppression de la radio
-    * *********************************************************************************************/
-
-    private void deleteRadio(final Radio radio) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getResources().getString(R.string.deleteRadioConfirm));
-        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Radio.deleteRadio(context, radio);
-                updateListView();
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, null);
-        builder.show();
-    }
-
-
-
-
-   /* **********************************************************************************************
+       /* **********************************************************************************************
     * Ajout ou édition d'une radio
     * *********************************************************************************************/
 
@@ -802,6 +696,143 @@ public class MainActivity extends AppCompatActivity
         } else if (currentVolume < 16) {
             assert play != null;
             play.setBackground(getDrawable(R.drawable.volume5));
+        }
+    }
+
+
+
+
+   /* *********************************************************************************************
+    * Click radio et menu radio
+    * ********************************************************************************************/
+
+    private final ListsClickListener clickListener = new ListsClickListener() {
+
+        @Override
+        public void onPlayableItemClick(PlayableItem item) {
+            play((Radio)item);
+        }
+
+        @Override
+        public void onPlayableItemMenuClick(PlayableItem item, int menuId) {
+            switch(menuId) {
+                case R.id.menu_edit:
+                    editRadio((Radio)item);
+                    break;
+                case R.id.menu_delete:
+                    deleteRadio((Radio)item);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+   /* **********************************************************************************************
+    * Lecture de la radio
+    * *********************************************************************************************/
+
+    private void play(Radio radio) {
+
+        String url = radio.getPlayableUri();
+        String name = radio.getName();
+        byte[] logo = radio.getLogo();
+
+        SharedPreferences.Editor edit = préférences.edit();
+
+        Intent player = new Intent(this, PlayerService.class);
+
+        player.putExtra("action", ACTION_PLAY);
+        player.putExtra("url", url);
+        player.putExtra("name", name);
+        startService(player);
+
+        if (logo != null) {
+
+            String encodedImage = ImageFactory.byteToString(logo);
+
+            Intent intent = new Intent();
+            intent.setAction(INTENT_UPDATENOTIF);
+            intent.putExtra("name", nom_radio);
+            intent.putExtra("state", "Play");
+            intent.putExtra("logo", encodedImage);
+            sendBroadcast(intent);
+
+            edit.putString("image_data",encodedImage);
+            edit.apply();
+
+        } else {
+
+            String encodedImage = ImageFactory.drawableResourceToBitmap(context, R.drawable.ic_radio_white_36dp);
+
+            Intent intent = new Intent();
+            intent.setAction(INTENT_UPDATENOTIF);
+            intent.putExtra("name", nom_radio);
+            intent.putExtra("state", "Play");
+            intent.putExtra("logo", encodedImage);
+            sendBroadcast(intent);
+
+            edit.remove("image_data");
+            edit.apply();
+        }
+    }
+
+
+
+   /* **********************************************************************************************
+    * Suppression de la radio
+    * *********************************************************************************************/
+
+    private void deleteRadio(final Radio radio) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getResources().getString(R.string.deleteRadioConfirm));
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Radio.deleteRadio(context, radio);
+                updateListView();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.show();
+    }
+
+
+
+
+        /* *********************************************************************************************
+     *
+     * Sauvegarde/restauration/importation des radios
+     *
+     * ********************************************************************************************/
+
+    private void exporter() {
+
+        if (Build.VERSION.SDK_INT >= 23
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            checkWritePermission();
+            imp_exp = "exporter";
+        } else {
+
+            RadiosDatabase radiosDatabase = new RadiosDatabase(context);
+
+            String Destination = Environment.getExternalStorageDirectory().toString() + "/Radio";
+
+            File newRep = new File(Destination);
+            if (!newRep.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                newRep.mkdir();
+            }
+
+            String path = Destination + "/" + RadiosDatabase.DB_NAME + ".xml";
+
+            DatabaseSave databaseSave = new DatabaseSave(radiosDatabase.getReadableDatabase(), path);
+            databaseSave.exportData();
+
+            Toast.makeText(context, getString(R.string.exporter), Toast.LENGTH_SHORT).show();
+
+
         }
     }
 
@@ -1066,45 +1097,6 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    /* *********************************************************************************************
-     *
-     * Sauvegarde/restauration/importation des radios
-     *
-     * ********************************************************************************************/
-
-    private static final int FILE_PICKER_RESULT = 0;
-
-    private void exporter() {
-
-        if (Build.VERSION.SDK_INT >= 23
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            checkWritePermission();
-            imp_exp = "exporter";
-        } else {
-
-            RadiosDatabase radiosDatabase = new RadiosDatabase(context);
-
-            String Destination = Environment.getExternalStorageDirectory().toString() + "/Radio";
-
-            File newRep = new File(Destination);
-            if (!newRep.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                newRep.mkdir();
-            }
-
-            String path = Destination + "/" + RadiosDatabase.DB_NAME + ".xml";
-
-            DatabaseSave databaseSave = new DatabaseSave(radiosDatabase.getReadableDatabase(), path);
-            databaseSave.exportData();
-
-            Toast.makeText(context, getString(R.string.exporter), Toast.LENGTH_SHORT).show();
-
-
-        }
-    }
-
     private void importer() {
 
         if (Build.VERSION.SDK_INT >= 23
@@ -1129,7 +1121,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /* **********************************************************************************************
+
+        /* **********************************************************************************************
     * Changer le logo de la radio
     * *********************************************************************************************/
 
@@ -1202,10 +1195,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     /* *********************************************************************************************
-     * Arrêt de la radio
-     * ********************************************************************************************/
+ * Arrêt de la radio
+ * ********************************************************************************************/
     public static void stop(Context context) {
         running = false;
 
@@ -1227,29 +1219,6 @@ public class MainActivity extends AppCompatActivity
         dialog.show(getSupportFragmentManager(), "about");
     }
 
-
-    /***********************************************************************************************
-     * Touche retour
-     **********************************************************************************************/
-
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        assert drawer != null;
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-            return true;
-        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-            moveTaskToBack(true);
-
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
-
     private void checkWritePermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
@@ -1261,7 +1230,7 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull  String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {

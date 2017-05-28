@@ -7,25 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="android:colorBackground">@color/white</item>
-
-        <item name="android:actionOverflowButtonStyle">@style/OverflowButton</item>
-        <item name="actionOverflowButtonStyle">@style/OverflowButton</item>
-    </style>
-
-
-    <style name="AppThemeFilePicker" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/grey_800</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <!-- Set Custom Icon for Overflow Button in ActionBar -->
-    <style name="OverflowButton" parent="@style/Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:tint">@color/grey_600</item>
-        <item name="android:src">@drawable/ic_more_vert_black_24dp</item>
-
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -37,12 +19,21 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/grey_600</item>
+    </style>
+
+
     <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">18sp</item>
     </style>
 
-    <declare-styleable name="BlurView">
-        <attr name="blurOverlayColor" format="color"/>
-    </declare-styleable>
+    <style name="AppThemeFilePicker" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/grey_800</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 
 </resources>
