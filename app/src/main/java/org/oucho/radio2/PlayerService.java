@@ -233,13 +233,17 @@ public class PlayerService extends Service
          WifiLocker.lock(context);
 
 
-
       playlist_task = new Playlist(this,url).start();
 
-      Intent intent = new Intent();
-      intent.setAction("org.oucho.musicplayer.STOP");
-      intent.putExtra("halt", "stop");
-      sendBroadcast(intent);
+      Intent music = new Intent();
+      music.setAction("org.oucho.musicplayer.STOP");
+      music.putExtra("halt", "stop");
+      sendBroadcast(music);
+
+      Intent radio = new Intent();
+      radio.setAction("org.oucho.clementine.STOP");
+      radio.putExtra("halt", "stop");
+      sendBroadcast(radio);
 
       return done(State.STATE_BUFFER);
    }
