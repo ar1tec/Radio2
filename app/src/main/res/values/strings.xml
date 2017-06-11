@@ -14,14 +14,12 @@
     <string name="errorInvalidURL">Invalid URL</string>
 
     <string name="action_music">Music</string>
-    <string name="action_clementine">Clementine</string>
-
 
     <string name="navigation_drawer_open">open</string>
     <string name="navigation_drawer_close">close</string>
 
     <!-- nav header activity main -->
-    <string name="by">Old Geek, may 2017</string>
+    <string name="by">Old Geek, june 2017</string>
 
     <string name="update">Update</string>
 
@@ -44,7 +42,7 @@
 
     <string name="about_message">
         \n
-        Radio 2.11.3, web radio pour android\n
+        Radio 2.11.4, web radio pour android\n
         \n
         Old Geek, 2017\n
         \n
@@ -134,5 +132,7 @@
     <string name="type_word">Document</string>
     <string name="type_apk">APK</string>
     <string name="folder_name_hint">Folder name</string>
+    <string name="drawer_close">close</string>
+    <string name="drawer_open">open</string>
 
 </resources>

@@ -18,7 +18,7 @@
     <string name="drawer_close">close</string>
 
     <!-- nav header activity main -->
-    <string name="by">Old Geek, mai 2017</string>
+    <string name="by">Old Geek, juni 2017</string>
 
     <string name="update">Aktualisierung</string>
 
@@ -30,7 +30,7 @@
 
     <string name="about_message">
         \n
-        Radio 2.11.3, Web-Radio für Android\n
+        Radio 2.11.4, Web-Radio für Android\n
         \n
         Old Geek, 2017\n
         \n
@@ -129,5 +129,7 @@
     <string name="completed">Completed</string>
     <string name="disconnected">Disconnected</string>
     <string name="action_music">Musik</string>
+    <string name="navigation_drawer_close">close</string>
+    <string name="navigation_drawer_open">open</string>
 
 </resources>
