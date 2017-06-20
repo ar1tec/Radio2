@@ -107,11 +107,8 @@ public class PlayerService extends Service
    private static final int NOTIFY_ID = 32;
    private static boolean timer = false;
 
-
    @Override
    public void onCreate() {
-
-      Log.i(TAG, "onCreate");
 
       context = getApplicationContext();
       préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
@@ -139,8 +136,6 @@ public class PlayerService extends Service
 
    public void onDestroy() {
       super.onDestroy();
-
-      Log.i(TAG, "onDestroy");
 
       stopPlayback();
 
@@ -212,8 +207,6 @@ public class PlayerService extends Service
 
    private int startPlayback(String url) {
 
-      Log.i(TAG, "startPlayback");
-
       stopPlayback(false);
 
       if ( ! URLUtil.isValidUrl(url) )
@@ -249,16 +242,16 @@ public class PlayerService extends Service
     **********************************************************************************************/
 
    @SuppressWarnings("UnusedReturnValue")
-   public int playLaunch(String url) {
+   public int playLaunch(String surl) {
 
-      Log.i(TAG, "playLaunch");
+      url = surl;
 
       launch_url = null;
 
-      if ( ! URLUtil.isValidUrl(url) )
+      if ( ! URLUtil.isValidUrl(surl) )
          return stopPlayback();
 
-      launch_url = url;
+      launch_url = surl;
 
       try {
 
@@ -269,7 +262,7 @@ public class PlayerService extends Service
             mExoPlayer.stop();
          }
 
-         if (url != null) {
+         if (surl != null) {
             initializeExoPlayer();
             mExoPlayer.setPlayWhenReady(true);
          }
@@ -287,9 +280,6 @@ public class PlayerService extends Service
    }
 
    private int stopPlayback(boolean update_state) {
-
-      Log.i(TAG, "playLaunch");
-
 
       Counter.timePasses();
       launch_url = null;
@@ -645,14 +635,13 @@ public class PlayerService extends Service
 
       @Override
       protected void onPostExecute(Boolean sourceIsHLS) {
+         prepareExoPLayer(sourceIsHLS, url);
 
-         String uriString = url;
-
-         prepareExoPLayer(sourceIsHLS, uriString);
          mExoPlayer.addListener(PlayerService.this);
       }
 
    }
+
 
 
    private int done(String state) {
@@ -682,10 +671,7 @@ public class PlayerService extends Service
 
          String receiveIntent = intent.getAction();
 
-         Log.i("Player Service","NotifUpdate, onReceive: " + receiveIntent);
-
          if (INTENT_UPDATENOTIF.equals(receiveIntent)) {
-            Log.i("Player Service","NotifUpdate, onReceive, INTENT_UPDATENOTIF");
 
             String etat = intent.getStringExtra("state");
             String nom = intent.getStringExtra("name");
@@ -702,8 +688,6 @@ public class PlayerService extends Service
          if (INTENT_STATE.equals(receiveIntent)) {
 
             String etat_lecture = intent.getStringExtra("state");
-
-            Log.i("Player Service","NotifUpdate, onReceive, INTENT_STATE traduction: " + etat_lecture);
 
             // Traduction du texte
             String trad;
@@ -745,9 +729,6 @@ public class PlayerService extends Service
 
 
    public void updateNotification(String nom_radio, String action, Bitmap logo) {
-
-      Log.i("Player Service","updateNotification");
-
 
       SharedPreferences préférences = context.getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
@@ -804,21 +785,15 @@ public class PlayerService extends Service
 
       if (startForeground) {
 
-         Log.i("Player Service", "updateNotification, if (startForeground)");
-
          startForeground(NOTIFY_ID, notification);
 
       } else {
 
          if (sIsServiceForeground) {
 
-            Log.i("Player Service", "updateNotification, if (sIsServiceForeground)");
-
             stopForeground(false);
 
          }
-
-         Log.i("Player Service", "updateNotification, else");
 
          NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
          notificationManager.notify(NOTIFY_ID, notification);
@@ -831,9 +806,6 @@ public class PlayerService extends Service
 
 
    public void removeNotification(Context context) {
-
-      Log.i("Player Service","removeNotification");
-
       NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
       notificationManager.cancel(NOTIFY_ID);
    }

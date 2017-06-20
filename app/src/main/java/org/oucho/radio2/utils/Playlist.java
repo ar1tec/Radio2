@@ -14,6 +14,7 @@ import org.oucho.radio2.net.HttpGetter;
 
 public class Playlist extends AsyncTask<Void, Void, String> {
 
+   private static final String TAG = "Playlist";
    private static final int max_ttl = 10;
 
    private static final int NONE    = 0;
@@ -73,6 +74,7 @@ public class Playlist extends AsyncTask<Void, Void, String> {
    }
 
    protected void onPostExecute(String url) {
+
       if ( url != null && player != null && ! isCancelled() && Counter.still(then) )
          player.playLaunch(url);
      }
