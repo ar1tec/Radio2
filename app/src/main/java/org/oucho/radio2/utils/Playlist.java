@@ -25,7 +25,7 @@ public class Playlist extends AsyncTask<Void, Void, String> {
    private String start_url = null;
    private int then = 0;
 
-   private static Random random = null;
+   //private static Random random = null;
 
    private static final String url_regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
    private static Pattern url_pattern = null;
@@ -167,8 +167,6 @@ public class Playlist extends AsyncTask<Void, Void, String> {
    }
 
    private static int playlistType(String url) {
-
-       //String URL;
 
        String URL = url.toLowerCase();
       if ( isSomeSuffix(URL,".m3u"  ) ) return M3U;

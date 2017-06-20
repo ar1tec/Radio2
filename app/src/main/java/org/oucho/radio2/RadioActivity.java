@@ -3,7 +3,6 @@ package org.oucho.radio2;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -30,15 +29,10 @@ public class RadioActivity extends Activity {
 
         }
 
+        assert intent != null;
         startActivity(intent.setClass(this, MainActivity.class));
-/*        startActivity(intent.setClass(this, MainActivity.class));
 
-        Intent intent1 = new Intent();
-        intent1.putExtra("android.intent.action.MAIN", true);
-        startActivity(intent1);*/
-
-        // MediaUtils.openMediaNoUi(intent.getData());
         finish();
-        return;
+       // return;
     }
 }
