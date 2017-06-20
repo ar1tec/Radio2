@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.oucho.radio2.interfaces.PlayableItem;
 import org.oucho.radio2.interfaces.RadioKeys;
@@ -21,7 +22,7 @@ public class Radio implements PlayableItem, RadioKeys {
 		this.name = name;
         this.img = img;
 	}
-	
+
 	public String getUrl() {
 		return url;
 	}
@@ -66,16 +67,21 @@ public class Radio implements PlayableItem, RadioKeys {
 		cursor.close();
 		return lst;
 	}
-	
+
 	public static void addRadio(Context context, Radio radio) {
+
+        Log.d("Radio", "loading: " + radio);
+
 		RadiosDatabase radiosDatabase = new RadiosDatabase(context);
 		ContentValues values = new ContentValues();
 		values.put("url", radio.url);
 		values.put("name", radio.name);
         values.put("image", radio.img);
+
 		try (SQLiteDatabase db = radiosDatabase.getWritableDatabase()) {
 			db.insertOrThrow(TABLE_NAME, null, values);
-		} catch (Exception ignored) {
+		} catch (Exception e) {
+            Log.d("Radio", "Error: " + e);
 		}
 	}
 	

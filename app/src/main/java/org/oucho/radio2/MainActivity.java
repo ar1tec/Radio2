@@ -34,6 +34,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -107,18 +108,18 @@ public class MainActivity extends AppCompatActivity
     private ImageView play;
     private ImageView pause;
 
-    private Context context;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        context = getApplicationContext();
+        mContext = getApplicationContext();
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             final int mUIFlag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             getWindow().getDecorView().setSystemUiVisibility(mUIFlag);
-            getWindow().setStatusBarColor(ContextCompat.getColor(context, R.color.white));
+            getWindow().setStatusBarColor(ContextCompat.getColor(mContext, R.color.white));
         }
 
         setContentView(R.layout.activity_main);
@@ -126,9 +127,9 @@ public class MainActivity extends AppCompatActivity
         préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
 
-        int couleurTitre = ContextCompat.getColor(context, R.color.colorAccent);
-        int couleurFond = ContextCompat.getColor(context, R.color.colorPrimary);
-        String titre = context.getString(R.string.app_name);
+        int couleurTitre = ContextCompat.getColor(mContext, R.color.colorAccent);
+        int couleurFond = ContextCompat.getColor(mContext, R.color.colorPrimary);
+        String titre = mContext.getString(R.string.app_name);
 
         ColorDrawable colorDrawable = new ColorDrawable(couleurFond);
 
@@ -180,15 +181,16 @@ public class MainActivity extends AppCompatActivity
         this.findViewById(R.id.play).setOnClickListener(this);
         this.findViewById(R.id.pause).setOnClickListener(this);
 
-        soundChargement = MediaPlayer.create(context, R.raw.connexion);
+        soundChargement = MediaPlayer.create(mContext, R.raw.connexion);
         soundChargement.setLooping(true);
 
         getBitRate();
         bitrate = true;
 
         volume();
-        State.getState(context);
+        State.getState(mContext);
         CheckUpdate.onStart(this);
+
     }
 
 
@@ -246,7 +248,10 @@ public class MainActivity extends AppCompatActivity
         if (running)
             showTimeEcran();
 
+
         updateListView();
+
+
     }
 
     @Override
@@ -523,13 +528,13 @@ public class MainActivity extends AppCompatActivity
 
     private void updateListView() {
         ArrayList<Object> items = new ArrayList<>();
-        items.addAll(Radio.getRadios(context));
+        items.addAll(Radio.getRadios(mContext));
 
         radioView.setAdapter(new RadioAdapter(this, items, nom_radio, clickListener));
 
         // pas fichu de trouver une façon d'extraire directement de l'Object
         List<String> lst = new ArrayList<>();
-        lst.addAll(Radio.getListe(context));
+        lst.addAll(Radio.getListe(mContext));
 
         String url = PlayerService.getUrl();
 
@@ -578,7 +583,7 @@ public class MainActivity extends AppCompatActivity
 
             if (oldRadio.getImg() != null ) {
                 editLogo.setImageBitmap(logoRadio);
-                editLogo.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+                editLogo.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                 text.setVisibility(View.INVISIBLE);
                 editLogo.setImageBitmap(ImageFactory.getImage(oldRadio.getImg()));
                 logoRadio = ImageFactory.getImage(oldRadio.getImg());
@@ -596,7 +601,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 if("".equals(url) || "http://".equals(url)) {
-                    Toast.makeText(context, R.string.errorInvalidURL, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, R.string.errorInvalidURL, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -604,11 +609,11 @@ public class MainActivity extends AppCompatActivity
                     name = url;
 
                 if(oldRadio != null) {
-                    Radio.deleteRadio(context, oldRadio);
+                    Radio.deleteRadio(mContext, oldRadio);
                 }
 
                 Radio newRadio = new Radio(url, name, img);
-                Radio.addRadio(context, newRadio);
+                Radio.addRadio(mContext, newRadio);
                 updateListView();
             }
         });
@@ -759,7 +764,7 @@ public class MainActivity extends AppCompatActivity
 
         } else {
 
-            String encodedImage = ImageFactory.drawableResourceToBitmap(context, R.drawable.ic_radio_white_36dp);
+            String encodedImage = ImageFactory.drawableResourceToBitmap(mContext, R.drawable.ic_radio_white_36dp);
 
             Intent intent = new Intent();
             intent.setAction(INTENT_UPDATENOTIF);
@@ -784,7 +789,7 @@ public class MainActivity extends AppCompatActivity
         builder.setMessage(getResources().getString(R.string.deleteRadioConfirm));
         builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Radio.deleteRadio(context, radio);
+                Radio.deleteRadio(mContext, radio);
                 updateListView();
             }
         });
@@ -811,7 +816,7 @@ public class MainActivity extends AppCompatActivity
             imp_exp = "exporter";
         } else {
 
-            RadiosDatabase radiosDatabase = new RadiosDatabase(context);
+            RadiosDatabase radiosDatabase = new RadiosDatabase(mContext);
 
             String Destination = Environment.getExternalStorageDirectory().toString() + "/Radio";
 
@@ -826,7 +831,7 @@ public class MainActivity extends AppCompatActivity
             DatabaseSave databaseSave = new DatabaseSave(radiosDatabase.getReadableDatabase(), path);
             databaseSave.exportData();
 
-            Toast.makeText(context, getString(R.string.exporter), Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, getString(R.string.exporter), Toast.LENGTH_SHORT).show();
 
 
         }
@@ -973,9 +978,9 @@ public class MainActivity extends AppCompatActivity
 
         PlayerService.setStateTimer(true);
         running = true;
-        State.getState(context);
+        State.getState(mContext);
         showTimeEcran();
-        volume.baisser(context, mTask, delay);
+        volume.baisser(mContext, mTask, delay);
     }
 
 
@@ -1078,13 +1083,13 @@ public class MainActivity extends AppCompatActivity
             timerEcran = null;
 
             volume.getMinuteur().cancel();
-            volume.setVolume(context, 1.0f);
+            volume.setVolume(mContext, 1.0f);
         }
 
         running = false;
 
         PlayerService.setStateTimer(false);
-        State.getState(context);
+        State.getState(mContext);
 
         timeAfficheur = ((TextView) findViewById(R.id.time_ecran));
         assert timeAfficheur != null;
@@ -1168,7 +1173,7 @@ public class MainActivity extends AppCompatActivity
 
                 String XMLdata = readXML.readFile(object.path + buffer.toString());
 
-                readXML.read(context, XMLdata);
+                readXML.read(mContext, XMLdata);
 
 
                 updateListView();
@@ -1179,13 +1184,13 @@ public class MainActivity extends AppCompatActivity
                 File imgFile = new  File(pathImg);
                 if(imgFile.exists()){
                     try {
-                        logoRadio = ImageFactory.getResizedBitmap(context, BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
+                        logoRadio = ImageFactory.getResizedBitmap(mContext, BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
 
                         final ImageView logo = (ImageView) editView.findViewById(R.id.logo);
                         final TextView text = (TextView) editView.findViewById(R.id.texte);
 
                         logo.setImageBitmap(logoRadio);
-                        logo.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+                        logo.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                         text.setVisibility(View.INVISIBLE);
                     } catch (NullPointerException ignored) {}
                 }
@@ -1221,7 +1226,7 @@ public class MainActivity extends AppCompatActivity
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             Permissions perm = new Permissions();
-            perm.check(context, MainActivity.this);
+            perm.check(mContext, MainActivity.this);
 
         }
     }

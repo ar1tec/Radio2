@@ -27,8 +27,8 @@ public class Playlist extends AsyncTask<Void, Void, String> {
 
    private static Random random = null;
 
-    private static final String url_regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
-    private static Pattern url_pattern = null;
+   private static final String url_regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
+   private static Pattern url_pattern = null;
 
    public Playlist(PlayerService a_player, String a_url) {
 
@@ -112,12 +112,14 @@ public class Playlist extends AsyncTask<Void, Void, String> {
       if ( links.size() == 0 )
          return null;
 
-      for (int i=0; i<links.size(); i+= 1)
+    //  for (int i=0; i<links.size(); i+= 1)
 
-      if ( random == null )
-         random = new Random();
+     // if ( random == null )
+     //    random = new Random();
 
-      return links.get(random.nextInt(links.size()));
+     // return links.get(random.nextInt(links.size()));
+
+      return links.get(0);
    }
 
 
