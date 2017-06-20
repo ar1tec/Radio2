@@ -17,6 +17,10 @@
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
 
+
+    <string name="addRadio_fromApp">La radio %1$s ajoutée</string>
+
+
     <!-- nav header activity main -->
     <string name="by">Old Geek, juin 2017</string>
 
@@ -30,7 +34,7 @@
 
     <string name="about_message">
         \n
-        Radio 2.11.4, web radio pour android\n
+        Radio 2.11.5, web radio pour android\n
         \n
         Old Geek, 2017\n
         \n

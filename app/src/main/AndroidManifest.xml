@@ -49,6 +49,15 @@
 
         </receiver>
 
+        <receiver android:name=".receiver.NewRadioReceiver"
+            tools:ignore="ExportedReceiver">
+
+            <intent-filter>
+                <action android:name="org.oucho.radio2.ADD_RADIO"/>
+            </intent-filter>
+
+        </receiver>
+
     </application>
 
 </manifest>

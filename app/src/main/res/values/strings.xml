@@ -42,7 +42,7 @@
 
     <string name="about_message">
         \n
-        Radio 2.11.4, web radio pour android\n
+        Radio 2.11.5, web radio pour android\n
         \n
         Old Geek, 2017\n
         \n
@@ -134,5 +134,8 @@
     <string name="folder_name_hint">Folder name</string>
     <string name="drawer_close">close</string>
     <string name="drawer_open">open</string>
+
+    <string name="addRadio_fromApp">Radio %1$s added</string>
+
 
 </resources>
