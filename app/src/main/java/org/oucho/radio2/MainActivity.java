@@ -84,8 +84,11 @@ public class MainActivity extends AppCompatActivity
     private String imp_exp;
     private String importType;
     private String app_music = "org.oucho.musicplayer";
+    private String app_mpd = "org.oucho.mpdclient";
+
 
     private boolean bitrate = false;
+    public static boolean mpdIsInstalled = false;
     private boolean musicIsInstalled = false;
 
     private static boolean running;
@@ -156,6 +159,7 @@ public class MainActivity extends AppCompatActivity
         mNavigationView.setNavigationItemSelectedListener(this);
 
         musicIsInstalled = checkApp(app_music);
+        mpdIsInstalled = checkApp(app_mpd);
 
         setNavigationMenu();
 
@@ -721,11 +725,24 @@ public class MainActivity extends AppCompatActivity
                 case R.id.menu_delete:
                     deleteRadio((Radio)item);
                     break;
+                case R.id.menu_add_mpd:
+                    String name = ((Radio) item).getName();
+                    String url = ((Radio) item).getUrl();
+                    addMPD(name, url);
+                    break;
                 default:
                     break;
             }
         }
     };
+
+    private void addMPD(String name, String url) {
+        Intent radio = new Intent();
+        radio.setAction("org.oucho.MPDclient.ADD_RADIO");
+        radio.putExtra("name", name);
+        radio.putExtra("url", url);
+        mContext.sendBroadcast(radio);
+    }
 
    /* **********************************************************************************************
     * Lecture de la radio

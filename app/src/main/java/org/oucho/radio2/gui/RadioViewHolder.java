@@ -78,7 +78,14 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
     public void onClick(View view) {
         if(view.equals(menu)) {
             final PopupMenu popup = new PopupMenu(activity, menu);
-            popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete, popup.getMenu());
+
+            if (MainActivity.mpdIsInstalled) {
+                popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete_mpd, popup.getMenu());
+            } else {
+                popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete, popup.getMenu());
+            }
+
+          //  popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete, popup.getMenu());
             popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 public boolean onMenuItemClick(MenuItem item) {
                     clickListener.onPlayableItemMenuClick(radio, item.getItemId());
