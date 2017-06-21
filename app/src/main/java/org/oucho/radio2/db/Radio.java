@@ -5,7 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
+import org.oucho.radio2.R;
 import org.oucho.radio2.interfaces.PlayableItem;
 import org.oucho.radio2.interfaces.RadioKeys;
 
@@ -80,7 +82,14 @@ public class Radio implements PlayableItem, RadioKeys {
 
 		try (SQLiteDatabase db = radiosDatabase.getWritableDatabase()) {
 			db.insertOrThrow(TABLE_NAME, null, values);
+
+            String text = context.getResources().getString(R.string.addRadio_fromApp, radio.getName());
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 		} catch (Exception e) {
+
+            String text = context.getResources().getString(R.string.addRadio_error);
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+
             Log.d("Radio", "Error: " + e);
 		}
 	}

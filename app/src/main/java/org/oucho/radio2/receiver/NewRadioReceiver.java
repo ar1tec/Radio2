@@ -4,9 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
-import org.oucho.radio2.R;
 import org.oucho.radio2.db.Radio;
 
 
@@ -26,10 +24,6 @@ public class NewRadioReceiver extends BroadcastReceiver {
 
             Radio newRadio = new Radio(url, name, null);
             Radio.addRadio(context, newRadio);
-
-            String text = context.getResources().getString(R.string.addRadio_fromApp, name);
-
-            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -136,6 +136,7 @@
     <string name="drawer_open">open</string>
 
     <string name="addRadio_fromApp">Radio %1$s added</string>
+    <string name="addRadio_error">This radio is already registered</string>
 
 
 </resources>

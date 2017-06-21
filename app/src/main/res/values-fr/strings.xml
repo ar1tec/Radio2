@@ -19,6 +19,7 @@
 
 
     <string name="addRadio_fromApp">La radio %1$s ajoutée</string>
+    <string name="addRadio_error">Cette radio est déjà enregistrée</string>
 
 
     <!-- nav header activity main -->

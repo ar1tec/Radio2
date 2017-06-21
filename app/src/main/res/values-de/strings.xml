@@ -133,6 +133,7 @@
     <string name="navigation_drawer_open">open</string>
 
     <string name="addRadio_fromApp">Radio %1$s hinzugefügt</string>
+    <string name="addRadio_error">Dieses Radio ist bereits registriert</string>
 
 
 </resources>
