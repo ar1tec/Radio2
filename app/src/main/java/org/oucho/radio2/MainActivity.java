@@ -34,7 +34,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -422,7 +421,6 @@ public class MainActivity extends AppCompatActivity
         if (nom_radio == null)
             nom_radio = préférences.getString("name", "");
 
-        assert StationTextView != null;
         StationTextView.setText(nom_radio);
     }
 
