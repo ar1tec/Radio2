@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             final int mUIFlag = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
             getWindow().getDecorView().setSystemUiVisibility(mUIFlag);
-            getWindow().setStatusBarColor(ContextCompat.getColor(mContext, R.color.white));
+           // getWindow().setStatusBarColor(ContextCompat.getColor(mContext, R.color.white));
         }
 
         setContentView(R.layout.activity_main);

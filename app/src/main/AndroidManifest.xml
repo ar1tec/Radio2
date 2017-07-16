@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:launchMode="singleTask"
         android:allowBackup="false"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme">
 
         <activity
             android:name=".MainActivity"
