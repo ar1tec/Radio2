@@ -24,7 +24,7 @@ Screenshots
 License
 -------
 
-<img alt="screenshot" src="/screenshots/WTFPL.png?raw=true" width="32px" /> DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+<img alt="screenshot" src="/screenshot/WTFPL.png?raw=true" width="32px" /> DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
                    Version 2, December 2004
 
 Copyright (C) 2017 Old Geek <dev@null.net>
