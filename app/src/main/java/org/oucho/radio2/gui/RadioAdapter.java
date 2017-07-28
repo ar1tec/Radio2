@@ -15,20 +15,20 @@ import java.util.ArrayList;
 
 public class RadioAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final MainActivity activity;
-    private final ArrayList<Object> items;
+    private final ArrayList<Object> radioItems;
     private final LayoutInflater inflater;
     private final ListsClickListener clickListener;
 
-    private final String nomRadio;
+    private final String radioName;
 
 
-    public RadioAdapter(MainActivity activity, ArrayList<Object> items, String nomRadio, ListsClickListener clickListener) {
+    public RadioAdapter(MainActivity activity, ArrayList<Object> radioItems, String radioName, ListsClickListener clickListener) {
         this.activity = activity;
-        this.items = items;
+        this.radioItems = radioItems;
         this.clickListener = clickListener;
         inflater = activity.getLayoutInflater();
 
-        this.nomRadio = nomRadio;
+        this.radioName = radioName;
     }
 
     @SuppressLint("InflateParams")
@@ -41,15 +41,15 @@ public class RadioAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Object item = items.get(position);
+        Object item = radioItems.get(position);
 
-        ((RadioViewHolder) holder).update(activity.getApplicationContext(), (Radio)item, nomRadio);
+        ((RadioViewHolder) holder).update(activity.getApplicationContext(), (Radio)item, radioName);
 
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return radioItems.size();
     }
 
 }

@@ -48,8 +48,8 @@ import org.oucho.radio2.audio.GetAudioFocusTask;
 import org.oucho.radio2.audio.VolumeTimer;
 import org.oucho.radio2.db.Radio;
 import org.oucho.radio2.db.RadiosDatabase;
-import org.oucho.radio2.dialog.About;
-import org.oucho.radio2.dialog.Permissions;
+import org.oucho.radio2.dialog.AboutDialog;
+import org.oucho.radio2.dialog.PermissionDialog;
 import org.oucho.radio2.filepicker.FilePicker;
 import org.oucho.radio2.filepicker.FilePickerActivity;
 import org.oucho.radio2.filepicker.FilePickerParcelObject;
@@ -79,38 +79,36 @@ public class MainActivity extends AppCompatActivity
 
     private static final int FILE_PICKER_RESULT = 0;
 
-    private String nom_radio;
-    private String etat_lecture;
-    private String imp_exp;
-    private String importType;
-    private String app_music = "org.oucho.musicplayer";
-    private String app_mpd = "org.oucho.mpdclient";
+    private String radio_name;
+    private String playing_state;
+    private String import_export_radio_list;
+    private String import_type; // file or img
+    private final String app_music = "org.oucho.musicplayer";
 
-
-    private boolean bitrate = false;
-    public static boolean mpdIsInstalled = false;
-    private boolean musicIsInstalled = false;
-
+    private boolean showBitrate = false;
+    private boolean music_app_is_installed = false;
+    public static boolean mpd_app_is_installed = false;
     private static boolean running;
-    private ScheduledFuture mTask;
 
-    private View editView;
+    private ScheduledFuture scheduledFuture;
+    private View edit_radio_view;
     private Handler handler = new Handler();
     private Bitmap logoRadio;
-    private VolumeTimer volume;
-    private TextView timeAfficheur;
-    private RecyclerView radioView;
-    private CountDownTimer timerEcran;
+    private VolumeTimer volumeTimer;
+    private TextView viewSleepTimer;
+    private RecyclerView mRecyclerView;
+    private CountDownTimer sleepTimerCounter;
     private DrawerLayout mDrawerLayout;
-    private MediaPlayer soundChargement;
-    private SharedPreferences préférences;
+    private MediaPlayer mediaPlayer;
+    private SharedPreferences preferences;
     private NavigationView mNavigationView;
-    private Etat_player Etat_player_Receiver;
+    private PlayerStateReceiver player_state_receiver;
 
-    private ImageView play;
-    private ImageView pause;
+    private ImageView img_play;
+    private ImageView img_pause;
 
     private Context mContext;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,14 +123,13 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
+        preferences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
+        int titleColor = ContextCompat.getColor(mContext, R.color.colorAccent);
+        int backgroundColor = ContextCompat.getColor(mContext, R.color.colorPrimary);
+        String title = mContext.getString(R.string.app_name);
 
-        int couleurTitre = ContextCompat.getColor(mContext, R.color.colorAccent);
-        int couleurFond = ContextCompat.getColor(mContext, R.color.colorPrimary);
-        String titre = mContext.getString(R.string.app_name);
-
-        ColorDrawable colorDrawable = new ColorDrawable(couleurFond);
+        ColorDrawable colorDrawable = new ColorDrawable(backgroundColor);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -142,71 +139,71 @@ public class MainActivity extends AppCompatActivity
         actionBar.setBackgroundDrawable(colorDrawable);
 
         if (android.os.Build.VERSION.SDK_INT >= 24) {
-            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>", Html.FROM_HTML_MODE_LEGACY));
+            actionBar.setTitle(Html.fromHtml("<font color='" + titleColor + "'>" + title + "</font>", Html.FROM_HTML_MODE_LEGACY));
         } else {
-            actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>"));
+            //noinspection deprecation
+            actionBar.setTitle(Html.fromHtml("<font color='" + titleColor + "'>" + title + "</font>"));
         }
 
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.setDrawerListener(toggle);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        musicIsInstalled = checkApp(app_music);
-        mpdIsInstalled = checkApp(app_mpd);
+        music_app_is_installed = checkIfAppIsInstalled(app_music);
+
+        String app_mpd = "org.oucho.mpdclient";
+        mpd_app_is_installed = checkIfAppIsInstalled(app_mpd);
 
         setNavigationMenu();
 
-        Control_Volume niveau_Volume = new Control_Volume(this, new Handler());
+        VolumeControl niveau_Volume = new VolumeControl(this, new Handler());
         getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
 
-        Etat_player_Receiver = new Etat_player();
+        player_state_receiver = new PlayerStateReceiver();
         IntentFilter filter = new IntentFilter(INTENT_STATE);
-        registerReceiver(Etat_player_Receiver, filter);
+        registerReceiver(player_state_receiver, filter);
 
-        volume = new VolumeTimer();
+        volumeTimer = new VolumeTimer();
 
-        radioView = (RecyclerView)findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        radioView.setLayoutManager(layoutManager);
+        mRecyclerView.setLayoutManager(layoutManager);
 
-        play = (ImageView) findViewById(R.id.play);
-        pause = (ImageView) findViewById(R.id.pause);
+        img_play = (ImageView) findViewById(R.id.play_radio);
+        img_pause = (ImageView) findViewById(R.id.pause_radio);
 
-        this.findViewById(R.id.add).setOnClickListener(this);
-        this.findViewById(R.id.stop).setOnClickListener(this);
-        this.findViewById(R.id.play).setOnClickListener(this);
-        this.findViewById(R.id.pause).setOnClickListener(this);
+        this.findViewById(R.id.add_radio).setOnClickListener(this);
+        this.findViewById(R.id.stop_radio).setOnClickListener(this);
+        this.findViewById(R.id.play_radio).setOnClickListener(this);
+        this.findViewById(R.id.pause_radio).setOnClickListener(this);
 
-        soundChargement = MediaPlayer.create(mContext, R.raw.connexion);
-        soundChargement.setLooping(true);
+        mediaPlayer = MediaPlayer.create(mContext, R.raw.connexion);
+        mediaPlayer.setLooping(true);
 
-        getBitRate();
-        bitrate = true;
+        showCurrentBitRate();
+        showBitrate = true;
 
         volume();
         State.getState(mContext);
         CheckUpdate.onStart(this);
-
     }
 
 
     private void setNavigationMenu() {
 
-        if (musicIsInstalled) {
+        if (music_app_is_installed) {
             mNavigationView.inflateMenu(R.menu.navigation_music);
         } else {
             mNavigationView.inflateMenu(R.menu.navigation);
         }
-
     }
 
-    private boolean checkApp(String packagename) {
+
+    private boolean checkIfAppIsInstalled(String packagename) {
         PackageManager packageManager = getPackageManager();
 
         try {
@@ -217,7 +214,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-       /* **********************************************************************************************
+
+   /* **********************************************************************************************
     * Pause / résume / etc.
     * *********************************************************************************************/
 
@@ -225,9 +223,9 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
 
-        if (bitrate) {
+        if (showBitrate) {
             stopBitrate();
-            bitrate = false;
+            showBitrate = false;
         }
     }
 
@@ -235,38 +233,35 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        if (!bitrate) {
-            getBitRate();
-            bitrate = true;
+        if (!showBitrate) {
+            showCurrentBitRate();
+            showBitrate = true;
         }
 
         if (State.isStopped()) {
             TextView status = (TextView) findViewById(R.id.etat);
-            etat_lecture = "Stop";
+            playing_state = "Stop";
             assert status != null;
-            status.setText(etat_lecture);
+            status.setText(playing_state);
         }
 
         if (running)
             showTimeEcran();
 
-
         updateListView();
-
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        if (bitrate)
+        if (showBitrate)
             stopBitrate();
 
-        soundChargement.release();
+        mediaPlayer.release();
 
         try {
-            unregisterReceiver(Etat_player_Receiver);
+            unregisterReceiver(player_state_receiver);
         } catch (IllegalArgumentException ignore) {}
 
     }
@@ -320,14 +315,14 @@ public class MainActivity extends AppCompatActivity
          mDrawerLayout.closeDrawer(GravityCompat.START);
 
         switch (menuItem.getItemId()) {
-            case R.id.action_music:
+            case R.id.nav_music:
                 Intent music = getPackageManager().getLaunchIntentForPackage(app_music);
                 startActivity(music);
                 break;
-            case R.id.action_export:
+            case R.id.nav_export:
                 exporter();
                 break;
-            case R.id.action_import:
+            case R.id.nav_import:
                 importer();
                 break;
             case R.id.nav_update:
@@ -352,7 +347,7 @@ public class MainActivity extends AppCompatActivity
     *
     * *********************************************************************************************/
 
-    private class Etat_player extends BroadcastReceiver {
+    private class PlayerStateReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -362,50 +357,50 @@ public class MainActivity extends AppCompatActivity
 
             if (INTENT_STATE.equals(receiveIntent)) {
 
-                TextView status = (TextView) findViewById(R.id.etat);
+                TextView player_status = (TextView) findViewById(R.id.etat);
 
-                boolean plop = intent.getBooleanExtra(ACTION_QUIT, false);
-                etat_lecture = intent.getStringExtra("state");
-                nom_radio = intent.getStringExtra("name");
+                boolean closeApplication = intent.getBooleanExtra(ACTION_QUIT, false);
+                playing_state = intent.getStringExtra("state");
+                radio_name = intent.getStringExtra("name");
 
-                if (plop)
+                if (closeApplication)
                     finish();
 
                 // Traduction du texte
-                String trad;
-                if ("Play".equals(etat_lecture)) {
-                    trad = context.getResources().getString(R.string.play);
-                    play.setVisibility(View.INVISIBLE);
-                    pause.setVisibility(View.VISIBLE);
-                } else if ("Loading...".equals(etat_lecture)) {
-                    trad = context.getResources().getString(R.string.loading);
-                } else if ("Disconnected".equals(etat_lecture)){
-                    trad = context.getResources().getString(R.string.disconnected);
-                } else if ("Completed".equals(etat_lecture)){
-                    trad = context.getResources().getString(R.string.completed);
-                } else if ("Pause".equals(etat_lecture)){
-                    trad = etat_lecture;
-                    play.setVisibility(View.VISIBLE);
-                    pause.setVisibility(View.INVISIBLE);
-                } else if ("Stop".equals(etat_lecture)){
-                    trad = etat_lecture;
-                    play.setVisibility(View.VISIBLE);
-                    pause.setVisibility(View.INVISIBLE);
+                String locale_string;
+                if ("Play".equals(playing_state)) {
+                    locale_string = context.getResources().getString(R.string.play);
+                    img_play.setVisibility(View.INVISIBLE);
+                    img_pause.setVisibility(View.VISIBLE);
+                } else if ("Loading...".equals(playing_state)) {
+                    locale_string = context.getResources().getString(R.string.loading);
+                } else if ("Disconnected".equals(playing_state)){
+                    locale_string = context.getResources().getString(R.string.disconnected);
+                } else if ("Completed".equals(playing_state)){
+                    locale_string = context.getResources().getString(R.string.completed);
+                } else if ("Pause".equals(playing_state)){
+                    locale_string = playing_state;
+                    img_play.setVisibility(View.VISIBLE);
+                    img_pause.setVisibility(View.INVISIBLE);
+                } else if ("Stop".equals(playing_state)){
+                    locale_string = playing_state;
+                    img_play.setVisibility(View.VISIBLE);
+                    img_pause.setVisibility(View.INVISIBLE);
                 } else {
-                    trad = etat_lecture;
+                    locale_string = playing_state;
                 }
 
-                status.setText(trad);
+                player_status.setText(locale_string);
 
-                updateNomRadio();
+                updateRadioName();
                 updateListView();
-                updatePlayPause();
+                updatePlayPauseIcon();
 
                 try {
-                    if (etat_lecture.equals("Loading...")) {
-                        soundChargement.start();
-                    } else if (soundChargement.isPlaying()) {
-                        soundChargement.pause();
+                    if (playing_state.equals("Loading...")) {
+                        mediaPlayer.start();
+                    } else if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
                     }
                 } catch (NullPointerException ignore) {}
             }
@@ -417,14 +412,14 @@ public class MainActivity extends AppCompatActivity
     * Affiche le nom de la radio active
     * *********************************/
 
-    private void updateNomRadio() {
+    private void updateRadioName() {
 
         TextView StationTextView = (TextView) findViewById(R.id.station);
 
-        if (nom_radio == null)
-            nom_radio = préférences.getString("name", "");
+        if (radio_name == null)
+            radio_name = preferences.getString("name", "");
 
-        StationTextView.setText(nom_radio);
+        StationTextView.setText(radio_name);
     }
 
 
@@ -433,13 +428,13 @@ public class MainActivity extends AppCompatActivity
     * ****************************/
 
     @SuppressWarnings("ConstantConditions")
-    private void updatePlayPause() {
-        ImageView equalizer = (ImageView) findViewById(R.id.icon_equalizer);
+    private void updatePlayPauseIcon() {
+        ImageView img_equalizer = (ImageView) findViewById(R.id.icon_equalizer);
 
         if (State.isPlaying() || State.isPaused()) {
-            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
+            img_equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
         } else {
-            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
+            img_equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
         }
     }
 
@@ -450,18 +445,18 @@ public class MainActivity extends AppCompatActivity
 
 
     private void exit() {
-        soundChargement.release();
+        mediaPlayer.release();
 
-        if (bitrate)
+        if (showBitrate)
             stopBitrate();
 
-        stopTimer();
+        stopSleepTimer();
 
         Intent player = new Intent(this, PlayerService.class);
         player.putExtra("action", ACTION_STOP);
         startService(player);
 
-        unregisterReceiver(Etat_player_Receiver);
+        unregisterReceiver(player_state_receiver);
 
         finish();
     }
@@ -474,46 +469,46 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(View v) {
 
-        Intent player = new Intent(this, PlayerService.class);
+        Intent action_player = new Intent(this, PlayerService.class);
 
 
         switch (v.getId()) {
-            case R.id.stop:
-                player.putExtra("action", ACTION_STOP);
-                startService(player);
+            case R.id.stop_radio:
+                action_player.putExtra("action", ACTION_STOP);
+                startService(action_player);
                 break;
-            case R.id.play:
-                switch (etat_lecture) {
+            case R.id.play_radio:
+                switch (playing_state) {
                     case "Stop":
-                        player.putExtra("action", ACTION_PLAY);
-                        startService(player);
+                        action_player.putExtra("action", ACTION_PLAY);
+                        startService(action_player);
                         break;
                     case "Pause":
-                        player.putExtra("action", ACTION_RESTART);
-                        startService(player);
+                        action_player.putExtra("action", ACTION_RESTART);
+                        startService(action_player);
                         break;
                     default:
                         break;
                 }
                 break;
 
-            case R.id.pause:
+            case R.id.pause_radio:
 
-                switch (etat_lecture) {
+                switch (playing_state) {
                     case "Play":
-                        player.putExtra("action", ACTION_PAUSE);
-                        startService(player);
+                        action_player.putExtra("action", ACTION_PAUSE);
+                        startService(action_player);
                         break;
                     case "Pause":
-                        player.putExtra("action", ACTION_RESTART);
-                        startService(player);
+                        action_player.putExtra("action", ACTION_RESTART);
+                        startService(action_player);
                         break;
                     default:
                         break;
                 }
                 break;
 
-            case R.id.add:
+            case R.id.add_radio:
                 editRadio(null);
                 break;
             default:
@@ -531,7 +526,7 @@ public class MainActivity extends AppCompatActivity
         ArrayList<Object> items = new ArrayList<>();
         items.addAll(Radio.getRadios(mContext));
 
-        radioView.setAdapter(new RadioAdapter(this, items, nom_radio, clickListener));
+        mRecyclerView.setAdapter(new RadioAdapter(this, items, radio_name, clickListener));
 
         // pas fichu de trouver une façon d'extraire directement de l'Object
         List<String> lst = new ArrayList<>();
@@ -540,12 +535,12 @@ public class MainActivity extends AppCompatActivity
         String url = PlayerService.getUrl();
 
         if (PlayerService.getUrl() == null) {
-            url = préférences.getString("url", null);
+            url = preferences.getString("url", null);
         }
 
         for (int i = 0; i < items.size(); i++) {
             if (lst.get(i).equals(url))
-                radioView.scrollToPosition( i );
+                mRecyclerView.scrollToPosition( i );
         }
     }
 
@@ -554,23 +549,24 @@ public class MainActivity extends AppCompatActivity
     * Ajout ou édition d'une radio
     * *********************************************************************************************/
 
+    @SuppressLint("InflateParams")
     private void editRadio(final Radio oldRadio) {
 
         logoRadio = null;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder edit_radio_dialog = new AlertDialog.Builder(this);
 
         int title = oldRadio == null ? R.string.addRadio : R.string.edit;
 
-        builder.setTitle(getResources().getString(title));
+        edit_radio_dialog.setTitle(getResources().getString(title));
 
-        editView = getLayoutInflater().inflate(R.layout.layout_editwebradio, null);
-        builder.setView(editView);
+        edit_radio_view = getLayoutInflater().inflate(R.layout.layout_editwebradio, null);
+        edit_radio_dialog.setView(edit_radio_view);
 
-        final EditText editTextUrl = (EditText) editView.findViewById(R.id.editTextUrl);
-        final EditText editTextName = (EditText) editView.findViewById(R.id.editTextName);
-        final ImageView editLogo = (ImageView) editView.findViewById(R.id.logo);
-        final TextView text = (TextView) editView.findViewById(R.id.texte);
+        final EditText editTextUrl = (EditText) edit_radio_view.findViewById(R.id.editTextUrl);
+        final EditText editTextName = (EditText) edit_radio_view.findViewById(R.id.editTextName);
+        final ImageView editLogo = (ImageView) edit_radio_view.findViewById(R.id.logo);
+        final TextView text = (TextView) edit_radio_view.findViewById(R.id.texte);
 
         editLogo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -591,44 +587,45 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        edit_radio_dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                String url = editTextUrl.getText().toString();
-                String name = editTextName.getText().toString();
-                byte[] img = null;
+                String radio_url = editTextUrl.getText().toString();
+                String radio_name = editTextName.getText().toString();
+                byte[] radio_logo = null;
 
                 if (logoRadio != null) {
-                    img = ImageFactory.getBytes(logoRadio);
+                    radio_logo = ImageFactory.getBytes(logoRadio);
                 }
 
-                if("".equals(url) || "http://".equals(url)) {
+                if("".equals(radio_url) || "http://".equals(radio_url)) {
                     Toast.makeText(mContext, R.string.errorInvalidURL, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if("".equals(name))
-                    name = url;
+                if("".equals(radio_name))
+                    radio_name = radio_url;
 
                 if(oldRadio != null) {
                     Radio.deleteRadio(mContext, oldRadio);
                 }
 
-                Radio newRadio = new Radio(url, name, img);
-                Radio.addRadio(mContext, newRadio);
+                Radio newRadio = new Radio(radio_url, radio_name, radio_logo);
+                Radio.addNewRadio(mContext, newRadio);
                 updateListView();
             }
         });
 
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        edit_radio_dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 updateListView();
             }
         });
 
 
-        AlertDialog dialog = builder.create();
+        AlertDialog dialog = edit_radio_dialog.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
+
     }
 
 
@@ -636,16 +633,16 @@ public class MainActivity extends AppCompatActivity
     * Volume observer
     * *********************************************************************************************/
 
-    private class Control_Volume extends ContentObserver {
+    private class VolumeControl extends ContentObserver {
         private int previousVolume;
         private final Context context;
 
-        private Control_Volume(Context c, Handler handler) {
+        private VolumeControl(Context context, Handler handler) {
             super(handler);
-            context=c;
+            this.context = context;
 
-            AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-            previousVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
+            AudioManager audioManager = (AudioManager) this.context.getSystemService(Context.AUDIO_SERVICE);
+            previousVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         }
 
         @Override
@@ -657,20 +654,20 @@ public class MainActivity extends AppCompatActivity
             AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
             int currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
 
-            int delta=previousVolume-currentVolume;
+            int delta = previousVolume - currentVolume;
 
-            if (delta >0) {
-                previousVolume=currentVolume;
+            if (delta > 0) {
+                previousVolume = currentVolume;
             }
-            else if(delta<0) {
-                previousVolume=currentVolume;
+            else if(delta < 0) {
+                previousVolume = currentVolume;
             }
         }
     }
 
 
     /* ******************************************
-     * Gestion de l'affichage de l'icon de volume
+     * Gestion de l'affichage de l'icon de volumeTimer
      * ******************************************/
 
     private void volume() {
@@ -725,9 +722,9 @@ public class MainActivity extends AppCompatActivity
                     deleteRadio((Radio)item);
                     break;
                 case R.id.menu_add_mpd:
-                    String name = ((Radio) item).getName();
-                    String url = ((Radio) item).getUrl();
-                    addMPD(name, url);
+                    String radio_name = ((Radio) item).getName();
+                    String radio_url = ((Radio) item).getUrl();
+                    sendRadioToMpdApp(radio_name, radio_url);
                     break;
                 default:
                     break;
@@ -735,12 +732,12 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
-    private void addMPD(String name, String url) {
-        Intent radio = new Intent();
-        radio.setAction("org.oucho.MPDclient.ADD_RADIO");
-        radio.putExtra("name", name);
-        radio.putExtra("url", url);
-        mContext.sendBroadcast(radio);
+    private void sendRadioToMpdApp(String radio_name, String radio_url) {
+        Intent sendRadioToMpd = new Intent();
+        sendRadioToMpd.setAction("org.oucho.MPDclient.ADD_RADIO");
+        sendRadioToMpd.putExtra("name", radio_name);
+        sendRadioToMpd.putExtra("url", radio_url);
+        mContext.sendBroadcast(sendRadioToMpd);
     }
 
    /* **********************************************************************************************
@@ -753,7 +750,7 @@ public class MainActivity extends AppCompatActivity
         String name = radio.getName();
         byte[] logo = radio.getLogo();
 
-        SharedPreferences.Editor edit = préférences.edit();
+        SharedPreferences.Editor edit = preferences.edit();
 
         Intent player = new Intent(this, PlayerService.class);
 
@@ -768,7 +765,7 @@ public class MainActivity extends AppCompatActivity
 
             Intent intent = new Intent();
             intent.setAction(INTENT_UPDATENOTIF);
-            intent.putExtra("name", nom_radio);
+            intent.putExtra("name", radio_name);
             intent.putExtra("state", "Play");
             intent.putExtra("logo", encodedImage);
             sendBroadcast(intent);
@@ -782,7 +779,7 @@ public class MainActivity extends AppCompatActivity
 
             Intent intent = new Intent();
             intent.setAction(INTENT_UPDATENOTIF);
-            intent.putExtra("name", nom_radio);
+            intent.putExtra("name", radio_name);
             intent.putExtra("state", "Play");
             intent.putExtra("logo", encodedImage);
             sendBroadcast(intent);
@@ -827,7 +824,7 @@ public class MainActivity extends AppCompatActivity
                 != PackageManager.PERMISSION_GRANTED) {
 
             checkWritePermission();
-            imp_exp = "exporter";
+            import_export_radio_list = "exporter";
         } else {
 
             RadiosDatabase radiosDatabase = new RadiosDatabase(mContext);
@@ -854,10 +851,10 @@ public class MainActivity extends AppCompatActivity
 
 
    /* **********************************************************************************************
-    * Get bitrate
+    * Get showBitrate
     * *********************************************************************************************/
 
-    private void getBitRate() {
+    private void showCurrentBitRate() {
         handler.postDelayed(new Runnable() {
 
             public void run() {
@@ -898,9 +895,9 @@ public class MainActivity extends AppCompatActivity
 
     private void stopBitrate() {
 
-        if (bitrate) {
+        if (showBitrate) {
             handler.removeCallbacksAndMessages(null);
-            bitrate = false;
+            showBitrate = false;
         }
     }
 
@@ -988,13 +985,13 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        mTask = scheduler.schedule(new GetAudioFocusTask(this), delay, TimeUnit.MILLISECONDS);
+        scheduledFuture = scheduler.schedule(new GetAudioFocusTask(this), delay, TimeUnit.MILLISECONDS);
 
-        PlayerService.setStateTimer(true);
+        PlayerService.timerOnOff(true);
         running = true;
         State.getState(mContext);
         showTimeEcran();
-        volume.baisser(mContext, mTask, delay);
+        volumeTimer.volumeDown(mContext, scheduledFuture, delay);
     }
 
 
@@ -1006,8 +1003,8 @@ public class MainActivity extends AppCompatActivity
         final String continuer = getString(R.string.continuer);
         final String cancelTimer = getString(R.string.cancel_timer);
 
-        if (mTask.getDelay(TimeUnit.MILLISECONDS) < 0) {
-            stopTimer();
+        if (scheduledFuture.getDelay(TimeUnit.MILLISECONDS) < 0) {
+            stopSleepTimer();
             return;
         }
 
@@ -1016,7 +1013,7 @@ public class MainActivity extends AppCompatActivity
 
         final TextView timeLeft = ((TextView) view.findViewById(R.id.time_left));
 
-        final AlertDialog dialog = new AlertDialog.Builder(this).setPositiveButton(continuer, new DialogInterface.OnClickListener() {
+        final AlertDialog timerDialog = new AlertDialog.Builder(this).setPositiveButton(continuer, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -1027,11 +1024,11 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                stopTimer();
+                stopSleepTimer();
             }
         }).setView(view).create();
 
-        new CountDownTimer(mTask.getDelay(TimeUnit.MILLISECONDS), 1000) {
+        new CountDownTimer(scheduledFuture.getDelay(TimeUnit.MILLISECONDS), 1000) {
             @Override
             public void onTick(long seconds) {
 
@@ -1045,11 +1042,11 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onFinish() {
-                dialog.dismiss();
+                timerDialog.dismiss();
             }
         }.start();
 
-        dialog.show();
+        timerDialog.show();
     }
 
 
@@ -1059,12 +1056,12 @@ public class MainActivity extends AppCompatActivity
 
     private void showTimeEcran() {
 
-        timeAfficheur = ((TextView) findViewById(R.id.time_ecran));
+        viewSleepTimer = ((TextView) findViewById(R.id.sleep_timer));
 
-        assert timeAfficheur != null;
-        timeAfficheur.setVisibility(View.VISIBLE);
+        assert viewSleepTimer != null;
+        viewSleepTimer.setVisibility(View.VISIBLE);
 
-        timerEcran = new CountDownTimer(mTask.getDelay(TimeUnit.MILLISECONDS), 1000) {
+        sleepTimerCounter = new CountDownTimer(scheduledFuture.getDelay(TimeUnit.MILLISECONDS), 1000) {
             @Override
             public void onTick(long seconds) {
 
@@ -1074,12 +1071,12 @@ public class MainActivity extends AppCompatActivity
 
                 String textTemps = "zZz " + String.format(getString(R.string.timer_info), ((secondes % 3600) / 60), ((secondes % 3600) % 60));
 
-                timeAfficheur.setText(textTemps);
+                viewSleepTimer.setText(textTemps);
             }
 
             @Override
             public void onFinish() {
-                timeAfficheur.setVisibility(View.INVISIBLE);
+                viewSleepTimer.setVisibility(View.INVISIBLE);
             }
 
         }.start();
@@ -1090,26 +1087,26 @@ public class MainActivity extends AppCompatActivity
     * Annuler le timer
     * ****************/
 
-    private void stopTimer() {
+    private void stopSleepTimer() {
         if (running) {
-            mTask.cancel(true);
-            timerEcran.cancel();
-            timerEcran = null;
+            scheduledFuture.cancel(true);
+            sleepTimerCounter.cancel();
+            sleepTimerCounter = null;
 
-            volume.getMinuteur().cancel();
-            volume.setVolume(mContext, 1.0f);
+            volumeTimer.getVolumeTimer().cancel();
+            volumeTimer.setVolume(mContext, 1.0f);
         }
 
         running = false;
 
-        PlayerService.setStateTimer(false);
+        PlayerService.timerOnOff(false);
         State.getState(mContext);
 
-        timeAfficheur = ((TextView) findViewById(R.id.time_ecran));
-        assert timeAfficheur != null;
-        timeAfficheur.setVisibility(View.INVISIBLE);
+        viewSleepTimer = ((TextView) findViewById(R.id.sleep_timer));
+        assert viewSleepTimer != null;
+        viewSleepTimer.setVisibility(View.INVISIBLE);
 
-        mTask = null;
+        scheduledFuture = null;
     }
 
 
@@ -1121,9 +1118,9 @@ public class MainActivity extends AppCompatActivity
                 != PackageManager.PERMISSION_GRANTED) {
 
             checkWritePermission();
-            imp_exp = "importer";
+            import_export_radio_list = "importer";
         } else {
-            importType = "fichier";
+            import_type = "fichier";
             String currentPath = Environment.getExternalStorageDirectory().toString() + "/Radio";
 
             Intent intent = new Intent(getApplicationContext(), FilePickerActivity.class);
@@ -1150,9 +1147,9 @@ public class MainActivity extends AppCompatActivity
                 != PackageManager.PERMISSION_GRANTED) {
 
             checkWritePermission();
-            imp_exp = "image";
+            import_export_radio_list = "image";
         } else {
-            importType = "image";
+            import_type = "image";
             String currentPath = Environment.getExternalStorageDirectory().toString() + "/";
 
             Intent intent = new Intent(getApplicationContext(), FilePickerActivity.class);
@@ -1181,7 +1178,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
 
-            if ( importType.equals("fichier") ) {
+            if ( import_type.equals("fichier") ) {
 
                 ReadXML readXML = new ReadXML();
 
@@ -1193,15 +1190,15 @@ public class MainActivity extends AppCompatActivity
                 updateListView();
 
 
-            } else if (importType.equals("image")) {
+            } else if (import_type.equals("image")) {
                 String pathImg = object.path + buffer.toString();
                 File imgFile = new  File(pathImg);
                 if(imgFile.exists()){
                     try {
                         logoRadio = ImageFactory.getResizedBitmap(mContext, BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
 
-                        final ImageView logo = (ImageView) editView.findViewById(R.id.logo);
-                        final TextView text = (TextView) editView.findViewById(R.id.texte);
+                        final ImageView logo = (ImageView) edit_radio_view.findViewById(R.id.logo);
+                        final TextView text = (TextView) edit_radio_view.findViewById(R.id.texte);
 
                         logo.setImageBitmap(logoRadio);
                         logo.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
@@ -1222,25 +1219,25 @@ public class MainActivity extends AppCompatActivity
         player.putExtra("action", "stop");
         context.startService(player);
 
-        PlayerService.setStateTimer(false);
+        PlayerService.timerOnOff(false);
         State.getState(context);
     }
 
 
     /***********************************************************************************************
-     * About dialog
+     * AboutDialog dialog
      **********************************************************************************************/
 
     private void about() {
-        About dialog = new About();
+        AboutDialog dialog = new AboutDialog();
         dialog.show(getSupportFragmentManager(), "about");
     }
 
     private void checkWritePermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-            Permissions perm = new Permissions();
-            perm.check(mContext, MainActivity.this);
+            PermissionDialog permission = new PermissionDialog();
+            permission.check(mContext, MainActivity.this);
 
         }
     }
@@ -1258,7 +1255,7 @@ public class MainActivity extends AppCompatActivity
 
                 if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && grantResult == PackageManager.PERMISSION_GRANTED) {
 
-                    switch (imp_exp) {
+                    switch (import_export_radio_list) {
                         case "importer":
                             importer();
                             break;

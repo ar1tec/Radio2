@@ -24,7 +24,7 @@
             android:background="?attr/selectableItemBackground">
 
             <ImageView
-                android:id="@+id/imageViewRadio"
+                android:id="@+id/imageRadioDefault"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -61,7 +61,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_toEndOf="@id/imageViewRadio"
+                android:layout_toEndOf="@id/imageRadioDefault"
                 android:layout_toStartOf="@id/buttonMenu"
                 android:orientation="vertical">
 

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import org.oucho.radio2.R;
 
-public class About extends DialogFragment {
+public class AboutDialog extends DialogFragment {
 
     @NonNull
     @Override

@@ -13,9 +13,9 @@ public class StopReceiver extends BroadcastReceiver implements RadioKeys {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        String etat = intent.getAction();
+        String action = intent.getAction();
 
-        if ( "org.oucho.radio2.STOP".equals(etat) && ( State.isPlaying() || State.isPaused() ) ) {
+        if ( "org.oucho.radio2.STOP".equals(action) && ( State.isPlaying() || State.isPaused() ) ) {
 
             String halt = intent.getStringExtra("halt");
             Intent player = new Intent(context, PlayerService.class);

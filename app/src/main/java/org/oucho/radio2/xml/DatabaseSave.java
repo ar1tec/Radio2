@@ -21,17 +21,21 @@ public class DatabaseSave {
         mDb = db;
 
         try {
-            File myFile = new File(destXml);
-            //noinspection ResultOfMethodCallIgnored
-            myFile.createNewFile();
-
-            FileOutputStream fOut = new FileOutputStream(myFile);
-            BufferedOutputStream bos = new BufferedOutputStream(fOut);
-
-            mExporter = new Exporter(bos);
+            saveToFile(destXml);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void saveToFile(String destXml) throws IOException {
+        File myFile = new File(destXml);
+        //noinspection ResultOfMethodCallIgnored
+        myFile.createNewFile();
+
+        FileOutputStream fOut = new FileOutputStream(myFile);
+        BufferedOutputStream bos = new BufferedOutputStream(fOut);
+
+        mExporter = new Exporter(bos);
     }
 
     public void exportData() {

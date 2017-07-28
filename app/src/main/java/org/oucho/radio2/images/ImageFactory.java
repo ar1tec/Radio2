@@ -78,7 +78,6 @@ public class ImageFactory {
     // convert from bitmap to string
     private static String bitmapToString(Bitmap image) {
 
-        //Bitmap one = BitmapFactory.decodeResource(image);
         byte[] two = getBytes(image);
 
         return Base64.encodeToString(two, Base64.DEFAULT);

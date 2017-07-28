@@ -97,7 +97,7 @@ public class ReadXML {
                             img = Base64.decode(image, Base64.DEFAULT);
 
                         Radio newRadio = new Radio(url, name, img);
-                        Radio.addRadio(context, newRadio);
+                        Radio.addNewRadio(context, newRadio);
                     }
                 }
 

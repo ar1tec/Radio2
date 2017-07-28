@@ -70,7 +70,7 @@ public class Radio implements PlayableItem, RadioKeys {
 		return lst;
 	}
 
-	public static void addRadio(Context context, Radio radio) {
+	public static void addNewRadio(Context context, Radio radio) {
 
         Log.d("Radio", "loading: " + radio);
 

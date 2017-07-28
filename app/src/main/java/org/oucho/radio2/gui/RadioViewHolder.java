@@ -21,8 +21,8 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
     private final TextView text;
     private final ImageButton menu;
 
-    private final ImageView image;
-    private final ImageView imageLogo;
+    private final ImageView imageDefault;
+    private final ImageView logoRadio;
 
     private final CardView fond;
 
@@ -33,18 +33,16 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
 
     RadioViewHolder(View view, MainActivity activity, ListsClickListener clickListener) {
         super(view);
-        text = (TextView) view.findViewById(R.id.textViewRadio);
-        menu = (ImageButton) view.findViewById(R.id.buttonMenu);
-
-        image = (ImageView) view.findViewById(R.id.imageViewRadio);
-
-        imageLogo = (ImageView) view.findViewById(R.id.logoViewRadio);
-
-        fond  = (CardView) view.findViewById(R.id.fond);
-
 
         this.activity = activity;
         this.clickListener = clickListener;
+
+        text = (TextView) view.findViewById(R.id.textViewRadio);
+        menu = (ImageButton) view.findViewById(R.id.buttonMenu);
+        imageDefault = (ImageView) view.findViewById(R.id.imageRadioDefault);
+        logoRadio = (ImageView) view.findViewById(R.id.logoViewRadio);
+        fond  = (CardView) view.findViewById(R.id.fond);
+
         view.setOnClickListener(this);
         menu.setOnClickListener(this);
         menu.setFocusable(false);
@@ -57,10 +55,9 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
         text.setText(radio.getTitle());
 
         if (radio.getImg() != null) {
-            image.setVisibility(View.INVISIBLE);
-            imageLogo.setImageBitmap(ImageFactory.getImage(radio.getLogo()));
-            imageLogo.setVisibility(View.VISIBLE);
-
+            imageDefault.setVisibility(View.INVISIBLE);
+            logoRadio.setImageBitmap(ImageFactory.getImage(radio.getLogo()));
+            logoRadio.setVisibility(View.VISIBLE);
         }
 
         if (radio.getName().equals(nomRadio)  ) {
@@ -68,8 +65,7 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
             fond.setBackgroundColor(ContextCompat.getColor(context, R.color.amber_50));
 
             if (radio.getImg() == null)
-            image.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent));
-
+            imageDefault.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent));
         }
     }
 
@@ -79,19 +75,19 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
         if(view.equals(menu)) {
             final PopupMenu popup = new PopupMenu(activity, menu);
 
-            if (MainActivity.mpdIsInstalled) {
+            if (MainActivity.mpd_app_is_installed) {
                 popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete_mpd, popup.getMenu());
             } else {
                 popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete, popup.getMenu());
             }
 
-          //  popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete, popup.getMenu());
             popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 public boolean onMenuItemClick(MenuItem item) {
                     clickListener.onPlayableItemMenuClick(radio, item.getItemId());
                     return true;
                 }
             });
+
             popup.show();
         } else {
             clickListener.onPlayableItemClick(radio);

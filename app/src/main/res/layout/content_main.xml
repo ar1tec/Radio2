@@ -32,9 +32,6 @@
             android:layout_centerHorizontal="true"
             tools:ignore="HardcodedText" />
 
-
-
-
         <ImageView
             android:id="@+id/icon_equalizer"
             android:layout_width="wrap_content"
@@ -71,7 +68,7 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/time_ecran"
+            android:id="@+id/sleep_timer"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:textSize="12sp"
@@ -118,10 +115,10 @@
             android:background="@drawable/playbar_dropshadow"/>
 
         <ImageButton
-            android:id="@+id/stop"
+            android:id="@+id/stop_radio"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_toStartOf="@+id/play"
+            android:layout_toStartOf="@+id/play_radio"
             android:layout_marginEnd="2dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="center"
@@ -131,7 +128,7 @@
             tools:ignore="ContentDescription" />
 
         <ImageButton
-            android:id="@+id/play"
+            android:id="@+id/play_radio"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginEnd="35dp"
@@ -144,7 +141,7 @@
             tools:ignore="ContentDescription" />
 
         <ImageView
-            android:id="@+id/pause"
+            android:id="@+id/pause_radio"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginEnd="35dp"
@@ -158,10 +155,10 @@
             android:visibility="invisible"/>
 
         <ImageView
-            android:id="@+id/add"
+            android:id="@+id/add_radio"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_toEndOf="@+id/play"
+            android:layout_toEndOf="@+id/play_radio"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="center"
             android:src="@drawable/ic_add_circle_grey_500_36dp"

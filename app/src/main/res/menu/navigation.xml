@@ -4,12 +4,12 @@
     <group android:id="@+id/haut">
 
         <item
-            android:id="@+id/action_export"
+            android:id="@+id/nav_export"
             android:icon="@drawable/ic_save_black_24dp"
             android:title="@string/exporterMenu"/>
 
         <item
-            android:id="@+id/action_import"
+            android:id="@+id/nav_import"
             android:icon="@drawable/ic_input_black_24dp"
             android:title="@string/importerMenu"/>
 

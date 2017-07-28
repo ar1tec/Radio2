@@ -10,7 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import org.oucho.radio2.R;
 import org.oucho.radio2.interfaces.RadioKeys;
 
-public class Permissions implements RadioKeys {
+public class PermissionDialog implements RadioKeys {
 
 public void check(Context context, final Activity activity) {
         DialogUtils.showPermissionDialog(activity, context.getString(R.string.permission_write_external_storage),

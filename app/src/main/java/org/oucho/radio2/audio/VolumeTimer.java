@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class VolumeTimer implements RadioKeys {
 
-    private CountDownTimer minuteurVolume;
+    private CountDownTimer volumeTimer;
 
     public void setVolume(Context contex, float volume) {
 
@@ -25,13 +25,12 @@ public class VolumeTimer implements RadioKeys {
         }
     }
 
-    public void baisser(final Context context, final ScheduledFuture task, final int delay) {
+    public void volumeDown(final Context context, final ScheduledFuture task, final int delay) {
 
-            // définir si le delay est supérieur ou inférieur à 10mn
+        final short minutes = (short) ( ( (delay / 1000) % 3600) / 60);
 
-            final short minutes = (short) ( ( (delay / 1000) % 3600) / 60);
-
-            final boolean tempsMinuterie = minutes > 10;
+        // delay is greater or less than 10mn
+        final boolean tempsMinuterie = minutes > 10;
 
             int cycle;
 
@@ -42,59 +41,61 @@ public class VolumeTimer implements RadioKeys {
             }
 
 
-        minuteurVolume = new CountDownTimer(delay, cycle) {
+        volumeTimer = new CountDownTimer(delay, cycle) {
                 @Override
                 public void onTick(long mseconds) {
 
-                    long temps1 = ((task.getDelay(TimeUnit.MILLISECONDS) / 1000) % 3600) / 60 ;
+                    // for long timer > 10mn
+                    long minutesTimer = ((task.getDelay(TimeUnit.MILLISECONDS) / 1000) % 3600) / 60 ;
 
-                    long temps2 = task.getDelay(TimeUnit.MILLISECONDS) / 1000;
+                    // for short timer < 10mn
+                    long secondesTimer = task.getDelay(TimeUnit.MILLISECONDS) / 1000;
 
                     if (tempsMinuterie) {
 
-                        if (temps1 < 1) {
+                        if (minutesTimer < 1) {
                             setVolume(context, 0.1f);
-                        } else if (temps1 < 2) {
+                        } else if (minutesTimer < 2) {
                             setVolume(context, 0.2f);
-                        } else if (temps1 < 3) {
+                        } else if (minutesTimer < 3) {
                             setVolume(context, 0.3f);
-                        } else if (temps1 < 4) {
+                        } else if (minutesTimer < 4) {
                             setVolume(context, 0.4f);
-                        } else if (temps1 < 5) {
+                        } else if (minutesTimer < 5) {
                             setVolume(context, 0.5f);
-                        } else if (temps1 < 6) {
+                        } else if (minutesTimer < 6) {
                             setVolume(context, 0.6f);
-                        } else if (temps1 < 7) {
+                        } else if (minutesTimer < 7) {
                             setVolume(context, 0.7f);
-                        } else if (temps1 < 8) {
+                        } else if (minutesTimer < 8) {
                             setVolume(context, 0.8f);
-                        } else if (temps1 < 9) {
+                        } else if (minutesTimer < 9) {
                             setVolume(context, 0.9f);
-                        } else if (temps1 < 10) {
+                        } else if (minutesTimer < 10) {
                             setVolume(context, 1.0f);
                         }
 
                     } else {
 
-                        if (temps2 < 6) {
+                        if (secondesTimer < 6) {
                             setVolume(context, 0.1f);
-                        } else if (temps2 < 12) {
+                        } else if (secondesTimer < 12) {
                             setVolume(context, 0.2f);
-                        } else if (temps2 < 18) {
+                        } else if (secondesTimer < 18) {
                             setVolume(context, 0.3f);
-                        } else if (temps2 < 24) {
+                        } else if (secondesTimer < 24) {
                             setVolume(context, 0.4f);
-                        } else if (temps2 < 30) {
+                        } else if (secondesTimer < 30) {
                             setVolume(context, 0.5f);
-                        } else if (temps2 < 36) {
+                        } else if (secondesTimer < 36) {
                             setVolume(context, 0.6f);
-                        } else if (temps2 < 42) {
+                        } else if (secondesTimer < 42) {
                             setVolume(context, 0.7f);
-                        } else if (temps2 < 48) {
+                        } else if (secondesTimer < 48) {
                             setVolume(context, 0.8f);
-                        } else if (temps2 < 54) {
+                        } else if (secondesTimer < 54) {
                             setVolume(context, 0.9f);
-                        } else if (temps2 < 60) {
+                        } else if (secondesTimer < 60) {
                             setVolume(context, 1.0f);
                         }
                     }
@@ -112,7 +113,7 @@ public class VolumeTimer implements RadioKeys {
 
     }
 
-    public CountDownTimer getMinuteur() {
-        return minuteurVolume;
+    public CountDownTimer getVolumeTimer() {
+        return volumeTimer;
     }
 }

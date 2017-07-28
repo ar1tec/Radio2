@@ -25,7 +25,7 @@ public class RadioActivity extends Activity {
 
 
             Radio newRadio = new Radio(intent.getData().toString(), intent.getData().toString() , null);
-            Radio.addRadio(getApplicationContext(), newRadio);
+            Radio.addNewRadio(getApplicationContext(), newRadio);
 
         }
 

@@ -73,8 +73,7 @@ import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
 import static org.oucho.radio2.utils.State.isPlaying;
 
 public class PlayerService extends Service
-   implements
-        RadioKeys,
+   implements RadioKeys,
         ExoPlayer.EventListener,
         OnAudioFocusChangeListener {
 
@@ -101,7 +100,7 @@ public class PlayerService extends Service
 
    private final String TAG = "Player Service";
 
-   private NotifUpdate notifUpdate_Receiver;
+   private NotificationUpdate notificationUpdateReceiver;
 
    private static boolean sIsServiceForeground = false;
    private static final int NOTIFY_ID = 32;
@@ -116,9 +115,9 @@ public class PlayerService extends Service
       url = préférences.getString("url", default_url);
       name = préférences.getString("name", default_name);
 
-      notifUpdate_Receiver = new NotifUpdate();
+      notificationUpdateReceiver = new NotificationUpdate();
       IntentFilter filter = new IntentFilter(INTENT_STATE);
-      registerReceiver(notifUpdate_Receiver, filter);
+      registerReceiver(notificationUpdateReceiver, filter);
 
       audio_manager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
       connectivity = new Connectivity(context,this);
@@ -148,8 +147,8 @@ public class PlayerService extends Service
          connectivity = null;
       }
 
-      if ( notifUpdate_Receiver != null )
-         unregisterReceiver(notifUpdate_Receiver);
+      if ( notificationUpdateReceiver != null )
+         unregisterReceiver(notificationUpdateReceiver);
 
       WifiLocker.unlock();
    }
@@ -664,7 +663,7 @@ public class PlayerService extends Service
 
 
 
-   private class NotifUpdate extends BroadcastReceiver {
+   private class NotificationUpdate extends BroadcastReceiver {
 
       @Override
       public void onReceive(Context context, Intent intent) {
@@ -723,61 +722,62 @@ public class PlayerService extends Service
       }
    }
 
-   public static void setStateTimer(boolean onOff){
+   public static void timerOnOff(boolean onOff){
       timer = onOff;
    }
 
 
-   public void updateNotification(String nom_radio, String action, Bitmap logo) {
+   public void updateNotification(String radio_name, String action, Bitmap logo_radio) {
 
       SharedPreferences préférences = context.getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
       String img = préférences.getString("image_data", "");
 
-      if( logo == null && !img.equalsIgnoreCase("") ){
-         byte[] b = Base64.decode(img, Base64.DEFAULT);
+      if( logo_radio == null && !img.equalsIgnoreCase("") ){
+         byte[] img_byte_array = Base64.decode(img, Base64.DEFAULT);
 
-         logo = BitmapFactory.decodeByteArray(b, 0, b.length);
+         logo_radio = BitmapFactory.decodeByteArray(img_byte_array, 0, img_byte_array.length);
       }
 
-      NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+      NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
 
-      Intent i = new Intent(context, MainActivity.class);
-      i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-      PendingIntent intent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+      Intent intent = new Intent(context, MainActivity.class);
+      intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-      builder.setContentIntent(intent);
+      PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+      notificationBuilder.setContentIntent(pendingIntent);
 
       if (!timer) {
-         builder.setSmallIcon(R.drawable.notification);
+         notificationBuilder.setSmallIcon(R.drawable.notification);
       } else {
-         builder.setSmallIcon(R.drawable.notification_sleeptimer);
+         notificationBuilder.setSmallIcon(R.drawable.notification_sleeptimer);
       }
 
-      builder.setOngoing(true);
+      notificationBuilder.setOngoing(true);
 
-      Boolean unlock;
-      unlock = "Play".equals(action);
-      builder.setOngoing(unlock);
+      Boolean unlockNotification;
+      unlockNotification = "Play".equals(action);
+      notificationBuilder.setOngoing(unlockNotification);
 
-      android.app.Notification notification = builder.build();
+      android.app.Notification notification = notificationBuilder.build();
       RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
 
       // Traduction du texte
-      String trad;
+      String locale_string;
       if ("Play".equals(action)) {
-         trad = context.getResources().getString(R.string.play);
+         locale_string = context.getResources().getString(R.string.play);
       } else if ("Loading...".equals(action)) {
-         trad = context.getResources().getString(R.string.loading);;
+         locale_string = context.getResources().getString(R.string.loading);;
       } else {
-         trad = action;
+         locale_string = action;
       }
 
-      contentView.setTextViewText(R.id.notif_name, nom_radio);
-      contentView.setTextViewText(R.id.notif_text, trad);
+      contentView.setTextViewText(R.id.notif_name, radio_name);
+      contentView.setTextViewText(R.id.notif_text, locale_string);
 
-      if (logo != null)
-         contentView.setImageViewBitmap(R.id.notif_ombre, logo);
+      if (logo_radio != null)
+         contentView.setImageViewBitmap(R.id.notif_ombre, logo_radio);
 
       notification.contentView = contentView;
 

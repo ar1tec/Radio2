@@ -23,7 +23,7 @@ public class NewRadioReceiver extends BroadcastReceiver {
             String url = intent.getStringExtra("url");
 
             Radio newRadio = new Radio(url, name, null);
-            Radio.addRadio(context, newRadio);
+            Radio.addNewRadio(context, newRadio);
         }
     }
 }

@@ -14,15 +14,15 @@ import java.util.ArrayList;
 
 public class HttpGetter {
 
-   public static List<String> httpGet(String str) {
+   public static List<String> httpGet(String url) {
 
       HttpURLConnection connection = null;
       List<String> lines = new ArrayList<>();
 
       try {
 
-         URL url = new URL(str);
-         connection = (HttpURLConnection) url.openConnection();
+         URL urlRadio = new URL(url);
+         connection = (HttpURLConnection) urlRadio.openConnection();
 
          if ( Playlist.isPlaylistMimeType(connection.getContentType()) ) {
             InputStream stream = new BufferedInputStream(connection.getInputStream());
@@ -30,6 +30,7 @@ public class HttpGetter {
          }
          connection.disconnect();
       } catch ( Exception e ) {
+
          if ( connection != null )
             connection.disconnect();
       }
@@ -47,4 +48,6 @@ public class HttpGetter {
 
       stream.close();
    }
+
+
 }
