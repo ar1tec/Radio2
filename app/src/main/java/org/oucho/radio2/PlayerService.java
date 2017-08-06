@@ -81,8 +81,8 @@ public class PlayerService extends Service
    private String mUserAgent;
    private String launch_url = null;
 
-   public static String url = null;
-   public static String name = null;
+   private static String url = null;
+   private static String name = null;
    private final String default_url = null;
    private final String default_name = null;
 
@@ -112,8 +112,8 @@ public class PlayerService extends Service
       context = getApplicationContext();
       préférences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
-      url = préférences.getString("url", default_url);
-      name = préférences.getString("name", default_name);
+      setUrl(préférences.getString("url", default_url));
+      setName(préférences.getString("name", default_name));
 
       notificationUpdateReceiver = new NotificationUpdate();
       IntentFilter filter = new IntentFilter(INTENT_STATE);
@@ -125,11 +125,6 @@ public class PlayerService extends Service
       mUserAgent = Util.getUserAgent(this, APPLICATION_NAME);
 
       createExoPlayer();
-    }
-
-
-   public static String getUrl() {
-       return url;
     }
 
 
@@ -176,7 +171,7 @@ public class PlayerService extends Service
 
       if (action != null && action.equals(ACTION_PLAY)) {
          intentPlay(intent); // récupère les infos pour les variables url, name etc.
-         startPlayback(url);
+         startPlayback(getUrl());
       }
 
       if (action != null && action.equals(ACTION_STOP)) {
@@ -204,22 +199,22 @@ public class PlayerService extends Service
    }
 
 
-   private int startPlayback(String url) {
+   private void startPlayback(String url) {
 
       stopPlayback(false);
 
       if ( ! URLUtil.isValidUrl(url) )
-         return stopPlayback();
+         stopPlayback();
 
       if ( isNetworkUrl(url) && ! Connectivity.isConnected(context) ) {
          connectivity.dropped_connection();
-         return done();
+         done();
       }
 
       int focus = audio_manager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
       if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED )
-         return stopPlayback();
+         stopPlayback();
 
       if ( isNetworkUrl(url) )
          WifiLocker.lock(context);
@@ -232,7 +227,7 @@ public class PlayerService extends Service
       music.putExtra("halt", "stop");
       sendBroadcast(music);
 
-      return done(State.STATE_BUFFER);
+      done(State.STATE_BUFFER);
    }
 
 
@@ -243,7 +238,7 @@ public class PlayerService extends Service
    @SuppressWarnings("UnusedReturnValue")
    public int playLaunch(String surl) {
 
-      url = surl;
+      setUrl(surl);
 
       launch_url = null;
 
@@ -311,10 +306,10 @@ public class PlayerService extends Service
 
    }
 
-   private int pause() {
+   private void pause() {
 
       if ( mExoPlayer == null || State.is(State.STATE_PAUSE) || ! isPlaying() )
-         return done();
+         done();
 
       if ( pause_task != null )
          pause_task.cancel(true);
@@ -329,27 +324,27 @@ public class PlayerService extends Service
 
       mExoPlayer.setPlayWhenReady(false);
 
-      return done(State.STATE_PAUSE);
+      done(State.STATE_PAUSE);
    }
 
 
-   private int restart() {
+   private void restart() {
 
       if ( mExoPlayer == null || State.isStopped() )
-         return startPlayback(url);
+         startPlayback(getUrl());
 
       mExoPlayer.setVolume(1.0f);
 
       if ( State.is(State.STATE_PLAY) || State.is(State.STATE_BUFFER) )
-         return done();
+         done();
 
       if ( State.is(State.STATE_DUCK) )
-         return done(State.STATE_PLAY);
+         done(State.STATE_PLAY);
 
       int focus = audio_manager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
       if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED )
-         return done();
+         done();
 
 
       if ( pause_task != null )
@@ -357,7 +352,7 @@ public class PlayerService extends Service
 
       mExoPlayer.setPlayWhenReady(true);
 
-      return done(State.STATE_PLAY);
+      done(State.STATE_PLAY);
    }
 
 
@@ -365,14 +360,14 @@ public class PlayerService extends Service
    private void intentPlay(Intent intent) {
 
       if ( intent.hasExtra("url") )
-         url = intent.getStringExtra("url");
+         setUrl(intent.getStringExtra("url"));
 
       if ( intent.hasExtra("name") )
-         name = intent.getStringExtra("name");
+         setName(intent.getStringExtra("name"));
 
       Editor editor = préférences.edit();
-      editor.putString("url", url);
-      editor.putString("name", name);
+      editor.putString("url", getUrl());
+      editor.putString("name", getName());
       editor.apply();
 
       failure_ttl = initial_failure_ttl;
@@ -494,7 +489,7 @@ public class PlayerService extends Service
          failure_ttl -= 1;
 
          if ( Connectivity.isConnected(context) )
-            startPlayback(url);
+            startPlayback(getUrl());
          else
             connectivity.dropped_connection();
       }
@@ -580,6 +575,7 @@ public class PlayerService extends Service
          }
       };
 
+      @SuppressWarnings("unchecked")
       DataSource.Factory dataSourceFactory = new CustomHttpDataSource(mUserAgent, transferListener);
 
       MediaSource mediaSource;
@@ -589,8 +585,7 @@ public class PlayerService extends Service
                  dataSourceFactory, 32, null, null);
       } else {
          ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-         mediaSource = new ExtractorMediaSource(Uri.parse(url),
-                 dataSourceFactory, extractorsFactory, 32, null, null, null);
+         mediaSource = new ExtractorMediaSource(Uri.parse(getUrl()), dataSourceFactory, extractorsFactory, 32, null, null, null);
       }
 
       mExoPlayer.prepare(mediaSource);
@@ -616,7 +611,7 @@ public class PlayerService extends Service
          String contentType;
          URLConnection connection;
          try {
-            connection = new URL(url).openConnection();
+            connection = new URL(getUrl()).openConnection();
             connection.connect();
             contentType = connection.getContentType();
             Log.v(TAG, "MIME type of stream: " + contentType);
@@ -634,13 +629,12 @@ public class PlayerService extends Service
 
       @Override
       protected void onPostExecute(Boolean sourceIsHLS) {
-         prepareExoPLayer(sourceIsHLS, url);
+         prepareExoPLayer(sourceIsHLS, getUrl());
 
          mExoPlayer.addListener(PlayerService.this);
       }
 
    }
-
 
 
    private int done(String state) {
@@ -651,6 +645,7 @@ public class PlayerService extends Service
       return done();
    }
 
+   @SuppressWarnings("SameReturnValue")
    private int done() {
       return START_NOT_STICKY;
    }
@@ -692,31 +687,31 @@ public class PlayerService extends Service
             String trad;
             if ("Play".equals(etat_lecture)) {
                trad = context.getResources().getString(R.string.play);
-               updateNotification(name, trad, null);
+               updateNotification(getName(), trad, null);
 
             } else if ("Loading...".equals(etat_lecture)) {
                trad = context.getResources().getString(R.string.loading);
-               updateNotification(name, trad, null);
+               updateNotification(getName(), trad, null);
 
             } else if ("Disconnected".equals(etat_lecture)){
                trad = context.getResources().getString(R.string.disconnected);
-               updateNotification(name, trad, null);
+               updateNotification(getName(), trad, null);
 
             } else if ("Completed".equals(etat_lecture)){
                trad = context.getResources().getString(R.string.disconnected);
-               updateNotification(name, trad, null);
+               updateNotification(getName(), trad, null);
 
             } else if ("Pause".equals(etat_lecture)){
                trad = etat_lecture;
-               updateNotification(name, trad, null);
+               updateNotification(getName(), trad, null);
 
             } else if ("Stop".equals(etat_lecture)){
                trad = etat_lecture;
-               updateNotification(name, trad, null);
+               updateNotification(getName(), trad, null);
 
             } else {
                trad = etat_lecture;
-               updateNotification(name, trad, null);
+               updateNotification(getName(), trad, null);
             }
          }
       }
@@ -727,7 +722,7 @@ public class PlayerService extends Service
    }
 
 
-   public void updateNotification(String radio_name, String action, Bitmap logo_radio) {
+   private void updateNotification(String radio_name, String action, Bitmap logo_radio) {
 
       SharedPreferences préférences = context.getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
@@ -768,7 +763,7 @@ public class PlayerService extends Service
       if ("Play".equals(action)) {
          locale_string = context.getResources().getString(R.string.play);
       } else if ("Loading...".equals(action)) {
-         locale_string = context.getResources().getString(R.string.loading);;
+         locale_string = context.getResources().getString(R.string.loading);
       } else {
          locale_string = action;
       }
@@ -805,9 +800,26 @@ public class PlayerService extends Service
 
 
 
-   public void removeNotification(Context context) {
+   private void removeNotification(Context context) {
       NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
       notificationManager.cancel(NOTIFY_ID);
    }
 
+
+   public static String getUrl() {
+      return url;
+   }
+
+   private static void setUrl(String value) {
+      url = value;
+   }
+
+
+   public static String getName() {
+      return name;
+   }
+
+   private static void setName(String value) {
+      name = value;
+   }
 }

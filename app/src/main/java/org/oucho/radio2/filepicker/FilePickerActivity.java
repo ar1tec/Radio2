@@ -35,6 +35,7 @@ import android.widget.Toast;
 import org.oucho.radio2.R;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -130,8 +131,8 @@ public class FilePickerActivity extends AppCompatActivity {
 		}
 
 		if (path == null) {
-			path = new File("/");
-			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) path = Environment.getExternalStorageDirectory();
+			if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+			    path = Environment.getExternalStorageDirectory();
 		}
 
 		readDirectory(path);
@@ -139,22 +140,18 @@ public class FilePickerActivity extends AppCompatActivity {
 		mHeaderTitle = (TextView) findViewById(R.id.title);
 		updateTitle();
 
-
 		new_folder = (ImageButton) findViewById(R.id.menu_new_folder);
         newFolder();
-
 
 		sort1 = (ImageButton) findViewById(R.id.menu_sort1);
 		sort2 = (ImageButton) findViewById(R.id.menu_sort2);
         triRépertoire();
-
 
 		cancel1 = (ImageButton) findViewById(R.id.menu_cancel1);
         setCancel1();
 
 		cancel2 = (ImageButton) findViewById(R.id.menu_cancel2);
         setCancel2();
-
 
 		ok1 = (ImageButton) findViewById(R.id.menu_ok1);
 		ok1_delimiter = findViewById(R.id.ok1_delimiter);
@@ -168,9 +165,7 @@ public class FilePickerActivity extends AppCompatActivity {
 		invert = (ImageButton) findViewById(R.id.menu_invert);
         setSelection();
 
-
         Log.d("Environment", String.valueOf(Environment.getExternalStorageDirectory()) );
-
     }
 
 
@@ -202,7 +197,17 @@ public class FilePickerActivity extends AppCompatActivity {
                                 if (file.exists()) {
                                     Toast.makeText(FilePickerActivity.this, R.string.folder_already_exists, Toast.LENGTH_SHORT).show();
                                 } else {
-                                    file.mkdir();
+
+                                    boolean folderExisted = file.exists() || file.mkdir();
+
+                                    try {
+
+                                        if (!folderExisted) {
+                                            throw new IOException("Unable to create path");
+                                        }
+                                    } catch (IOException e) {
+                                        Log.e("FilePickerActivity", "Error: " + e);
+                                    }
 
                                     if (file.isDirectory()) {
                                         readDirectory(mCurrentDirectory);
@@ -213,24 +218,19 @@ public class FilePickerActivity extends AppCompatActivity {
                                         Toast.makeText(FilePickerActivity.this, R.string.folder_not_created, Toast.LENGTH_SHORT).show();
 
                                     }
-                                }
-                            }
+                                } //if (file.exists())
+                            } // if (name.length() > 0)
                         }
-                    });
+                    }); //alert.setPositiveButton
 
                     alert.setNegativeButton(android.R.string.cancel, null);
                     alert.show();
-
                 }
-            });
-
+            }); // new_folder.setOnClickListener
 
         } else {
-
-                new_folder.setVisibility(ImageButton.GONE);
-
+            new_folder.setVisibility(ImageButton.GONE);
         }
-
     }
 
 
@@ -268,7 +268,8 @@ public class FilePickerActivity extends AppCompatActivity {
                                 case 5:
                                     mOptSortType = FilePicker.SORT_DATE_DESC;
                                     break;
-
+                                default:
+                                    break;
                             }
                             sort();
                         }
@@ -277,19 +278,16 @@ public class FilePickerActivity extends AppCompatActivity {
                 }
             };
 
-
             sort1.setOnClickListener(listener);
             sort2.setOnClickListener(listener);
-
 
         } else {
 
             sort1.setVisibility(ImageButton.GONE);
             sort2.setVisibility(ImageButton.GONE);
-
         }
-
     }
+
 
     /* ******************************************
      * Cancel1
@@ -325,7 +323,6 @@ public class FilePickerActivity extends AppCompatActivity {
             }
 
         });
-
     }
 
     /* ******************************************
@@ -375,7 +372,6 @@ public class FilePickerActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
 
@@ -420,7 +416,6 @@ public class FilePickerActivity extends AppCompatActivity {
                     ((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
                 }
             });
-
         }
     }
 
@@ -499,15 +494,17 @@ public class FilePickerActivity extends AppCompatActivity {
 		mFilesList.clear();
 		File[] files = path.listFiles();
 		if (files != null) {
-			for (int i = 0; i < files.length; i++) {
-				if (mOptChoiceType == FilePicker.CHOICE_TYPE_DIRECTORIES && !files[i].isDirectory()) continue;
-				if (files[i].isFile()) {
-					String extension = getFileExtension(files[i].getName());
-					if (mOptFilterListed != null && !mOptFilterListed.contains(extension)) continue;
-					if (mOptFilterExclude != null && mOptFilterExclude.contains(extension)) continue;
-				}
-				mFilesList.add(files[i]);
-			}
+            for (File file : files) {
+                if (mOptChoiceType == FilePicker.CHOICE_TYPE_DIRECTORIES && !file.isDirectory())
+                    continue;
+                if (file.isFile()) {
+                    String extension = getFileExtension(file.getName());
+                    if (mOptFilterListed != null && !mOptFilterListed.contains(extension)) continue;
+                    if (mOptFilterExclude != null && mOptFilterExclude.contains(extension))
+                        continue;
+                }
+                mFilesList.add(file);
+            }
 		}
 
 		sort();
@@ -552,7 +549,7 @@ public class FilePickerActivity extends AppCompatActivity {
 
 		mAbsListView = (AbsListView) findViewById(R.id.listview);
 		mAbsListView.setEmptyView(mEmptyView);
-		FilesListAdapter adapter = new FilesListAdapter(this, R.layout.fp__list_item);
+		FilesListAdapter adapter = new FilesListAdapter(this);
 
         mAbsListView.setAdapter(adapter);
 
@@ -623,9 +620,7 @@ public class FilePickerActivity extends AppCompatActivity {
                         return false;
                     }
                 });
-
             }
-
         }
 
 		mAbsListView.setVisibility(View.VISIBLE);
@@ -650,13 +645,13 @@ public class FilePickerActivity extends AppCompatActivity {
 		return mBitmapsCache.get(key);
 	}
 
-	class FilesListAdapter extends BaseAdapter {
+	private class FilesListAdapter extends BaseAdapter {
 		private final Context mContext;
 		private final int mResource;
 
-		public FilesListAdapter(Context context, int resource) {
+        FilesListAdapter(Context context) {
 			mContext = context;
-			mResource = resource;
+			mResource = R.layout.fp__list_item;
 		}
 
 		@Override
@@ -674,6 +669,7 @@ public class FilePickerActivity extends AppCompatActivity {
 			return position;
 		}
 
+        @SuppressLint("ViewHolder")
         @Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
 			File file = mFilesList.get(position);
@@ -725,8 +721,6 @@ public class FilePickerActivity extends AppCompatActivity {
 			TextView filename = (TextView) convertView.findViewById(R.id.filename);
 			filename.setText(file.getName());
 
-
-
 			if (filesize != null) {
 
                 String date = getDateModification(file);
@@ -766,7 +760,7 @@ public class FilePickerActivity extends AppCompatActivity {
 		class ThumbnailLoader extends AsyncTask<File, Void, Bitmap> {
 			private final WeakReference<ImageView> imageViewReference;
 
-			public ThumbnailLoader(ImageView imageView) {
+			ThumbnailLoader(ImageView imageView) {
 				imageViewReference = new WeakReference<>(imageView);
 			}
 
@@ -806,18 +800,13 @@ public class FilePickerActivity extends AppCompatActivity {
 
 			@Override
 			protected void onPostExecute(Bitmap bitmap) {
-				if (imageViewReference != null) {
-					final ImageView imageView = imageViewReference.get();
-					if (imageView != null) {
-						if (bitmap == null) imageView.setImageResource(R.drawable.ic_file_gray_116dp);
-						else imageView.setImageBitmap(bitmap);
-					}
-				}
-			}
-
+                final ImageView imageView = imageViewReference.get();
+                if (imageView != null) {
+                    if (bitmap == null) imageView.setImageResource(R.drawable.ic_file_gray_116dp);
+                    else imageView.setImageBitmap(bitmap);
+                }
+            }
 		}
-
 	}
-
 
 }

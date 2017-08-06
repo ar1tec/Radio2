@@ -34,6 +34,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,6 +66,7 @@ import org.oucho.radio2.xml.DatabaseSave;
 import org.oucho.radio2.xml.ReadXML;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -87,12 +89,12 @@ public class MainActivity extends AppCompatActivity
 
     private boolean showBitrate = false;
     private boolean music_app_is_installed = false;
-    public static boolean mpd_app_is_installed = false;
+    private static boolean mpd_app_is_installed = false;
     private static boolean running;
 
     private ScheduledFuture scheduledFuture;
     private View edit_radio_view;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private Bitmap logoRadio;
     private VolumeTimer volumeTimer;
     private TextView viewSleepTimer;
@@ -108,6 +110,7 @@ public class MainActivity extends AppCompatActivity
     private ImageView img_pause;
 
     private Context mContext;
+
 
 
     @Override
@@ -156,7 +159,7 @@ public class MainActivity extends AppCompatActivity
         music_app_is_installed = checkIfAppIsInstalled(app_music);
 
         String app_mpd = "org.oucho.mpdclient";
-        mpd_app_is_installed = checkIfAppIsInstalled(app_mpd);
+        setMpdAppIsInstalled(checkIfAppIsInstalled(app_mpd));
 
         setNavigationMenu();
 
@@ -574,16 +577,16 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        if(oldRadio!=null) {
+        if(oldRadio != null) {
             editTextUrl.setText(oldRadio.getUrl());
-            editTextName.setText(oldRadio.getName());
+            editTextName.setText(oldRadio.getTitle());
 
-            if (oldRadio.getImg() != null ) {
+            if (oldRadio.getLogo() != null ) {
                 editLogo.setImageBitmap(logoRadio);
                 editLogo.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
                 text.setVisibility(View.INVISIBLE);
-                editLogo.setImageBitmap(ImageFactory.getImage(oldRadio.getImg()));
-                logoRadio = ImageFactory.getImage(oldRadio.getImg());
+                editLogo.setImageBitmap(ImageFactory.getImage(oldRadio.getLogo()));
+                logoRadio = ImageFactory.getImage(oldRadio.getLogo());
             }
         }
 
@@ -623,6 +626,7 @@ public class MainActivity extends AppCompatActivity
 
 
         AlertDialog dialog = edit_radio_dialog.create();
+        //noinspection ConstantConditions
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
 
@@ -722,8 +726,8 @@ public class MainActivity extends AppCompatActivity
                     deleteRadio((Radio)item);
                     break;
                 case R.id.menu_add_mpd:
-                    String radio_name = ((Radio) item).getName();
-                    String radio_url = ((Radio) item).getUrl();
+                    String radio_name = item.getTitle();
+                    String radio_url = item.getUrl();
                     sendRadioToMpdApp(radio_name, radio_url);
                     break;
                 default:
@@ -746,8 +750,8 @@ public class MainActivity extends AppCompatActivity
 
     private void play(Radio radio) {
 
-        String url = radio.getPlayableUri();
-        String name = radio.getName();
+        String url = radio.getUrl();
+        String name = radio.getTitle();
         byte[] logo = radio.getLogo();
 
         SharedPreferences.Editor edit = preferences.edit();
@@ -832,9 +836,16 @@ public class MainActivity extends AppCompatActivity
             String Destination = Environment.getExternalStorageDirectory().toString() + "/Radio";
 
             File newRep = new File(Destination);
-            if (!newRep.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                newRep.mkdir();
+
+            boolean folderExisted = newRep.exists() || newRep.mkdir();
+
+            try {
+
+                if (!folderExisted) {
+                    throw new IOException("Unable to create path");
+                }
+            } catch (IOException e) {
+                Log.e("MainActivity", "Error: " + e);
             }
 
             String path = Destination + "/" + RadiosDatabase.DB_NAME + ".xml";
@@ -1265,10 +1276,20 @@ public class MainActivity extends AppCompatActivity
                         case "image":
                             addImg();
                             break;
+                        default:
+                            break;
                     }
                 }
             }
         }
     }
 
+
+    public static boolean getMpdAppIsInstalled() {
+        return mpd_app_is_installed;
+    }
+
+    private static void setMpdAppIsInstalled(boolean value) {
+        mpd_app_is_installed = value;
+    }
 }

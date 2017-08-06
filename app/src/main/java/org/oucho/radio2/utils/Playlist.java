@@ -13,7 +13,6 @@ import org.oucho.radio2.net.HttpGetter;
 
 public class Playlist extends AsyncTask<Void, Void, String> {
 
-   private static final String TAG = "Playlist";
    private static final int max_ttl = 10;
 
    private static final int NONE    = 0;
@@ -48,22 +47,15 @@ public class Playlist extends AsyncTask<Void, Void, String> {
       int ttl = max_ttl;
       int type = NONE;
 
-      if ( url != null && url.length() != 0 && URLUtil.isValidUrl(url) )
+      if ( url != null && url.length() != 0 && URLUtil.isValidUrl(url) ) {
          type = playlistType(url);
-      else
+      } else {
          url = null;
+      }
 
-       //noinspection ConstantConditions
-       if ( 0 < ttl && url != null && type != NONE ) {
-
+      if (url != null && type != NONE ) {
          ttl -= 1;
-
          url = selectUrlFromPlaylist(url,type);
-         if ( url != null && url.length() != 0 && URLUtil.isValidUrl(url) )
-             //noinspection UnusedAssignment
-             type = playlistType(url);
-         else
-            url = null;
       }
 
       if (ttl  == 0)

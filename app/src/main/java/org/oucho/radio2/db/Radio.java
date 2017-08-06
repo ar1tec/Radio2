@@ -25,18 +25,6 @@ public class Radio implements PlayableItem, RadioKeys {
         this.img = img;
 	}
 
-	public String getUrl() {
-		return url;
-	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public byte[] getImg() {
-        return img;
-    }
-	
 	public static ArrayList<Radio> getRadios(Context context) {
 		RadiosDatabase radiosDatabase = new RadiosDatabase(context);
 		SQLiteDatabase db = radiosDatabase.getReadableDatabase();
@@ -50,7 +38,6 @@ public class Radio implements PlayableItem, RadioKeys {
         cursor.close();
         return radios;
 	}
-
 
 	public static List<String> getListe(Context context) {
 		RadiosDatabase radiosDatabase = new RadiosDatabase(context);
@@ -83,7 +70,7 @@ public class Radio implements PlayableItem, RadioKeys {
 		try (SQLiteDatabase db = radiosDatabase.getWritableDatabase()) {
 			db.insertOrThrow(TABLE_NAME, null, values);
 
-            String text = context.getResources().getString(R.string.addRadio_fromApp, radio.getName());
+            String text = context.getResources().getString(R.string.addRadio_fromApp, radio.getTitle());
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 		} catch (Exception e) {
 
@@ -101,13 +88,14 @@ public class Radio implements PlayableItem, RadioKeys {
 		db.close();
 	}
 
+
 	@Override
 	public String getTitle() {
 		return name;
 	}
 
 	@Override
-	public String getPlayableUri() {
+	public String getUrl() {
 		return url;
 	}
 

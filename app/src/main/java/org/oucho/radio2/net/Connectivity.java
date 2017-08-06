@@ -35,12 +35,13 @@ public class Connectivity extends BroadcastReceiver {
       context.registerReceiver(this, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
    }
 
+
    static private void initConnectivity(Context context) {
 
       if ( connectivity == null )
          connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
       if ( connectivity != null )
-         previous_type = getType();
+         setPreviousType(getType());
    }
 
    public void destroy() {
@@ -73,8 +74,8 @@ public class Connectivity extends BroadcastReceiver {
                if ( network.getState() == NetworkInfo.State.CONNECTED )
                   return type;
 
-             default:
-                 break;
+            default:
+               break;
          }
       }
 
@@ -83,12 +84,12 @@ public class Connectivity extends BroadcastReceiver {
 
    public static boolean onWifi() {
 
-      return previous_type == ConnectivityManager.TYPE_WIFI;
+      return getPreviousType() == ConnectivityManager.TYPE_WIFI;
    }
 
    static public boolean isConnected(Context context) {
 
-       initConnectivity(context);
+      initConnectivity(context);
 
       return (getType() != TYPE_NONE);
    }
@@ -103,21 +104,18 @@ public class Connectivity extends BroadcastReceiver {
 
       boolean want_network_playing = State.isWantPlaying() && playerService.isNetworkUrl();
 
-      if ( type == TYPE_NONE && previous_type != TYPE_NONE && want_network_playing )
+      if ( type == TYPE_NONE && getPreviousType() != TYPE_NONE && want_network_playing )
          dropped_connection();
 
 
-      if ( previous_type == TYPE_NONE && type != previous_type && Counter.still(then) )
+      if ( getPreviousType() == TYPE_NONE && type != getPreviousType() && Counter.still(then) )
          restart();
 
-      if ( previous_type != TYPE_NONE && type != TYPE_NONE && type != previous_type && want_network_playing )
+      if ( getPreviousType() != TYPE_NONE && type != TYPE_NONE && type != getPreviousType() && want_network_playing )
          restart();
 
-      previous_type = type;
+      setPreviousType(type);
    }
-
-
-
 
 
    public void dropped_connection() {
@@ -159,28 +157,27 @@ public class Connectivity extends BroadcastReceiver {
 
    }
 
+   private void reconnect(int delay) {
 
- private void reconnect(int delay) {
+      handler = new Handler();
+      handler.postDelayed(new Runnable() {
 
-    handler = new Handler();
-    handler.postDelayed(new Runnable() {
+         @SuppressLint("SetTextI18n")
+         public void run() {
 
-       @SuppressLint("SetTextI18n")
-       public void run() {
+            Log.d("Connectivity", "reconnect(int delay), reconnexion x seconde");
 
-          Log.d("Connectivity", "reconnect(int delay), reconnexion x seconde");
+            if (!State.isPlaying()) {
 
-          if (!State.isPlaying()) {
+               Intent player2 = new Intent(context, PlayerService.class);
+               player2.putExtra("action", "play");
+               context.startService(player2);
+            }
+         }
 
-             Intent player2 = new Intent(context, PlayerService.class);
-             player2.putExtra("action", "play");
-             context.startService(player2);
-          }
-       }
+      }, delay);
 
-    }, delay);
-
- }
+   }
 
 
    private void restart() {
@@ -195,6 +192,14 @@ public class Connectivity extends BroadcastReceiver {
       playerP.putExtra("action", "play");
       context.startService(playerP);
 
+   }
+
+   private static int getPreviousType() {
+      return previous_type;
+   }
+
+   private static void setPreviousType(int value) {
+      previous_type = value;
    }
 }
 

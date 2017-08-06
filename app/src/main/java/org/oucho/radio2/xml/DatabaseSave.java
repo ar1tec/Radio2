@@ -7,6 +7,7 @@ import java.io.IOException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Base64;
+import android.util.Log;
 
 import org.oucho.radio2.db.RadiosDatabase;
 
@@ -29,8 +30,16 @@ public class DatabaseSave {
 
     private void saveToFile(String destXml) throws IOException {
         File myFile = new File(destXml);
-        //noinspection ResultOfMethodCallIgnored
-        myFile.createNewFile();
+
+        boolean myFileExisted = myFile.exists() || myFile.createNewFile();
+
+        try {
+            if (!myFileExisted) {
+                throw new IOException("Unable to create file");
+            }
+        } catch (IOException e) {
+            Log.e("DatabaseSave", "Error: " + e);
+        }
 
         FileOutputStream fOut = new FileOutputStream(myFile);
         BufferedOutputStream bos = new BufferedOutputStream(fOut);
@@ -86,7 +95,7 @@ public class DatabaseSave {
 
 
 
-    private class Exporter {
+    private static class Exporter {
 
         private static final String ENTETE = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n" + "<map>" + "\n" ;
         private static final String START_RADIO = "<radio>" + "\n";

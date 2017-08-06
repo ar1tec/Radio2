@@ -32,15 +32,15 @@ public class AutoScrollableTextView extends AppCompatTextView {
         setHorizontallyScrolling(true);
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
-        if(focused)
             super.onFocusChanged(focused, direction, previouslyFocusedRect);
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public void onWindowFocusChanged(boolean focused) {
-        if(focused)
             super.onWindowFocusChanged(focused);
     }
 

@@ -54,17 +54,17 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
 
         text.setText(radio.getTitle());
 
-        if (radio.getImg() != null) {
+        if (radio.getLogo() != null) {
             imageDefault.setVisibility(View.INVISIBLE);
             logoRadio.setImageBitmap(ImageFactory.getImage(radio.getLogo()));
             logoRadio.setVisibility(View.VISIBLE);
         }
 
-        if (radio.getName().equals(nomRadio)  ) {
+        if (radio.getTitle().equals(nomRadio)  ) {
 
             fond.setBackgroundColor(ContextCompat.getColor(context, R.color.amber_50));
 
-            if (radio.getImg() == null)
+            if (radio.getLogo() == null)
             imageDefault.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent));
         }
     }
@@ -75,7 +75,7 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
         if(view.equals(menu)) {
             final PopupMenu popup = new PopupMenu(activity, menu);
 
-            if (MainActivity.mpd_app_is_installed) {
+            if (MainActivity.getMpdAppIsInstalled()) {
                 popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete_mpd, popup.getMenu());
             } else {
                 popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete, popup.getMenu());

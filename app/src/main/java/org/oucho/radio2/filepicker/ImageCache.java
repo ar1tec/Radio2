@@ -49,12 +49,4 @@ class ImageCache {
         return mMemoryCache.get(key);
     }
 
-    public void remove(String key) {
-        mMemoryCache.remove(key);
-    }
-
-    public synchronized void clear() {
-        mMemoryCache.evictAll();
-    }
-
 }

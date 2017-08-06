@@ -14,9 +14,6 @@
     <string name="errorInvalidURL">Ungültige URL</string>
 
 
-    <string name="drawer_open">open</string>
-    <string name="drawer_close">close</string>
-
     <!-- nav header activity main -->
     <string name="by">Old Geek, juni 2017</string>
 
@@ -121,23 +118,10 @@
     </string-array>
 
 
-
-    <string name="type_archive">Archive</string>
-    <string name="type_document">Dokument</string>
-    <string name="type_drawing">Zeichnung</string>
-    <string name="type_excel">Excel</string>
-    <string name="type_image">Image</string>
-    <string name="type_music">Musik</string>
-    <string name="type_video">Video</string>
-    <string name="type_pdf">PDF</string>
-    <string name="type_power_point">Präsentation</string>
-    <string name="type_word">Dokument</string>
-    <string name="type_apk">APK</string>
-
     <string name="add_logo">Tippen um ein Logo hinzuzufügen</string>
     <string name="notif_touch">(Zum Öffnen tippen)</string>
     <string name="station_name">Stationsname</string>
-    <string name="loading">Laden...</string>
+    <string name="loading" tools:ignore="TypographyEllipsis">Laden...</string>
     <string name="play">Play</string>
     <string name="completed">Completed</string>
     <string name="disconnected">Disconnected</string>

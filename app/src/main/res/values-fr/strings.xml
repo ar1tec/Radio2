@@ -14,10 +14,6 @@
     <string name="errorInvalidURL">Veuillez entrer une adresse valide</string>
 
 
-    <string name="drawer_open">open</string>
-    <string name="drawer_close">close</string>
-
-
     <string name="addRadio_fromApp">La radio %1$s ajoutée</string>
     <string name="addRadio_error">Cette radio est déjà enregistrée</string>
     <string name="add_mpd">Envoyer vers MPD Client</string>
@@ -127,23 +123,10 @@
     </string-array>
 
 
-
-    <string name="type_archive">Archive</string>
-    <string name="type_document">Fichier</string>
-    <string name="type_drawing">Dessin</string>
-    <string name="type_excel">Tableur</string>
-    <string name="type_image">Image</string>
-    <string name="type_music">Musique</string>
-    <string name="type_video">Vidéo</string>
-    <string name="type_pdf">Document PDF</string>
-    <string name="type_power_point">Présentation</string>
-    <string name="type_word">Document</string>
-    <string name="type_apk">APK</string>
-
     <string name="add_logo">Touchez pour ajouter un logo</string>
     <string name="station_name">Nom de la radio à l\'écoute</string>
     <string name="notif_touch">(Touchez pour ouvrir)</string>
-    <string name="loading">Chargement...</string>
+    <string name="loading" tools:ignore="TypographyEllipsis">Chargement...</string>
     <string name="play">Lecture</string>
     <string name="disconnected">Déconnecté</string>
     <string name="completed">Complété</string>

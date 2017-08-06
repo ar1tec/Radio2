@@ -84,6 +84,7 @@ public class ImageFactory {
     }
 
     // convert from drawable to string
+    @SuppressWarnings("SameParameterValue")
     public static String drawableResourceToBitmap(Context context, int drawable) {
 
         Bitmap one = BitmapFactory.decodeResource(context.getResources(), drawable);

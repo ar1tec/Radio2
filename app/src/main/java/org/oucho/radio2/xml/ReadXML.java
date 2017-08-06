@@ -36,7 +36,7 @@ public class ReadXML {
 
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String receiveString = "";
+            String receiveString;
             StringBuilder stringBuilder = new StringBuilder();
 
             while ( (receiveString = bufferedReader.readLine()) != null ) {
@@ -44,6 +44,7 @@ public class ReadXML {
             }
 
             inputStream.close();
+            bufferedReader.close();
             ret = stringBuilder.toString();
 
         } catch (FileNotFoundException e) {
@@ -58,7 +59,7 @@ public class ReadXML {
 
     public void read(Context context, String XMLData) {
 
-        List<XmlValuesModel> myData = null;
+        List<XmlValuesModel> myData;
 
         try {
 

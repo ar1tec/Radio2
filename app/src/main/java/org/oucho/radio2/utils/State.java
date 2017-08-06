@@ -37,8 +37,8 @@ public class State implements RadioKeys {
 
       Intent intent = new Intent(INTENT_STATE);
       intent.putExtra("state", current_state);
-      intent.putExtra("url", PlayerService.url);
-      intent.putExtra("name", PlayerService.name);
+      intent.putExtra("url", PlayerService.getUrl());
+      intent.putExtra("name", PlayerService.getName());
 
       context.sendBroadcast(intent);
    }
@@ -53,37 +53,7 @@ public class State implements RadioKeys {
        return current_state.equals(s);
    }
 
-   public static String text() {
-
-      if (is(STATE_STOP))
-          return "Stop";
-
-       if (is(STATE_PLAY))
-           return "Play";
-
-       if (is(STATE_PAUSE))
-           return "Pause";
-
-       if (is(STATE_BUFFER))
-           return "Loading...";
-
-       if (is(STATE_DUCK))
-           return "\\_o< coin";
-
-       if (is(STATE_COMPLETED))
-           return "Completed";
-
-      if (is(STATE_ERROR))
-          return "Error";
-
-      if (is(STATE_DISCONNECTED))
-          return "Disconnected";
-
-      // Should not happen.
-      return "Unknown";
-   }
-
-   public static boolean isPlaying() {
+    public static boolean isPlaying() {
        return is(STATE_PLAY) || is(STATE_BUFFER) || is(STATE_DUCK);
    }
 
