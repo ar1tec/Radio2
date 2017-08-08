@@ -1,6 +1,7 @@
 package org.oucho.radio2;
 
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -717,10 +718,6 @@ public class PlayerService extends Service
       }
    }
 
-   public static void timerOnOff(boolean onOff){
-      timer = onOff;
-   }
-
 
    private void updateNotification(String radio_name, String action, Bitmap logo_radio) {
 
@@ -755,10 +752,10 @@ public class PlayerService extends Service
       unlockNotification = "Play".equals(action);
       notificationBuilder.setOngoing(unlockNotification);
 
-      android.app.Notification notification = notificationBuilder.build();
+      Notification notification = notificationBuilder.build();
+
       RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
 
-      // Traduction du texte
       String locale_string;
       if ("Play".equals(action)) {
          locale_string = context.getResources().getString(R.string.play);
@@ -784,18 +781,15 @@ public class PlayerService extends Service
 
       } else {
 
-         if (sIsServiceForeground) {
-
+         if (sIsServiceForeground)
             stopForeground(false);
 
-         }
 
          NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
          notificationManager.notify(NOTIFY_ID, notification);
       }
 
       sIsServiceForeground = startForeground;
-
    }
 
 
@@ -822,4 +816,9 @@ public class PlayerService extends Service
    private static void setName(String value) {
       name = value;
    }
+
+   public static void timerOnOff(boolean onOff){
+      timer = onOff;
+   }
+
 }

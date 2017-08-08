@@ -143,7 +143,7 @@ public class Connectivity extends BroadcastReceiver {
                player2.putExtra("action", "play");
                context.startService(player2);
 
-               reconnect(5000);
+               reconnect();
 
             } else {
 
@@ -157,7 +157,7 @@ public class Connectivity extends BroadcastReceiver {
 
    }
 
-   private void reconnect(int delay) {
+   private void reconnect() {
 
       handler = new Handler();
       handler.postDelayed(new Runnable() {
@@ -175,7 +175,7 @@ public class Connectivity extends BroadcastReceiver {
             }
          }
 
-      }, delay);
+      }, 5000);
 
    }
 

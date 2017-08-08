@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.inflateMenu(R.menu.navigation);
         mNavigationView.setNavigationItemSelectedListener(this);
 
         music_app_is_installed = checkIfAppIsInstalled(app_music);
@@ -198,10 +199,14 @@ public class MainActivity extends AppCompatActivity
 
     private void setNavigationMenu() {
 
+        Menu navigatioMenu = mNavigationView.getMenu();
+
         if (music_app_is_installed) {
-            mNavigationView.inflateMenu(R.menu.navigation_music);
+            navigatioMenu.setGroupVisible(R.id.add_music, true);
+            navigatioMenu.setGroupVisible(R.id.haut_default, false);
         } else {
-            mNavigationView.inflateMenu(R.menu.navigation);
+            navigatioMenu.setGroupVisible(R.id.add_music, false);
+            navigatioMenu.setGroupVisible(R.id.haut_default, true);
         }
     }
 
@@ -323,9 +328,11 @@ public class MainActivity extends AppCompatActivity
                 startActivity(music);
                 break;
             case R.id.nav_export:
+            case R.id.nav_export0:
                 exporter();
                 break;
             case R.id.nav_import:
+            case R.id.nav_import0:
                 importer();
                 break;
             case R.id.nav_update:

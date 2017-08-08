@@ -22,30 +22,25 @@ public class CustomHttpDataSource implements DataSource.Factory {
         listener = value;
     }
 
-    private void setConnectTimeoutMillis(int value) {
-        connectTimeoutMillis = value;
+    private void setConnectTimeoutMillis() {
+        connectTimeoutMillis = DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS;
     }
 
-    private void setReadTimeoutMillis(int value) {
-        readTimeoutMillis = value;
+    private void setReadTimeoutMillis() {
+        readTimeoutMillis = DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS;
     }
 
-    private void setAllowCrossProtocolRedirects(boolean value) {
-        allowCrossProtocolRedirects = value;
+    private void setAllowCrossProtocolRedirects() {
+        allowCrossProtocolRedirects = false;
     }
+
     public CustomHttpDataSource(String userAgent, TransferListener<? super DataSource> listener) {
 
         setUserAgent(userAgent);
         setListener(listener);
-        setConnectTimeoutMillis(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS);
-        setReadTimeoutMillis(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS);
-        setAllowCrossProtocolRedirects(false);
-
-        //this.userAgent = userAgent;
-       // this.listener = listener;
-       // this.connectTimeoutMillis = DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS;
-       // this.readTimeoutMillis = DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS;
-       // this.allowCrossProtocolRedirects = false;
+        setConnectTimeoutMillis();
+        setReadTimeoutMillis();
+        setAllowCrossProtocolRedirects();
     }
 
 
