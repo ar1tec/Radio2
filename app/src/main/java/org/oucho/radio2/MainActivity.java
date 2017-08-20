@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity
         View.OnClickListener {
 
     private static final int FILE_PICKER_RESULT = 0;
+    private static final int RADIO_LIST = 11;
+
 
     private String radio_name;
     private String playing_state;
@@ -334,6 +336,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_import:
             case R.id.nav_import0:
                 importer();
+                break;
+            case R.id.nav_radio_list:
+                Intent intent = new Intent(getApplicationContext(), RadioListActivity.class);
+                startActivityForResult(intent, RADIO_LIST);
                 break;
             case R.id.nav_update:
                 CheckUpdate.withInfo(this);
@@ -830,9 +836,7 @@ public class MainActivity extends AppCompatActivity
 
     private void exporter() {
 
-        if (Build.VERSION.SDK_INT >= 23
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             checkWritePermission();
             import_export_radio_list = "exporter";
@@ -1131,9 +1135,7 @@ public class MainActivity extends AppCompatActivity
 
     private void importer() {
 
-        if (Build.VERSION.SDK_INT >= 23
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             checkWritePermission();
             import_export_radio_list = "importer";
@@ -1160,9 +1162,7 @@ public class MainActivity extends AppCompatActivity
 
     private void addImg() {
 
-        if (Build.VERSION.SDK_INT >= 23
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             checkWritePermission();
             import_export_radio_list = "image";

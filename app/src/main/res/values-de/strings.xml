@@ -131,6 +131,7 @@
 
     <string name="addRadio_fromApp">Radio %1$s hinzugefügt</string>
     <string name="addRadio_error">Dieses Radio ist bereits registriert</string>
+    <string name="add_mpd">Senden an MPD Remote</string>
 
 
 </resources>

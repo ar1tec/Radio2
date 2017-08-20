@@ -75,6 +75,12 @@ public class ImageFactory {
         return bitmapToString(getImage(logo));
     }
 
+    // convert from byte string to byte
+    public static byte[] stringToByte(String logo) {
+
+        return Base64.decode(logo, Base64.DEFAULT);
+    }
+
     // convert from bitmap to string
     private static String bitmapToString(Bitmap image) {
 

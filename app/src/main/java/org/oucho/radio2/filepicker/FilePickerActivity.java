@@ -94,7 +94,7 @@ public class FilePickerActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.fp__main_activity);
+		setContentView(R.layout.file_picker_main_activity);
 
 
 		intent = getIntent();
@@ -114,7 +114,7 @@ public class FilePickerActivity extends AppCompatActivity {
 
 		mOptSortType = intent.getIntExtra(FilePicker.SET_SORT_TYPE, FilePicker.SORT_NAME_ASC);
 
-		mEmptyView = getLayoutInflater().inflate(R.layout.fp__empty, null);
+		mEmptyView = getLayoutInflater().inflate(R.layout.file_picker_empty, null);
 		addContentView(mEmptyView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
 		setAbsListView();
@@ -180,7 +180,7 @@ public class FilePickerActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
-                    View alertView = LayoutInflater.from(FilePickerActivity.this).inflate(R.layout.fp__new_folder, null);
+                    View alertView = LayoutInflater.from(FilePickerActivity.this).inflate(R.layout.file_picker_new_folder, null);
                     final TextView name = (TextView) alertView.findViewById(R.id.name);
 
                     AlertDialog.Builder alert = new AlertDialog.Builder(FilePickerActivity.this);
@@ -651,7 +651,7 @@ public class FilePickerActivity extends AppCompatActivity {
 
         FilesListAdapter(Context context) {
 			mContext = context;
-			mResource = R.layout.fp__list_item;
+			mResource = R.layout.file_picker_list_item;
 		}
 
 		@Override

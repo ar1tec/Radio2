@@ -21,6 +21,11 @@
             android:icon="@drawable/ic_input_black_24dp"
             android:title="@string/importerMenu"/>
 
+        <item
+            android:id="@+id/nav_radio_list"
+            android:icon="@drawable/ic_music_note_black_24dp"
+            android:title="Liste de radio"/>
+
     </group>
 
     <group android:id="@+id/haut_default">

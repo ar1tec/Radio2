@@ -102,7 +102,6 @@
     <string name="permission_write_external_storage">Permission to write external storage</string>
 
 
-
     <string-array name="size_units">
         <item>o</item>
         <item>Ko</item>

@@ -193,6 +193,6 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/line"
-        tools:listitem="@layout/fp__list_item" />
+        tools:listitem="@layout/file_picker_list_item" />
 
 </RelativeLayout>

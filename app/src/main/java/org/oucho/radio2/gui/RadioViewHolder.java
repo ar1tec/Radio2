@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.oucho.radio2.MainActivity;
@@ -24,7 +25,7 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
     private final ImageView imageDefault;
     private final ImageView logoRadio;
 
-    private final CardView fond;
+    private final RelativeLayout fond;
 
     private Radio radio;
     private final MainActivity activity;
@@ -41,7 +42,7 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
         menu = (ImageButton) view.findViewById(R.id.buttonMenu);
         imageDefault = (ImageView) view.findViewById(R.id.imageRadioDefault);
         logoRadio = (ImageView) view.findViewById(R.id.logoViewRadio);
-        fond  = (CardView) view.findViewById(R.id.fond);
+        fond  = (RelativeLayout) view.findViewById(R.id.fond);
 
         view.setOnClickListener(this);
         menu.setOnClickListener(this);
@@ -62,10 +63,12 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
 
         if (radio.getTitle().equals(nomRadio)  ) {
 
-            fond.setBackgroundColor(ContextCompat.getColor(context, R.color.amber_50));
+            fond.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
+            text.setTextColor(ContextCompat.getColor(context, R.color.white));
+            menu.setImageDrawable(activity.getDrawable(R.drawable.ic_more_vert_white_24dp));
 
-            if (radio.getLogo() == null)
-            imageDefault.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent));
+            // if (radio.getLogo() == null)
+            //    imageDefault.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent));
         }
     }
 

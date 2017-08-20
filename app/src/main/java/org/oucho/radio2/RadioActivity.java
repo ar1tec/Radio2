@@ -21,8 +21,6 @@ public class RadioActivity extends Activity {
         if (Intent.ACTION_VIEW.equals(action) && intent.getData() != null) {
 
             intent.setDataAndType(intent.getData(), intent.getType());
-            Log.w("PWET", intent.getData() + " " + intent.getType());
-
 
             Radio newRadio = new Radio(intent.getData().toString(), intent.getData().toString() , null);
             Radio.addNewRadio(getApplicationContext(), newRadio);
@@ -33,6 +31,5 @@ public class RadioActivity extends Activity {
         startActivity(intent.setClass(this, MainActivity.class));
 
         finish();
-       // return;
     }
 }
