@@ -3,11 +3,10 @@ package org.oucho.radio2.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.oucho.radio2.db.Radio;
-import org.oucho.radio2.images.ImageFactory;
+import org.oucho.radio2.utils.ImageFactory;
 
 
 public class NewRadioReceiver extends BroadcastReceiver {

@@ -55,7 +55,8 @@ import org.oucho.radio2.filepicker.FilePicker;
 import org.oucho.radio2.filepicker.FilePickerActivity;
 import org.oucho.radio2.filepicker.FilePickerParcelObject;
 import org.oucho.radio2.gui.RadioAdapter;
-import org.oucho.radio2.images.ImageFactory;
+import org.oucho.radio2.tunein.RadioListActivity;
+import org.oucho.radio2.utils.ImageFactory;
 import org.oucho.radio2.interfaces.ListsClickListener;
 import org.oucho.radio2.interfaces.PlayableItem;
 import org.oucho.radio2.interfaces.RadioKeys;
@@ -330,14 +331,13 @@ public class MainActivity extends AppCompatActivity
                 startActivity(music);
                 break;
             case R.id.nav_export:
-            case R.id.nav_export0:
                 exporter();
                 break;
             case R.id.nav_import:
-            case R.id.nav_import0:
                 importer();
                 break;
             case R.id.nav_radio_list:
+            case R.id.nav_radio_list0:
                 Intent intent = new Intent(getApplicationContext(), RadioListActivity.class);
                 startActivityForResult(intent, RADIO_LIST);
                 break;

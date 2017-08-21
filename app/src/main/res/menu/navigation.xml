@@ -12,18 +12,8 @@
             android:title="@string/action_music"/>
 
         <item
-            android:id="@+id/nav_export0"
-            android:icon="@drawable/ic_save_black_24dp"
-            android:title="@string/exporterMenu"/>
-
-        <item
-            android:id="@+id/nav_import0"
-            android:icon="@drawable/ic_input_black_24dp"
-            android:title="@string/importerMenu"/>
-
-        <item
-            android:id="@+id/nav_radio_list"
-            android:icon="@drawable/ic_music_note_black_24dp"
+            android:id="@+id/nav_radio_list0"
+            android:icon="@drawable/tunein"
             android:title="Liste de radio"/>
 
     </group>
@@ -31,17 +21,23 @@
     <group android:id="@+id/haut_default">
 
         <item
-            android:id="@+id/nav_export"
-            android:icon="@drawable/ic_save_black_24dp"
-            android:title="@string/exporterMenu"/>
+            android:id="@+id/nav_radio_list"
+            android:icon="@drawable/tunein"
+            android:title="Liste de radio"/>
 
-        <item
-            android:id="@+id/nav_import"
-            android:icon="@drawable/ic_input_black_24dp"
-            android:title="@string/importerMenu"/>
+
 
     </group>
 
+    <item
+        android:id="@+id/nav_export"
+        android:icon="@drawable/ic_save_black_24dp"
+        android:title="@string/exporterMenu"/>
+
+    <item
+        android:id="@+id/nav_import"
+        android:icon="@drawable/ic_input_black_24dp"
+        android:title="@string/importerMenu"/>
 
     <item
         android:id="@+id/nav_update"

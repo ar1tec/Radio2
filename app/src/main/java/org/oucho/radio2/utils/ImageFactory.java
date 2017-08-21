@@ -1,4 +1,4 @@
-package org.oucho.radio2.images;
+package org.oucho.radio2.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;

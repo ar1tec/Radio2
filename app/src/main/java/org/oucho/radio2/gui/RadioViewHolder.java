@@ -2,7 +2,6 @@ package org.oucho.radio2.gui;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -15,7 +14,7 @@ import android.widget.TextView;
 import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.R;
 import org.oucho.radio2.db.Radio;
-import org.oucho.radio2.images.ImageFactory;
+import org.oucho.radio2.utils.ImageFactory;
 import org.oucho.radio2.interfaces.ListsClickListener;
 
 class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

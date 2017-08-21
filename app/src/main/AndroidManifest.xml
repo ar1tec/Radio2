@@ -98,7 +98,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".RadioListActivity">
+        <activity android:name=".tunein.RadioListActivity">
         </activity>
     </application>
 

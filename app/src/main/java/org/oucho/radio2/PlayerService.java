@@ -50,7 +50,7 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 
-import org.oucho.radio2.images.ImageFactory;
+import org.oucho.radio2.utils.ImageFactory;
 import org.oucho.radio2.interfaces.RadioKeys;
 import org.oucho.radio2.net.Connectivity;
 import org.oucho.radio2.net.CustomHttpDataSource;
