@@ -51,7 +51,7 @@ public class TuneInLoader extends BaseLoader<List<String>> {
 
             conn.setReadTimeout(10000 /* milliseconds */);
             conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestProperty("User-Agent", "Radio/2.0 (Android 6.0; Intel Atom) Version/1.1.2 Radio/30");
+            conn.setRequestProperty("User-Agent", "Radio/2.0 (Android 5+)");
             conn.setRequestProperty("Accept-Language", langue + "-" + pays);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
