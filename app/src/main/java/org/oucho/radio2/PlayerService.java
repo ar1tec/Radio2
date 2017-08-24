@@ -73,10 +73,7 @@ import static com.google.android.exoplayer2.ExoPlayer.STATE_IDLE;
 import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
 import static org.oucho.radio2.utils.State.isPlaying;
 
-public class PlayerService extends Service
-   implements RadioKeys,
-        ExoPlayer.EventListener,
-        OnAudioFocusChangeListener {
+public class PlayerService extends Service implements RadioKeys, ExoPlayer.EventListener, OnAudioFocusChangeListener {
 
    private Context context = null;
    private String mUserAgent;
@@ -516,7 +513,6 @@ public class PlayerService extends Service
 
       String state;
       if (isLoading) {
-
          state = "Media source is currently being loaded.";
       } else {
          state = "Media source is currently not being loaded.";
@@ -545,9 +541,7 @@ public class PlayerService extends Service
             releaseExoPlayer();
         }
 
-
-      DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(this,
-              null, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+      DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(this, null, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
 
       TrackSelector trackSelector = new DefaultTrackSelector();
 
@@ -582,8 +576,7 @@ public class PlayerService extends Service
       MediaSource mediaSource;
 
       if (sourceIsHLS) {
-         mediaSource = new HlsMediaSource(Uri.parse(uriString),
-                 dataSourceFactory, 32, null, null);
+         mediaSource = new HlsMediaSource(Uri.parse(uriString), dataSourceFactory, 32, null, null);
       } else {
          ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
          mediaSource = new ExtractorMediaSource(Uri.parse(getUrl()), dataSourceFactory, extractorsFactory, 32, null, null, null);
@@ -616,7 +609,7 @@ public class PlayerService extends Service
             connection.connect();
             contentType = connection.getContentType();
             Log.v(TAG, "MIME type of stream: " + contentType);
-            if (contentType.contains("application/vnd.apple.mpegurl") || contentType.contains("application/x-mpegurl")) {
+            if (contentType != null && (contentType.contains("application/vnd.apple.mpegurl") || contentType.contains("application/x-mpegurl"))) {
                Log.v(TAG, "HTTP Live Streaming detected.");
                return true;
             } else {
@@ -786,6 +779,7 @@ public class PlayerService extends Service
 
 
          NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+         assert notificationManager != null;
          notificationManager.notify(NOTIFY_ID, notification);
       }
 
@@ -796,6 +790,7 @@ public class PlayerService extends Service
 
    private void removeNotification(Context context) {
       NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+      assert notificationManager != null;
       notificationManager.cancel(NOTIFY_ID);
    }
 

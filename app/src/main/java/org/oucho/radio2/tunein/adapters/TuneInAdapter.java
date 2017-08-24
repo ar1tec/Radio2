@@ -1,7 +1,6 @@
 package org.oucho.radio2.tunein.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-
 
 import org.oucho.radio2.R;
 
@@ -23,87 +21,89 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
     private static final String TAG = "TuneInAdapter";
     private List<String> categorieList = new ArrayList<>();
 
+    private boolean typeAudio = true;
 
     public void setData(List<String> data) {
-        categorieList = data;
+
+
+      //  Log.d(TAG, "setData, data: " + data);
+
+        List<String> list = new ArrayList<>();
+
+        for (int i = 0; i < data.size(); i++) {
+            if  (data.get(i).contains("type=\"audio\"")) {
+            //    Log.d(TAG, "setData, audio: " + data.get(i));
+                list.add(data.get(i));
+            }
+        }
+
+        for (int i = 0; i < data.size(); i++) {
+            if  (data.get(i).contains("type=\"link\"")) {
+            //    Log.d(TAG, "setData, link: " + data.get(i));
+                list.add(data.get(i));
+            }
+        }
+
+         categorieList = list;
+
+        typeAudio = data.contains("type=\"audio\"");
+
         notifyDataSetChanged();
     }
 
 
     @Override
     public TuneInViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.categorie_item, parent, false);
-
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_tunein_list_item, parent, false);
         return new TuneInViewHolder(itemView);
     }
 
 
     @Override
     public void onBindViewHolder(TuneInViewHolder viewHolder, int position) {
-        String item = categorieList.get(position);
 
+        String item = categorieList.get(position);
         String[] parts = item.split("\" ");
 
-
-        if (item.contains("type=\"link\"")) {
-
-            String text = parts[1];
-
-            String name = text.replace("text=\"" , "");
-
-            viewHolder.text.setVisibility(View.VISIBLE);
-            viewHolder.relativeLayout.setVisibility(View.GONE);
-
-            viewHolder.text.setText(name);
-        }
+        viewHolder.text.setVisibility(View.GONE);
+        viewHolder.relativeLayout.setVisibility(View.GONE);
 
         if  (item.contains("type=\"audio\"")) {
 
             String text = parts[1];
-
             String name = text.replace("text=\"" , "");
 
             viewHolder.text.setVisibility(View.GONE);
             viewHolder.relativeLayout.setVisibility(View.VISIBLE);
-
             viewHolder.details_title.setText(name);
 
-            String url;
+            for (String part : parts) {
 
-
-
-            for (int i = 0; i < parts.length; i++) {
-
-                if (parts[i].contains("URL=\"")) {
-
-                    url = parts[i].replace("URL=\"", "");
-
-                    Log.d(TAG, "url: " + url);
-
-
-
+                if (part.contains("subtext=\"")) {
+                    viewHolder.detail_subtitle.setText(part.replace("subtext=\"", ""));
                 }
 
-                if (parts[i].contains("subtext=\"")) {
-
-                    viewHolder.detail_subtitle.setText(parts[i].replace("subtext=\"", ""));
-
-                    Log.d(TAG, "subtitle: " + parts[i].replace("subtext=\"", ""));
-
-
+                if (part.contains("image=\"")) {
+                    String url_image = part.replace("image=\"", "");
+                    Picasso.with(viewHolder.itemView.getContext()).load(url_image).fit().centerCrop().into(viewHolder.image);
                 }
+            }
 
-                if (parts[i].contains("image=\"")) {
+        }
 
-                    String url_image = parts[i].replace("image=\"", "");
+        if  (!typeAudio) {
 
-                    Log.d(TAG, "image url: " + url_image);
+            if (item.contains("type=\"link\"")) {
 
-                    Picasso.with(viewHolder.itemView.getContext()).load(parts[i].replace("image=\"", "")).fit().centerCrop().into(viewHolder.image);
-                }
+                String text = parts[1];
+                String name = text.replace("text=\"", "");
 
+                viewHolder.text.setVisibility(View.VISIBLE);
+                viewHolder.relativeLayout.setVisibility(View.GONE);
+                viewHolder.text.setText(name);
             }
         }
+
     }
 
     @Override
@@ -142,6 +142,8 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
             relativeLayout = (RelativeLayout) itemView.findViewById(R.id.detail_layout);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+
         }
 
         @Override
@@ -156,7 +158,12 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
         public boolean onLongClick(View v) {
             int position = getAdapterPosition();
 
-            return true;
+            if (categorieList.get(position).contains("type=\"audio\"") ) {
+                triggerOnItemLongClickListener(position, v);
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 

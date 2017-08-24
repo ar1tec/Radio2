@@ -31,7 +31,7 @@
         android:layout_marginTop="-20dp"
         android:layout_gravity="center"
         android:text="ZZzzz..."
-        android:textColor="@color/blue_900"
+        android:textColor="@color/blue_900_transp"
         android:textSize="20sp"
         android:textStyle="bold"/>
 

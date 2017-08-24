@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -96,6 +98,9 @@ public class FilePickerActivity extends AppCompatActivity {
 
 		setContentView(R.layout.file_picker_main_activity);
 
+        Window window = getWindow();
+
+        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.blue_900));
 
 		intent = getIntent();
 

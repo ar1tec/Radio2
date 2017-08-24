@@ -24,6 +24,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -33,7 +35,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -45,8 +46,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.oucho.radio2.audio.GetAudioFocusTask;
-import org.oucho.radio2.audio.VolumeTimer;
 import org.oucho.radio2.db.Radio;
 import org.oucho.radio2.db.RadiosDatabase;
 import org.oucho.radio2.dialog.AboutDialog;
@@ -55,14 +54,16 @@ import org.oucho.radio2.filepicker.FilePicker;
 import org.oucho.radio2.filepicker.FilePickerActivity;
 import org.oucho.radio2.filepicker.FilePickerParcelObject;
 import org.oucho.radio2.gui.RadioAdapter;
-import org.oucho.radio2.tunein.RadioListActivity;
-import org.oucho.radio2.utils.ImageFactory;
 import org.oucho.radio2.interfaces.ListsClickListener;
 import org.oucho.radio2.interfaces.PlayableItem;
 import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.tunein.TuneInFragment;
 import org.oucho.radio2.update.CheckUpdate;
+import org.oucho.radio2.utils.ImageFactory;
 import org.oucho.radio2.utils.SeekArc;
 import org.oucho.radio2.utils.State;
+import org.oucho.radio2.utils.audio.GetAudioFocusTask;
+import org.oucho.radio2.utils.audio.VolumeTimer;
 import org.oucho.radio2.xml.DatabaseSave;
 import org.oucho.radio2.xml.ReadXML;
 
@@ -75,13 +76,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity
-        implements RadioKeys,
-        NavigationView.OnNavigationItemSelectedListener,
-        View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements RadioKeys, NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private static final int FILE_PICKER_RESULT = 0;
-    private static final int RADIO_LIST = 11;
+    private static final String TAG = "MainActivity";
 
 
     private String radio_name;
@@ -108,6 +106,7 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences preferences;
     private NavigationView mNavigationView;
     private PlayerStateReceiver player_state_receiver;
+    private BroadcasteReceiver broadcasteReceiver;
 
     private ImageView img_play;
     private ImageView img_pause;
@@ -131,7 +130,6 @@ public class MainActivity extends AppCompatActivity
 
         preferences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
-        int titleColor = ContextCompat.getColor(mContext, R.color.colorAccent);
         int backgroundColor = ContextCompat.getColor(mContext, R.color.colorPrimary);
         String title = mContext.getString(R.string.app_name);
 
@@ -143,13 +141,7 @@ public class MainActivity extends AppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setBackgroundDrawable(colorDrawable);
-
-        if (android.os.Build.VERSION.SDK_INT >= 24) {
-            actionBar.setTitle(Html.fromHtml("<font color='" + titleColor + "'>" + title + "</font>", Html.FROM_HTML_MODE_LEGACY));
-        } else {
-            //noinspection deprecation
-            actionBar.setTitle(Html.fromHtml("<font color='" + titleColor + "'>" + title + "</font>"));
-        }
+        actionBar.setTitle(title);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -171,8 +163,12 @@ public class MainActivity extends AppCompatActivity
         getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
 
         player_state_receiver = new PlayerStateReceiver();
-        IntentFilter filter = new IntentFilter(INTENT_STATE);
-        registerReceiver(player_state_receiver, filter);
+        IntentFilter filter0 = new IntentFilter(INTENT_STATE);
+        registerReceiver(player_state_receiver, filter0);
+
+        broadcasteReceiver = new BroadcasteReceiver();
+        IntentFilter filter1 = new IntentFilter(INTENT_TITRE);
+        registerReceiver(broadcasteReceiver, filter1);
 
         volumeTimer = new VolumeTimer();
 
@@ -182,6 +178,8 @@ public class MainActivity extends AppCompatActivity
 
         img_play = (ImageView) findViewById(R.id.play_radio);
         img_pause = (ImageView) findViewById(R.id.pause_radio);
+        ImageView img_tune_in = (ImageView) findViewById(R.id.list_radio);
+        img_tune_in.setOnClickListener(this);
 
         this.findViewById(R.id.add_radio).setOnClickListener(this);
         this.findViewById(R.id.stop_radio).setOnClickListener(this);
@@ -338,8 +336,11 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_radio_list:
             case R.id.nav_radio_list0:
-                Intent intent = new Intent(getApplicationContext(), RadioListActivity.class);
-                startActivityForResult(intent, RADIO_LIST);
+                Fragment fragment = TuneInFragment.newInstance();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom);
+                ft.replace(R.id.content_main, fragment);
+                ft.commit();
                 break;
             case R.id.nav_update:
                 CheckUpdate.withInfo(this);
@@ -424,6 +425,24 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    private class BroadcasteReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String receiveIntent = intent.getAction();
+
+            if (INTENT_STATE.equals(receiveIntent)) {
+
+                String titre = intent.getStringExtra("titre");
+
+                Log.e(TAG, "String titre = intent.getStringExtra(\"titre\"): " + titre);
+
+                setTitle( titre );
+
+            }
+        }
+    }
    /* *********************************
     * Affiche le nom de la radio active
     * *********************************/
@@ -526,6 +545,14 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.add_radio:
                 editRadio(null);
+                break;
+
+            case R.id.list_radio:
+                Fragment fragment = TuneInFragment.newInstance();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom);
+                ft.replace(R.id.content_main, fragment);
+                ft.commit();
                 break;
             default:
                 break;
@@ -659,6 +686,7 @@ public class MainActivity extends AppCompatActivity
             this.context = context;
 
             AudioManager audioManager = (AudioManager) this.context.getSystemService(Context.AUDIO_SERVICE);
+            assert audioManager != null;
             previousVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         }
 
@@ -669,6 +697,7 @@ public class MainActivity extends AppCompatActivity
             volume();
 
             AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            assert audio != null;
             int currentVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
 
             int delta = previousVolume - currentVolume;
@@ -690,6 +719,7 @@ public class MainActivity extends AppCompatActivity
     private void volume() {
 
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        assert audioManager != null;
         int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
         ImageView play = (ImageView) findViewById(R.id.icon_volume);

@@ -80,7 +80,7 @@ public class Radio implements PlayableItem, RadioKeys {
             Log.d("Radio", "Error: " + e);
 		}
 	}
-	
+
 	public static void deleteRadio(Context context, Radio radio) {
 		RadiosDatabase radiosDatabase = new RadiosDatabase(context);
 		SQLiteDatabase db = radiosDatabase.getWritableDatabase();

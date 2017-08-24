@@ -2,6 +2,7 @@ package org.oucho.radio2.tunein.loaders;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.Html;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,11 +18,11 @@ import java.util.Locale;
 
 public class TuneInLoader extends BaseLoader<List<String>> {
 
-    private String TAG = "TuneInLoader";
+    private final String TAG = "TuneInLoader";
 
-    private Context mContext;
+    private final Context mContext;
 
-    private String urlRadioTime;
+    private final String urlRadioTime;
 
     public TuneInLoader(Context context, String url) {
         super(context);
@@ -42,16 +43,19 @@ public class TuneInLoader extends BaseLoader<List<String>> {
         String pays = Locale.getDefault().getCountry();
 
         try {
-            // http://opml.radiotime.com/Browse.ashx?c=local
-            // http://opml.radiotime.com
+
+            Log.d(TAG, "loadInBackground(): " + urlRadioTime);
+
             URL url = new URL(urlRadioTime);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setReadTimeout(10000 /* milliseconds */);
             conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestProperty("User-Agent", "Radio/2.0 (Android 6.0; Intel Atom) Version/1.1.2 Radio/30");
+            //conn.setRequestProperty("User-Agent", "Radio/2.0 (Android 6.0; Intel Atom) Version/1.1.2 Radio/30");
             conn.setRequestProperty("Accept-Language", langue + "-" + pays);
             conn.setRequestMethod("GET");
+            conn.setInstanceFollowRedirects(true);
+
             conn.setDoInput(true);
             conn.connect();
 
@@ -59,8 +63,12 @@ public class TuneInLoader extends BaseLoader<List<String>> {
 
             data = convertStreamToString(stream);
 
+          //  Log.d(TAG, "loadInBackground() data: " + data);
+
+
             liste = parse(data);
 
+            conn.disconnect();
             stream.close();
 
         } catch (SocketTimeoutException e) {
@@ -97,14 +105,14 @@ public class TuneInLoader extends BaseLoader<List<String>> {
         String titre;
         String status = head.substring(head.indexOf("<status>") + 8, head.indexOf("</status>"));
 
-        if (status.equals("200")) {
+        if (status.equals("200") && head.contains("<title>")) {
             titre = head.substring(head.indexOf("<title>") + 7, head.indexOf("</title>"));
 
-            Log.d(TAG, "titre " + titre);
+          //  Log.d(TAG, "titre " + Html.fromHtml(titre));
 
             Intent intent = new Intent();
             intent.setAction("org.oucho.radio2.INTENT_TITRE");
-            intent.putExtra("Titre", titre);
+            intent.putExtra("titre", titre);
             mContext.sendBroadcast(intent);
         }
 
@@ -132,11 +140,13 @@ public class TuneInLoader extends BaseLoader<List<String>> {
 
         List<String> liste = new ArrayList<>();
 
-        for (int i = 0; i < lines.length; i++) {
+        for (String line : lines) {
 
-            String type = lines[i].replace("<outline ", "").replace("/>", "").replace("\n", "");
+            String type = line.replace("<outline ", "").replace("/>", "").replace("\n", "");
 
-            liste.add(type);
+            liste.add(Html.fromHtml(type).toString());
+
+            // Log.e(TAG, "Parse body: " + Html.fromHtml(type).toString());
 
         }
 
