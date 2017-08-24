@@ -667,7 +667,10 @@ public class PlayerService extends Service implements RadioKeys, ExoPlayer.Event
             Bitmap logoBitmap = null;
 
             if (logo != null) {
-               logoBitmap = ImageFactory.stringToBitmap(logo);
+
+                Log.d(TAG, "if (logo != null)");
+
+                logoBitmap = ImageFactory.stringToBitmap(logo);
             }
 
             updateNotification(nom, etat, logoBitmap);
@@ -719,7 +722,11 @@ public class PlayerService extends Service implements RadioKeys, ExoPlayer.Event
       String img = préférences.getString("image_data", "");
 
       if( logo_radio == null && !img.equalsIgnoreCase("") ){
-         byte[] img_byte_array = Base64.decode(img, Base64.DEFAULT);
+
+          Log.d(TAG, "if( logo_radio == null && !img.equalsIgnoreCase(\"\") )");
+
+
+          byte[] img_byte_array = Base64.decode(img, Base64.DEFAULT);
 
          logo_radio = BitmapFactory.decodeByteArray(img_byte_array, 0, img_byte_array.length);
       }

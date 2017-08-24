@@ -25,36 +25,29 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
 
     public void setData(List<String> data) {
 
-
-      //  Log.d(TAG, "setData, data: " + data);
-
         List<String> list = new ArrayList<>();
 
         for (int i = 0; i < data.size(); i++) {
             if  (data.get(i).contains("type=\"audio\"")) {
-            //    Log.d(TAG, "setData, audio: " + data.get(i));
                 list.add(data.get(i));
             }
         }
 
         for (int i = 0; i < data.size(); i++) {
             if  (data.get(i).contains("type=\"link\"")) {
-            //    Log.d(TAG, "setData, link: " + data.get(i));
                 list.add(data.get(i));
             }
         }
 
-         categorieList = list;
-
+        categorieList = list;
         typeAudio = data.contains("type=\"audio\"");
-
         notifyDataSetChanged();
     }
 
 
     @Override
     public TuneInViewHolder onCreateViewHolder(ViewGroup parent, int type) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_tunein_list_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_tunein_list_item, parent, false);
         return new TuneInViewHolder(itemView);
     }
 
@@ -103,31 +96,24 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
                 viewHolder.text.setText(name);
             }
         }
-
     }
 
     @Override
     public int getItemCount() {
-
         return categorieList.size();
     }
 
     public String getItem(int position) {
-
         return categorieList.get(position);
     }
 
     public class TuneInViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        private final TextView text;
-
-        private final TextView details_title;
-        private final TextView detail_subtitle;
-
-        private final ImageView image;
-
         private final RelativeLayout relativeLayout;
-
+        private final ImageView image;
+        private final TextView detail_subtitle;
+        private final TextView details_title;
+        private final TextView text;
 
         TuneInViewHolder(View itemView) {
             super(itemView);
@@ -143,21 +129,17 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
-
         }
 
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-
             triggerOnItemClickListener(position, v);
-
         }
 
         @Override
         public boolean onLongClick(View v) {
             int position = getAdapterPosition();
-
             if (categorieList.get(position).contains("type=\"audio\"") ) {
                 triggerOnItemLongClickListener(position, v);
                 return true;

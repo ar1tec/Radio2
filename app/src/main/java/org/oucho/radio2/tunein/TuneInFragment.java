@@ -40,7 +40,7 @@ import java.util.List;
 public class TuneInFragment extends Fragment implements RadioKeys {
 
     private final List<String> historique = new ArrayList<>();
-    private final String TAG = "TuneInFragment";
+    private static final String TAG = "TuneInFragment";
     private ProgressBar mProgressBar;
     private TuneInAdapter mAdapter;
     private Context mContext;
@@ -64,7 +64,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.activity_tunein_content, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_tunein, container, false);
 
 
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
@@ -134,6 +134,8 @@ public class TuneInFragment extends Fragment implements RadioKeys {
             String item = mAdapter.getItem(position);
             String[] parts = item.split("\" ");
 
+            String url_image = null;
+
             if (item.contains("type=\"link\"")) {
 
                 String url = null;
@@ -157,6 +159,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
                 String text = parts[1];
                 String name = text.replace("text=\"" , "");
+
                 String url = null;
 
                 for (String part : parts) {
@@ -164,9 +167,16 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                         url = part.replace("URL=\"", "");
                         Log.d(TAG, "url: " + url);
                     }
+
+                    if (part.contains("image=\"")) {
+
+                        url_image = part.replace("image=\"", "");
+                        Log.d(TAG, "image url: " + url_image);
+                    }
+
                 }
 
-                new playItem().execute(url, name, mContext);
+                new playItem().execute(url, name, url_image, mContext);
             }
         }
     };
@@ -243,7 +253,6 @@ public class TuneInFragment extends Fragment implements RadioKeys {
             String url_radio;
             String name_radio = objects[1].toString();
             String url_image = objects[2].toString();
-
             Context context = (Context) objects[3];
             Bitmap bmImg;
 
@@ -302,7 +311,14 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
             String httpRequest = objects[0].toString().replace(" ", "%20");
 
-            Context context = (Context) objects[2];
+            String img_URL = objects[2].toString();
+
+            Log.d(TAG, "url img = " + img_URL);
+
+
+            Context context = (Context) objects[3];
+
+            Bitmap bmImg;
 
             try {
                 URL url = new URL(httpRequest);
@@ -318,6 +334,18 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
                 data = convertStreamToString(stream);
 
+
+                URL url1 = new URL(img_URL);
+                HttpURLConnection conn1 = (HttpURLConnection) url1.openConnection();
+                conn1.setDoInput(true);
+                conn1.connect();
+
+                InputStream isImg = conn1.getInputStream();
+
+                bmImg = BitmapFactory.decodeStream(isImg);
+
+                String img = ImageFactory.byteToString(ImageFactory.getBytes(ImageFactory.getResizedBitmap(context, bmImg)));
+
                 Intent player = new Intent(context, PlayerService.class);
 
                 player.putExtra("action", ACTION_PLAY);
@@ -325,6 +353,15 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                 player.putExtra("name", objects[1].toString());
                 context.startService(player);
 
+                Intent intent = new Intent();
+                intent.setAction(INTENT_UPDATENOTIF);
+                intent.putExtra("name", objects[1].toString());
+                intent.putExtra("state", "Play");
+                intent.putExtra("logo", img);
+                context.sendBroadcast(intent);
+
+
+                isImg.close();
                 stream.close();
 
             }catch(SocketTimeoutException e){
@@ -361,14 +398,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
                     if (historique.size() > 1) {
 
-
-                        Log.d(TAG, "onBackPressed historique.size: " + historique.size());
-
-
                         String last = historique.get(historique.size() -2);
-
-                        Log.d(TAG, "onBackPressed last: " + last);
-
 
                         Bundle args = new Bundle();
                         args.putString("url", last);
@@ -382,21 +412,21 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                         load(args);
 
                         return true;
+
                     } else {
+
+                        Intent intent = new Intent();
+                        intent.setAction(INTENT_TITRE);
+                        intent.putExtra("titre", getResources().getString(R.string.app_name));
+                        mContext.sendBroadcast(intent);
 
                         FragmentTransaction ft = getFragmentManager().beginTransaction();
                         ft.setCustomAnimations(R.anim.slide_out_bottom, R.anim.slide_out_bottom);
                         ft.remove(TuneInFragment.this);
-
-                        Intent intent = new Intent();
-                        intent.setAction("org.oucho.radio2.INTENT_TITRE");
-                        intent.putExtra("titre", R.string.app_name);
-                        mContext.sendBroadcast(intent);
-
                         ft.commit();
-                    } // if
+                    }
 
-                } // if
+                }
                 return true;
             }
         });

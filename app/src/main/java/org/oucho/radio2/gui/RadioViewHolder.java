@@ -66,9 +66,8 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
             text.setTextColor(ContextCompat.getColor(context, R.color.white));
             menu.setImageDrawable(activity.getDrawable(R.drawable.ic_more_vert_white_24dp));
 
-            // if (radio.getLogo() == null)
-            //    imageDefault.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent));
         } else {
+
             fond.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
             text.setTextColor(ContextCompat.getColor(context, R.color.grey_800));
             menu.setImageDrawable(activity.getDrawable(R.drawable.ic_more_vert_grey_400_24dp));

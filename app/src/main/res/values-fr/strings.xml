@@ -134,4 +134,8 @@
     <string name="navigation_drawer_close">close</string>
     <string name="navigation_drawer_open">open</string>
 
+    <string name="add_radio_browse">Parcourir</string>
+    <string name="add_radio_manual">Ajouter manuellement</string>
+
+
 </resources>

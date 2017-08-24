@@ -33,6 +33,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -106,13 +107,13 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     private SharedPreferences preferences;
     private NavigationView mNavigationView;
     private PlayerStateReceiver player_state_receiver;
-    private BroadcasteReceiver broadcasteReceiver;
 
     private ImageView img_play;
     private ImageView img_pause;
 
     private Context mContext;
 
+    private ActionBar actionBar;
 
 
     @Override
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setBackgroundDrawable(colorDrawable);
         actionBar.setTitle(title);
@@ -163,12 +164,12 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
 
         player_state_receiver = new PlayerStateReceiver();
-        IntentFilter filter0 = new IntentFilter(INTENT_STATE);
-        registerReceiver(player_state_receiver, filter0);
+        IntentFilter filter = new IntentFilter(INTENT_STATE);
+        filter.addAction(INTENT_STATE);
+        filter.addAction(INTENT_TITRE);
 
-        broadcasteReceiver = new BroadcasteReceiver();
-        IntentFilter filter1 = new IntentFilter(INTENT_TITRE);
-        registerReceiver(broadcasteReceiver, filter1);
+        registerReceiver(player_state_receiver, filter);
+
 
         volumeTimer = new VolumeTimer();
 
@@ -178,8 +179,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         img_play = (ImageView) findViewById(R.id.play_radio);
         img_pause = (ImageView) findViewById(R.id.pause_radio);
-        ImageView img_tune_in = (ImageView) findViewById(R.id.list_radio);
-        img_tune_in.setOnClickListener(this);
 
         this.findViewById(R.id.add_radio).setOnClickListener(this);
         this.findViewById(R.id.stop_radio).setOnClickListener(this);
@@ -284,7 +283,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
 
             moveTaskToBack(true);
-
         }
 
         return super.onKeyDown(keyCode, event);
@@ -372,6 +370,16 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
             String receiveIntent = intent.getAction();
 
+            if (INTENT_TITRE.equals(receiveIntent)) {
+
+                String titre = intent.getStringExtra("titre");
+
+                Log.e(TAG, "String titre = intent.getStringExtra(\"titre\"): " + titre);
+
+                actionBar.setTitle( titre );
+
+            }
+
             if (INTENT_STATE.equals(receiveIntent)) {
 
                 TextView player_status = (TextView) findViewById(R.id.etat);
@@ -425,24 +433,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     }
 
 
-    private class BroadcasteReceiver extends BroadcastReceiver {
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            String receiveIntent = intent.getAction();
-
-            if (INTENT_STATE.equals(receiveIntent)) {
-
-                String titre = intent.getStringExtra("titre");
-
-                Log.e(TAG, "String titre = intent.getStringExtra(\"titre\"): " + titre);
-
-                setTitle( titre );
-
-            }
-        }
-    }
    /* *********************************
     * Affiche le nom de la radio active
     * *********************************/
@@ -544,22 +535,47 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
                 break;
 
             case R.id.add_radio:
-                editRadio(null);
+                popupAddRadio(v);
                 break;
 
-            case R.id.list_radio:
-                Fragment fragment = TuneInFragment.newInstance();
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom);
-                ft.replace(R.id.content_main, fragment);
-                ft.commit();
-                break;
             default:
                 break;
         }
     }
 
 
+    private void popupAddRadio(final View v) {
+
+        final PopupMenu popup = new PopupMenu(MainActivity.this, v);
+
+        popup.getMenuInflater().inflate(R.menu.add_radio, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(final MenuItem item) {
+
+                switch (item.getItemId()) {
+                    case R.id.add_browse:
+                        Fragment fragment = TuneInFragment.newInstance();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom);
+                        ft.replace(R.id.content_main, fragment);
+                        ft.commit();
+                        break;
+                    case R.id.add_manual:
+                        editRadio(null);
+                        break;
+                    default:
+                        break;
+                }
+
+                return true;
+            }
+        });
+
+        popup.show();
+    }
 
        /* *********************************************************************************************
     * Mise à jour de la vue de la liste des radios
