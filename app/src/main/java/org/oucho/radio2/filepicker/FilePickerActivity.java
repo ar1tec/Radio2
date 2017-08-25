@@ -186,7 +186,7 @@ public class FilePickerActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     View alertView = LayoutInflater.from(FilePickerActivity.this).inflate(R.layout.file_picker_new_folder, null);
-                    final TextView name = (TextView) alertView.findViewById(R.id.name);
+                    final TextView name = alertView.findViewById(R.id.name);
 
                     AlertDialog.Builder alert = new AlertDialog.Builder(FilePickerActivity.this);
                     alert.setTitle(R.string.new_folder);
@@ -564,7 +564,7 @@ public class FilePickerActivity extends AppCompatActivity {
 				if (position < mFilesList.size()) {
 					File file = mFilesList.get(position);
 					if (mIsMultiChoice) {
-						CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+						CheckBox checkBox = view.findViewById(R.id.checkbox);
 						if (checkBox.isChecked()) {
 							checkBox.setChecked(false);
 							mSelected.remove(file.getName());
@@ -683,11 +683,11 @@ public class FilePickerActivity extends AppCompatActivity {
 
 			convertView = LayoutInflater.from(mContext).inflate(mResource, parent, false);
 
-			ImageView thumbnail = (ImageView) convertView.findViewById(R.id.thumbnail);
-            TextView filesize = (TextView) convertView.findViewById(R.id.filesize);
-            TextView filesize2 = (TextView) convertView.findViewById(R.id.filesize2);
+			ImageView thumbnail = convertView.findViewById(R.id.thumbnail);
+            TextView filesize = convertView.findViewById(R.id.filesize);
+            TextView filesize2 = convertView.findViewById(R.id.filesize2);
 
-            CheckBox checkbox = (CheckBox) convertView.findViewById(R.id.checkbox);
+            CheckBox checkbox = convertView.findViewById(R.id.checkbox);
 
 			if (mSelected.contains(file.getName())) {
 				checkbox.setChecked(true);
@@ -723,7 +723,7 @@ public class FilePickerActivity extends AppCompatActivity {
                 }
 			}
 
-			TextView filename = (TextView) convertView.findViewById(R.id.filename);
+			TextView filename = convertView.findViewById(R.id.filename);
 			filename.setText(file.getName());
 
 			if (filesize != null) {

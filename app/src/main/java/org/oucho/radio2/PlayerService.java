@@ -579,14 +579,18 @@ public class PlayerService extends Service implements RadioKeys, ExoPlayer.Event
          mediaSource = new HlsMediaSource(Uri.parse(uriString), dataSourceFactory, 32, null, null);
       } else {
          ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-         mediaSource = new ExtractorMediaSource(Uri.parse(getUrl()), dataSourceFactory, extractorsFactory, 32, null, null, null);
+         mediaSource = new ExtractorMediaSource(Uri.parse(getUrl()), dataSourceFactory, extractorsFactory, null, null);
       }
 
       mExoPlayer.prepare(mediaSource);
    }
 
+    @Override
+    public void onRepeatModeChanged(int repeatMode) {
 
-   private void releaseExoPlayer() {
+    }
+
+    private void releaseExoPlayer() {
       mExoPlayer.release();
       mExoPlayer = null;
    }

@@ -22,11 +22,11 @@ public class AboutDialog extends DialogFragment {
         AlertDialog.Builder about = new AlertDialog.Builder(getActivity());
 
         View dialoglayout = getActivity().getLayoutInflater().inflate(R.layout.alertdialog_main_noshadow, null);
-        Toolbar toolbar = (Toolbar) dialoglayout.findViewById(R.id.dialog_toolbar_noshadow);
+        Toolbar toolbar = dialoglayout.findViewById(R.id.dialog_toolbar_noshadow);
         toolbar.setTitle(title);
         toolbar.setTitleTextColor(0xffffffff);
 
-        final TextView text = (TextView) dialoglayout.findViewById(R.id.showrules_dialog);
+        final TextView text = dialoglayout.findViewById(R.id.showrules_dialog);
         text.setText(getString(R.string.about_message));
 
         about.setView(dialoglayout);

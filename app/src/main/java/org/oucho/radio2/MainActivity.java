@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         IntentFilter filter = new IntentFilter(INTENT_STATE);
         filter.addAction(INTENT_STATE);
         filter.addAction(INTENT_TITRE);
+        filter.addAction(INTENT_ERROR);
 
         registerReceiver(player_state_receiver, filter);
 
@@ -370,13 +371,21 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
             String receiveIntent = intent.getAction();
 
+            if (INTENT_ERROR.equals(receiveIntent)) {
+
+                String error = intent.getStringExtra("error");
+
+                Toast.makeText(mContext, "Erreur de connexion: " + error, Toast.LENGTH_SHORT).show();
+            }
+
             if (INTENT_TITRE.equals(receiveIntent)) {
 
                 String titre = intent.getStringExtra("titre");
-
-                Log.e(TAG, "String titre = intent.getStringExtra(\"titre\"): " + titre);
-
                 actionBar.setTitle( titre );
+
+                if (titre.equals(getResources().getString(R.string.app_name))) {
+                    updateListView();
+                }
 
             }
 
@@ -622,10 +631,10 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         edit_radio_view = getLayoutInflater().inflate(R.layout.layout_editwebradio, null);
         edit_radio_dialog.setView(edit_radio_view);
 
-        final EditText editTextUrl = (EditText) edit_radio_view.findViewById(R.id.editTextUrl);
-        final EditText editTextName = (EditText) edit_radio_view.findViewById(R.id.editTextName);
-        final ImageView editLogo = (ImageView) edit_radio_view.findViewById(R.id.logo);
-        final TextView text = (TextView) edit_radio_view.findViewById(R.id.texte);
+        final EditText editTextUrl = edit_radio_view.findViewById(R.id.editTextUrl);
+        final EditText editTextName = edit_radio_view.findViewById(R.id.editTextName);
+        final ImageView editLogo = edit_radio_view.findViewById(R.id.logo);
+        final TextView text = edit_radio_view.findViewById(R.id.texte);
 
         editLogo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -982,8 +991,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         @SuppressLint("InflateParams")
         View view = getLayoutInflater().inflate(R.layout.date_picker_dialog, null);
-        mSeekArc = (SeekArc) view.findViewById(R.id.seekArc);
-        mSeekArcProgress = (TextView) view.findViewById(R.id.seekArcProgress);
+        mSeekArc = view.findViewById(R.id.seekArc);
+        mSeekArcProgress = view.findViewById(R.id.seekArcProgress);
 
         mSeekArc.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
 
@@ -1079,7 +1088,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         @SuppressLint("InflateParams")
         View view = getLayoutInflater().inflate(R.layout.timer_info_dialog, null);
 
-        final TextView timeLeft = ((TextView) view.findViewById(R.id.time_left));
+        final TextView timeLeft = view.findViewById(R.id.time_left);
 
         final AlertDialog timerDialog = new AlertDialog.Builder(this).setPositiveButton(continuer, new DialogInterface.OnClickListener() {
 
@@ -1261,8 +1270,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
                     try {
                         logoRadio = ImageFactory.getResizedBitmap(mContext, BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
 
-                        final ImageView logo = (ImageView) edit_radio_view.findViewById(R.id.logo);
-                        final TextView text = (TextView) edit_radio_view.findViewById(R.id.texte);
+                        final ImageView logo = edit_radio_view.findViewById(R.id.logo);
+                        final TextView text = edit_radio_view.findViewById(R.id.texte);
 
                         logo.setImageBitmap(logoRadio);
                         logo.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));

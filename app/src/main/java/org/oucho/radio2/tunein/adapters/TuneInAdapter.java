@@ -118,14 +118,14 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
         TuneInViewHolder(View itemView) {
             super(itemView);
 
-            text = (TextView) itemView.findViewById(R.id.item_title);
+            text = itemView.findViewById(R.id.item_title);
 
-            details_title = (TextView) itemView.findViewById(R.id.detail_title);
-            detail_subtitle = (TextView) itemView.findViewById(R.id.detail_subtitle);
+            details_title = itemView.findViewById(R.id.detail_title);
+            detail_subtitle = itemView.findViewById(R.id.detail_subtitle);
 
-            image = (ImageView) itemView.findViewById(R.id.detail_image);
+            image = itemView.findViewById(R.id.detail_image);
 
-            relativeLayout = (RelativeLayout) itemView.findViewById(R.id.detail_layout);
+            relativeLayout = itemView.findViewById(R.id.detail_layout);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

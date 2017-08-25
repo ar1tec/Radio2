@@ -6,6 +6,8 @@ import android.text.Html;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.oucho.radio2.PlayerService;
+
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static org.oucho.radio2.interfaces.RadioKeys.INTENT_ERROR;
 import static org.oucho.radio2.interfaces.RadioKeys.INTENT_TITRE;
 
 
@@ -56,7 +59,12 @@ public class TuneInLoader extends BaseLoader<List<String>> {
 
         } catch (SocketTimeoutException e) {
 
-            Toast.makeText(mContext, "Erreur de connexion: " + e, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(mContext, "Erreur de connexion: " + e, Toast.LENGTH_SHORT).show();
+
+            Intent error = new Intent();
+            error.setAction(INTENT_ERROR);
+            error.putExtra("error", e);
+            mContext.sendBroadcast(error);
 
         } catch (Exception e) {
             e.printStackTrace();

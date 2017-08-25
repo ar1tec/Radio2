@@ -6,10 +6,11 @@ import android.content.Intent;
 import android.util.Log;
 
 import org.oucho.radio2.db.Radio;
+import org.oucho.radio2.interfaces.RadioKeys;
 import org.oucho.radio2.utils.ImageFactory;
 
 
-public class NewRadioReceiver extends BroadcastReceiver {
+public class NewRadioReceiver extends BroadcastReceiver implements RadioKeys {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -18,11 +19,10 @@ public class NewRadioReceiver extends BroadcastReceiver {
 
         Log.w("RadioReceiver", etat);
 
-        if ( "org.oucho.radio2.ADD_RADIO".equals(etat) ) {
+        if ( INTENT_ADD_RADIO.equals(etat) ) {
 
             String name = intent.getStringExtra("name");
             String url = intent.getStringExtra("url");
-
             String image = intent.getStringExtra("image");
 
             byte[] img = null;

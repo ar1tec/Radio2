@@ -67,7 +67,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tunein, container, false);
 
-        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
+        RecyclerView mRecyclerView = rootView.findViewById(R.id.recyclerview);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
         mAdapter = new TuneInAdapter();
@@ -76,7 +76,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
         mRecyclerView.setAdapter(mAdapter);
 
-        mProgressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        mProgressBar = rootView.findViewById(R.id.progressBar);
 
         Bundle args = new Bundle();
         args.putString("url", "http://opml.radiotime.com");
@@ -127,8 +127,6 @@ public class TuneInFragment extends Fragment implements RadioKeys {
             String item = mAdapter.getItem(position);
             String[] parts = item.split("\" ");
 
-            String url_image = null;
-
             if (item.contains("type=\"link\"")) {
 
                 String url = null;
@@ -160,15 +158,9 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                         url = part.replace("URL=\"", "");
                         Log.d(TAG, "url: " + url);
                     }
-
-                    if (part.contains("image=\"")) {
-
-                        url_image = part.replace("image=\"", "");
-                        Log.d(TAG, "image url: " + url_image);
-                    }
                 }
 
-                new playItem().execute(url, name, url_image, mContext);
+                new playItem().execute(url, name, mContext);
             }
         }
     };
@@ -202,6 +194,8 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                     String name = text.replace("text=\"" , "");
                     String url = null;
                     String url_image = null;
+
+                    Log.d(TAG, "name: " + name);
 
                     for (String part : parts) {
 
@@ -240,6 +234,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
             Bitmap bmImg;
 
 
+
             try {
 
                 OkHttpClient getUrl = new OkHttpClient();
@@ -260,16 +255,24 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                 inputStream.close();
 
                 String img = ImageFactory.byteToString(ImageFactory.getBytes(ImageFactory.getResizedBitmap(context, bmImg)));
+                String[] rustine = url_radio.split("\n"); // a tendance à doubler l'url
+
+                Log.d(TAG, "saveItem name_radio: " + name_radio + ", url: " + rustine[0]);
 
                 Intent radio = new Intent();
-                radio.setAction("org.oucho.radio2.ADD_RADIO");
-                radio.putExtra("url", url_radio);
+                radio.setAction(INTENT_ADD_RADIO);
+                radio.putExtra("url", rustine[0]);
                 radio.putExtra("name", name_radio);
                 radio.putExtra("image", img);
                 context.sendBroadcast(radio);
 
             } catch (SocketTimeoutException e) {
-                Toast.makeText(context, "Erreur de connexion: " + e, Toast.LENGTH_SHORT).show();
+                Intent error = new Intent();
+                error.setAction(INTENT_ERROR);
+                error.putExtra("error", e);
+                context.sendBroadcast(error);
+
+                //Toast.makeText(context, "Erreur de connexion: " + e, Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -285,10 +288,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
             String data = null;
             String httpRequest = objects[0].toString().replace(" ", "%20");
-            String img_URL = objects[2].toString();
-            Context context = (Context) objects[3];
-
-            Bitmap bmImg;
+            Context context = (Context) objects[2];
 
             try {
 
@@ -299,34 +299,25 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                 Response responseUrl = getUrl.newCall(requestUrl).execute();
                 data = responseUrl.body().string();
 
-                OkHttpClient getImg = new OkHttpClient();
-                Request requestImg = new Request.Builder()
-                        .url(img_URL)
-                        .build();
-                Response responseImg = getImg.newCall(requestImg).execute();
-                InputStream inputStream = responseImg.body().byteStream();
-                bmImg = BitmapFactory.decodeStream(inputStream);
-                inputStream.close();
+                Log.d(TAG, "playItem url: " + data);
 
-                String img = ImageFactory.byteToString(ImageFactory.getBytes(ImageFactory.getResizedBitmap(context, bmImg)));
+                String[] rustine = data.split("\n"); // a tendance à doubler l'url
 
                 Intent player = new Intent(context, PlayerService.class);
 
                 player.putExtra("action", ACTION_PLAY);
-                player.putExtra("url", data);
+                player.putExtra("url", rustine[0]);
                 player.putExtra("name", objects[1].toString());
                 context.startService(player);
 
-                Intent intent = new Intent();
-                intent.setAction(INTENT_UPDATENOTIF);
-                intent.putExtra("name", objects[1].toString());
-                intent.putExtra("state", "Play");
-                intent.putExtra("logo", img);
-                context.sendBroadcast(intent);
-
             } catch (SocketTimeoutException e) {
 
-                Toast.makeText(context, "Erreur de connexion: " + e, Toast.LENGTH_SHORT).show();
+                Intent error = new Intent();
+                error.setAction(INTENT_ERROR);
+                error.putExtra("error", e);
+                context.sendBroadcast(error);
+
+                //Toast.makeText(context, "Erreur de connexion: " + e, Toast.LENGTH_SHORT).show();
 
             }
             catch (Exception e) {

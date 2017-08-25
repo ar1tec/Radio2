@@ -14,8 +14,8 @@ import android.widget.TextView;
 import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.R;
 import org.oucho.radio2.db.Radio;
-import org.oucho.radio2.utils.ImageFactory;
 import org.oucho.radio2.interfaces.ListsClickListener;
+import org.oucho.radio2.utils.ImageFactory;
 
 class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private final TextView text;
@@ -37,11 +37,11 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
         this.activity = activity;
         this.clickListener = clickListener;
 
-        text = (TextView) view.findViewById(R.id.textViewRadio);
-        menu = (ImageButton) view.findViewById(R.id.buttonMenu);
-        imageDefault = (ImageView) view.findViewById(R.id.imageRadioDefault);
-        logoRadio = (ImageView) view.findViewById(R.id.logoViewRadio);
-        fond  = (RelativeLayout) view.findViewById(R.id.fond);
+        text = view.findViewById(R.id.textViewRadio);
+        menu = view.findViewById(R.id.buttonMenu);
+        imageDefault = view.findViewById(R.id.imageRadioDefault);
+        logoRadio = view.findViewById(R.id.logoViewRadio);
+        fond  = view.findViewById(R.id.fond);
 
         view.setOnClickListener(this);
         menu.setOnClickListener(this);
