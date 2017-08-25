@@ -6,14 +6,14 @@ import android.text.Html;
 import android.util.Log;
 import android.widget.Toast;
 
-
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static org.oucho.radio2.interfaces.RadioKeys.INTENT_TITRE;
 
@@ -36,7 +36,6 @@ public class TuneInLoader extends BaseLoader<List<String>> {
     @Override
     public List<String> loadInBackground() {
 
-        String data;
         List<String> liste = null;
 
         String langue = Locale.getDefault().getLanguage();
@@ -46,23 +45,14 @@ public class TuneInLoader extends BaseLoader<List<String>> {
 
             Log.d(TAG, "loadInBackground(): " + urlRadioTime);
 
-            URL url = new URL(urlRadioTime);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(urlRadioTime)
+                    .header("Accept-Language", langue + "-" + pays)
+                    .build();
+            Response response = client.newCall(request).execute();
 
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestProperty("User-Agent", "Radio/2.0 (Android 5+)");
-            conn.setRequestProperty("Accept-Language", langue + "-" + pays);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-
-            InputStream stream = conn.getInputStream();
-            data = convertStreamToString(stream);
-            liste = parse(data);
-
-            conn.disconnect();
-            stream.close();
+            liste = parse(response.body().string());
 
         } catch (SocketTimeoutException e) {
 
@@ -75,11 +65,6 @@ public class TuneInLoader extends BaseLoader<List<String>> {
         return liste;
     }
 
-
-    private String convertStreamToString(java.io.InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
-    }
 
     private List<String> parse(String string) {
 

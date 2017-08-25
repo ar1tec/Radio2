@@ -30,11 +30,13 @@ import org.oucho.radio2.tunein.loaders.TuneInLoader;
 import org.oucho.radio2.utils.ImageFactory;
 
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class TuneInFragment extends Fragment implements RadioKeys {
@@ -63,16 +65,12 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fragment_tunein, container, false);
 
-
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
-
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
         mAdapter = new TuneInAdapter();
-
         mAdapter.setOnItemClickListener(mOnItemClickListener);
         mAdapter.setOnItemLongClickListener(mOnLongClickListener);
 
@@ -91,9 +89,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
 
     private void load(Bundle args) {
-
         mProgressBar.setVisibility(View.VISIBLE);
-
         getLoaderManager().restartLoader(0, args, mLoaderCallbacks);
     }
 
@@ -108,7 +104,6 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
             Log.d(TAG, "Loader historique.size: " + historique.size());
 
-
             return new TuneInLoader(mContext, args.getString("url"));
         }
 
@@ -121,9 +116,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         }
 
         @Override
-        public void onLoaderReset(Loader<List<String>> loader) {
-            //  Auto-generated method stub
-        }
+        public void onLoaderReset(Loader<List<String>> loader) {}
     };
 
 
@@ -173,7 +166,6 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                         url_image = part.replace("image=\"", "");
                         Log.d(TAG, "image url: " + url_image);
                     }
-
                 }
 
                 new playItem().execute(url, name, url_image, mContext);
@@ -187,16 +179,9 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         public void onItemLongClick(int position, View view) {
 
             String item = mAdapter.getItem(position);
-
             showPopup(view, item);
         }
     };
-
-
-    private static String convertStreamToString(java.io.InputStream is) {
-        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
-    }
 
 
     private void showPopup(final View view,final String item) {
@@ -221,13 +206,11 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                     for (String part : parts) {
 
                         if (part.contains("URL=\"")) {
-
                             url = part.replace("URL=\"", "");
                             Log.d(TAG, "url: " + url);
                         }
 
                         if (part.contains("image=\"")) {
-
                             url_image = part.replace("image=\"", "");
                             Log.d(TAG, "image url: " + url_image);
                         }
@@ -258,29 +241,23 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
 
             try {
-                URL url = new URL(httpRequest);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                conn.connect();
+                OkHttpClient getUrl = new OkHttpClient();
+                Request requestUrl = new Request.Builder()
+                        .url(httpRequest)
+                        .build();
+                Response response = getUrl.newCall(requestUrl).execute();
+                url_radio = response.body().string();
 
-                InputStream stream = conn.getInputStream();
 
-                url_radio = convertStreamToString(stream);
-
-                stream.close();
-
-                URL url1 = new URL(url_image);
-                HttpURLConnection conn1 = (HttpURLConnection) url1.openConnection();
-                conn1.setDoInput(true);
-                conn1.connect();
-
-                InputStream is = conn1.getInputStream();
-
-                bmImg = BitmapFactory.decodeStream(is);
-
-                is.close();
+                OkHttpClient getImg = new OkHttpClient();
+                Request requestImg = new Request.Builder()
+                        .url(url_image)
+                        .build();
+                Response responseImg = getImg.newCall(requestImg).execute();
+                InputStream inputStream = responseImg.body().byteStream();
+                bmImg = BitmapFactory.decodeStream(inputStream);
+                inputStream.close();
 
                 String img = ImageFactory.byteToString(ImageFactory.getBytes(ImageFactory.getResizedBitmap(context, bmImg)));
 
@@ -307,42 +284,29 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         protected String doInBackground(Object... objects) {
 
             String data = null;
-
-
             String httpRequest = objects[0].toString().replace(" ", "%20");
-
             String img_URL = objects[2].toString();
-
-            Log.d(TAG, "url img = " + img_URL);
-
-
             Context context = (Context) objects[3];
 
             Bitmap bmImg;
 
             try {
-                URL url = new URL(httpRequest);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-                conn.setReadTimeout(10000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                conn.connect();
+                OkHttpClient getUrl = new OkHttpClient();
+                Request requestUrl = new Request.Builder()
+                        .url(httpRequest)
+                        .build();
+                Response responseUrl = getUrl.newCall(requestUrl).execute();
+                data = responseUrl.body().string();
 
-                InputStream stream = conn.getInputStream();
-
-                data = convertStreamToString(stream);
-
-
-                URL url1 = new URL(img_URL);
-                HttpURLConnection conn1 = (HttpURLConnection) url1.openConnection();
-                conn1.setDoInput(true);
-                conn1.connect();
-
-                InputStream isImg = conn1.getInputStream();
-
-                bmImg = BitmapFactory.decodeStream(isImg);
+                OkHttpClient getImg = new OkHttpClient();
+                Request requestImg = new Request.Builder()
+                        .url(img_URL)
+                        .build();
+                Response responseImg = getImg.newCall(requestImg).execute();
+                InputStream inputStream = responseImg.body().byteStream();
+                bmImg = BitmapFactory.decodeStream(inputStream);
+                inputStream.close();
 
                 String img = ImageFactory.byteToString(ImageFactory.getBytes(ImageFactory.getResizedBitmap(context, bmImg)));
 
@@ -360,11 +324,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                 intent.putExtra("logo", img);
                 context.sendBroadcast(intent);
 
-
-                isImg.close();
-                stream.close();
-
-            }catch(SocketTimeoutException e){
+            } catch (SocketTimeoutException e) {
 
                 Toast.makeText(context, "Erreur de connexion: " + e, Toast.LENGTH_SHORT).show();
 
@@ -407,8 +367,6 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                         historique.remove(historique.size() - 1);
                         historique.remove(historique.size() - 1);
 
-                        Log.d(TAG, "historique.size: " + historique.size());
-
                         load(args);
 
                         return true;
@@ -430,6 +388,5 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                 return true;
             }
         });
-
     }
 }
