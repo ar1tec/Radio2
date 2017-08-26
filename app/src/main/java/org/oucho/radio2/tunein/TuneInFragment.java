@@ -13,8 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,7 +27,9 @@ import org.oucho.radio2.interfaces.RadioKeys;
 import org.oucho.radio2.tunein.adapters.BaseAdapter;
 import org.oucho.radio2.tunein.adapters.TuneInAdapter;
 import org.oucho.radio2.tunein.loaders.TuneInLoader;
+import org.oucho.radio2.utils.CustomLayoutManager;
 import org.oucho.radio2.utils.ImageFactory;
+import org.oucho.radio2.utils.fastscroll.FastScrollRecyclerView;
 
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
@@ -50,6 +50,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
     private Context mContext;
 
     private Receiver receiver;
+    FastScrollRecyclerView mRecyclerView;
 
     public TuneInFragment() {
     }
@@ -70,8 +71,9 @@ public class TuneInFragment extends Fragment implements RadioKeys {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tunein, container, false);
 
-        RecyclerView mRecyclerView = rootView.findViewById(R.id.recyclerview);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mRecyclerView = rootView.findViewById(R.id.recyclerview);
+
+        mRecyclerView.setLayoutManager(new CustomLayoutManager(mContext));
 
         mAdapter = new TuneInAdapter();
         mAdapter.setOnItemClickListener(mOnItemClickListener);
@@ -80,22 +82,10 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         mRecyclerView.setAdapter(mAdapter);
 
         mProgressBar = rootView.findViewById(R.id.progressBar);
-        // editText = rootView.findViewById(R.id.search_radio);
-
-/*        FloatingActionButton fab = rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(
-
-                new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                search();
-            }
-        });*/
 
         Bundle args = new Bundle();
         args.putString("url", "http://opml.radiotime.com");
 
-        //search();
         load(args);
 
         return rootView;
@@ -114,11 +104,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         public Loader<List<String>> onCreateLoader(int id, Bundle args) {
 
             String url = args.getString("url");
-
             historique.add(url);
-
-            Log.d(TAG, "Loader historique.size: " + historique.size());
-
             return new TuneInLoader(mContext, args.getString("url"));
         }
 
@@ -129,6 +115,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
             mProgressBar.setVisibility(View.GONE);
 
+            mRecyclerView.scrollToPosition(0);
         }
 
         @Override
@@ -151,7 +138,6 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
                     if (part.contains("URL=\"")) {
                         url = part.replace("URL=\"", "");
-                        Log.d(TAG, "url link : " + url);
                     }
                 }
 
@@ -172,7 +158,6 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                 for (String part : parts) {
                     if (part.contains("URL=\"")) {
                         url = part.replace("URL=\"", "");
-                        Log.d(TAG, "url: " + url);
                     }
                 }
 
@@ -217,12 +202,10 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
                         if (part.contains("URL=\"")) {
                             url = part.replace("URL=\"", "");
-                            Log.d(TAG, "url: " + url);
                         }
 
                         if (part.contains("image=\"")) {
                             url_image = part.replace("image=\"", "");
-                            Log.d(TAG, "image url: " + url_image);
                         }
                     }
 

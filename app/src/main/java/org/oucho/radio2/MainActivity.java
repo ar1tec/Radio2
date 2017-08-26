@@ -32,7 +32,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -64,6 +63,7 @@ import org.oucho.radio2.interfaces.PlayableItem;
 import org.oucho.radio2.interfaces.RadioKeys;
 import org.oucho.radio2.tunein.TuneInFragment;
 import org.oucho.radio2.update.CheckUpdate;
+import org.oucho.radio2.utils.CustomLayoutManager;
 import org.oucho.radio2.utils.ImageFactory;
 import org.oucho.radio2.utils.SeekArc;
 import org.oucho.radio2.utils.State;
@@ -191,8 +191,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         volumeTimer = new VolumeTimer();
 
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
+
+        mRecyclerView.setLayoutManager(new CustomLayoutManager(this));
 
         img_play = (ImageView) findViewById(R.id.play_radio);
         img_pause = (ImageView) findViewById(R.id.pause_radio);
@@ -209,7 +209,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         showBitrate = true;
 
         search();
-
         volume();
         State.getState(mContext);
         CheckUpdate.onStart(this);
@@ -366,11 +365,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         searchLayout.setVisibility(View.VISIBLE);
     }
 
-
-
-
-
-
     private void search() {
 
         editText.setOnFocusChangeListener(focusListener);
@@ -403,8 +397,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         });
 
     }
-
-
 
     private final View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
         public void onFocusChange(View v, boolean hasFocus) {
