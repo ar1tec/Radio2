@@ -34,7 +34,7 @@
 
     <string name="about_message">
         \n
-        Radio 2.11.6, web radio pour android\n
+        Radio 2.12.0, web radio pour android\n
         \n
         Old Geek, 2017\n
         \n
@@ -137,7 +137,7 @@
     <string name="navigation_drawer_close">close</string>
     <string name="navigation_drawer_open">open</string>
 
-    <string name="add_radio_browse">Parcourir une liste</string>
+    <string name="add_radio_browse">Parcourir la liste</string>
     <string name="add_radio_manual">Ajouter manuellement</string>
 
     <string name="error_connexion">Problème de connexion</string>
