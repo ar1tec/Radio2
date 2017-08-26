@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     private static EditText editText;
     private LinearLayout searchLayout;
 
-    public boolean isFocusedSearch;
+    private boolean isFocusedSearch;
 
 
     @Override
@@ -397,6 +397,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
                     if (view != null) {
                         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        assert imm != null;
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
 
@@ -410,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
 
 
-    private View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+    private final View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
         public void onFocusChange(View v, boolean hasFocus) {
             if (hasFocus){
                 isFocusedSearch = true;

@@ -1,5 +1,6 @@
 package org.oucho.radio2.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ public class AboutDialog extends DialogFragment {
 
         AlertDialog.Builder about = new AlertDialog.Builder(getActivity());
 
+        @SuppressLint("InflateParams")
         View dialoglayout = getActivity().getLayoutInflater().inflate(R.layout.alertdialog_main_noshadow, null);
         Toolbar toolbar = dialoglayout.findViewById(R.id.dialog_toolbar_noshadow);
         toolbar.setTitle(title);

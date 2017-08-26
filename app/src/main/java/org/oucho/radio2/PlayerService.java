@@ -29,10 +29,10 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -67,13 +67,13 @@ import java.net.URLConnection;
 import static com.google.android.exoplayer2.ExoPlaybackException.TYPE_RENDERER;
 import static com.google.android.exoplayer2.ExoPlaybackException.TYPE_SOURCE;
 import static com.google.android.exoplayer2.ExoPlaybackException.TYPE_UNEXPECTED;
-import static com.google.android.exoplayer2.ExoPlayer.STATE_BUFFERING;
-import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
-import static com.google.android.exoplayer2.ExoPlayer.STATE_IDLE;
-import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
+import static com.google.android.exoplayer2.Player.STATE_BUFFERING;
+import static com.google.android.exoplayer2.Player.STATE_ENDED;
+import static com.google.android.exoplayer2.Player.STATE_IDLE;
+import static com.google.android.exoplayer2.Player.STATE_READY;
 import static org.oucho.radio2.utils.State.isPlaying;
 
-public class PlayerService extends Service implements RadioKeys, ExoPlayer.EventListener, OnAudioFocusChangeListener {
+public class PlayerService extends Service implements RadioKeys, Player.EventListener, OnAudioFocusChangeListener {
 
    private Context context = null;
    private String mUserAgent;

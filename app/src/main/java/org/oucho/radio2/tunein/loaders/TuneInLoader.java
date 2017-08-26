@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.Html;
 import android.util.Log;
-import android.widget.Toast;
-
-import org.oucho.radio2.PlayerService;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -55,6 +52,7 @@ public class TuneInLoader extends BaseLoader<List<String>> {
                     .build();
             Response response = client.newCall(request).execute();
 
+            //noinspection ConstantConditions
             liste = parse(response.body().string());
 
         } catch (SocketTimeoutException e) {

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     tools:ignore="Overdraw">
 
@@ -15,37 +14,10 @@
         android:layout_centerInParent="true"
         android:visibility="gone"/>
 
-<!--    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:srcCompat="@android:drawable/ic_search_category_default"
-        android:tint="@color/white"/>-->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-<!--        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:elevation="1dp">
-
-            <EditText
-                android:id="@+id/search_radio"
-                android:imeOptions="actionSearch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:inputType="text"
-                android:visibility="gone"/>
-        </LinearLayout>-->
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview"
@@ -54,7 +26,5 @@
             android:visibility="visible" />
 
     </LinearLayout>
-
-
 
 </RelativeLayout>

@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.PlayerService;
 import org.oucho.radio2.R;
 import org.oucho.radio2.interfaces.RadioKeys;
@@ -51,11 +50,6 @@ public class TuneInFragment extends Fragment implements RadioKeys {
     private Context mContext;
 
     private Receiver receiver;
-
-    // private EditText editText;
-
-    private static boolean search_radio_active = false;
-
 
     public TuneInFragment() {
     }
@@ -264,6 +258,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                         .url(httpRequest)
                         .build();
                 Response response = getUrl.newCall(requestUrl).execute();
+                //noinspection ConstantConditions
                 url_radio = response.body().string();
 
 
@@ -272,7 +267,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                         .url(url_image)
                         .build();
                 Response responseImg = getImg.newCall(requestImg).execute();
-                InputStream inputStream = responseImg.body().byteStream();
+                @SuppressWarnings("ConstantConditions") InputStream inputStream = responseImg.body().byteStream();
                 bmImg = BitmapFactory.decodeStream(inputStream);
                 inputStream.close();
 
@@ -319,6 +314,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                         .url(httpRequest)
                         .build();
                 Response responseUrl = getUrl.newCall(requestUrl).execute();
+                //noinspection ConstantConditions
                 data = responseUrl.body().string();
 
                 Log.d(TAG, "playItem url: " + data);
@@ -361,6 +357,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         mContext.registerReceiver(receiver, filter);
 
         // Active la touche back
+        //noinspection ConstantConditions
         getView().setFocusableInTouchMode(true);
         getView().requestFocus();
         getView().setOnKeyListener(new View.OnKeyListener() {
@@ -374,10 +371,12 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                 AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
                 if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                    //noinspection ConstantConditions
                     audioManager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
                 }
 
                 if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                    //noinspection ConstantConditions
                     audioManager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND);
                 }
 
@@ -441,6 +440,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
             if (INTENT_FOCUS.equals(receiveIntent)) {
 
+                //noinspection ConstantConditions
                 getView().setFocusableInTouchMode(true);
                 getView().requestFocus();
             }
@@ -455,6 +455,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         Bundle args = new Bundle();
         args.putString("url", "http://opml.radiotime.com/Search.ashx?query=" + query);
 
+        //noinspection ConstantConditions
         getView().setFocusableInTouchMode(true);
         getView().requestFocus();
 
