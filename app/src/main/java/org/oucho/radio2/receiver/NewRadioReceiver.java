@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
+import org.oucho.radio2.R;
 import org.oucho.radio2.db.Radio;
 import org.oucho.radio2.interfaces.RadioKeys;
 import org.oucho.radio2.utils.ImageFactory;
@@ -22,10 +24,17 @@ public class NewRadioReceiver extends BroadcastReceiver implements RadioKeys {
         if ( INTENT_ADD_RADIO.equals(etat) ) {
 
             String name = intent.getStringExtra("name");
+
+            if (intent.getStringExtra("url") == null) {
+                String text = context.getResources().getString(R.string.addRadio_error_url);
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             String url = intent.getStringExtra("url");
             String image = intent.getStringExtra("image");
-
             byte[] img = null;
+
             if (image != null)
                 img = ImageFactory.stringToByte(image);
 

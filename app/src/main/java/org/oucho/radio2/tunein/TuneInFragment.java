@@ -1,9 +1,12 @@
 package org.oucho.radio2.tunein;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,8 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
+import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.PlayerService;
 import org.oucho.radio2.R;
 import org.oucho.radio2.interfaces.RadioKeys;
@@ -46,6 +49,12 @@ public class TuneInFragment extends Fragment implements RadioKeys {
     private ProgressBar mProgressBar;
     private TuneInAdapter mAdapter;
     private Context mContext;
+
+    private Receiver receiver;
+
+    // private EditText editText;
+
+    private static boolean search_radio_active = false;
 
 
     public TuneInFragment() {
@@ -77,10 +86,22 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         mRecyclerView.setAdapter(mAdapter);
 
         mProgressBar = rootView.findViewById(R.id.progressBar);
+        // editText = rootView.findViewById(R.id.search_radio);
+
+/*        FloatingActionButton fab = rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(
+
+                new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                search();
+            }
+        });*/
 
         Bundle args = new Bundle();
         args.putString("url", "http://opml.radiotime.com");
 
+        //search();
         load(args);
 
         return rootView;
@@ -111,6 +132,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         public void onLoadFinished(Loader<List<String>> loader, List<String> list) {
             if (list != null)
                 mAdapter.setData(list);
+
             mProgressBar.setVisibility(View.GONE);
 
         }
@@ -267,12 +289,12 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                 context.sendBroadcast(radio);
 
             } catch (SocketTimeoutException e) {
+
                 Intent error = new Intent();
                 error.setAction(INTENT_ERROR);
-                error.putExtra("error", e);
+                error.putExtra("error", "TimeoutException " + e);
                 context.sendBroadcast(error);
 
-                //Toast.makeText(context, "Erreur de connexion: " + e, Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -314,10 +336,8 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
                 Intent error = new Intent();
                 error.setAction(INTENT_ERROR);
-                error.putExtra("error", e);
+                error.putExtra("error", "TimeoutException " + e);
                 context.sendBroadcast(error);
-
-                //Toast.makeText(context, "Erreur de connexion: " + e, Toast.LENGTH_SHORT).show();
 
             }
             catch (Exception e) {
@@ -329,21 +349,37 @@ public class TuneInFragment extends Fragment implements RadioKeys {
     }
 
 
+
     @Override
     public void onResume() {
         super.onResume();
 
-        // Active la touche back
-        if (getView() == null) {
-            return;
-        }
+        receiver = new Receiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(INTENT_SEARCH);
+        filter.addAction(INTENT_FOCUS);
+        mContext.registerReceiver(receiver, filter);
 
+        // Active la touche back
         getView().setFocusableInTouchMode(true);
         getView().requestFocus();
         getView().setOnKeyListener(new View.OnKeyListener() {
 
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                Log.d(TAG, "onBackPressed");
+
+
+                AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                    audioManager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
+                }
+
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                    audioManager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND);
+                }
 
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
 
@@ -380,4 +416,49 @@ public class TuneInFragment extends Fragment implements RadioKeys {
             }
         });
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mContext.unregisterReceiver(receiver);
+
+    }
+
+    private class Receiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String receiveIntent = intent.getAction();
+
+            if (INTENT_SEARCH.equals(receiveIntent)) {
+
+                String text = intent.getStringExtra("search");
+
+                search(text);
+            }
+
+            if (INTENT_FOCUS.equals(receiveIntent)) {
+
+                getView().setFocusableInTouchMode(true);
+                getView().requestFocus();
+            }
+
+        }
+    }
+
+    private void search(String search) {
+
+        String query = search.replace(" ", "%20");
+
+        Bundle args = new Bundle();
+        args.putString("url", "http://opml.radiotime.com/Search.ashx?query=" + query);
+
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+
+        load(args);
+    }
+
 }

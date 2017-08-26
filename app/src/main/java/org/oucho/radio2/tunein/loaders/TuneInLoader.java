@@ -59,11 +59,9 @@ public class TuneInLoader extends BaseLoader<List<String>> {
 
         } catch (SocketTimeoutException e) {
 
-           // Toast.makeText(mContext, "Erreur de connexion: " + e, Toast.LENGTH_SHORT).show();
-
             Intent error = new Intent();
             error.setAction(INTENT_ERROR);
-            error.putExtra("error", e);
+            error.putExtra("error", "TimeoutException " + e);
             mContext.sendBroadcast(error);
 
         } catch (Exception e) {

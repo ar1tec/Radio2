@@ -21,7 +21,12 @@ public interface RadioKeys {
     String INTENT_STATE = "org.oucho.radio2.INTENT_STATE";
     String INTENT_TITRE = "org.oucho.radio2.INTENT_TITRE";
     String INTENT_ERROR = "org.oucho.radio2.INTENT_ERROR";
+    String INTENT_SEARCH = "org.oucho.radio2.INTENT_SEARCH";
+    String INTENT_FOCUS = "org.oucho.radio2.INTENT_FOCUS";
+
+
     String INTENT_ADD_RADIO = "org.oucho.radio2.ADD_RADIO";
+
 
 
 

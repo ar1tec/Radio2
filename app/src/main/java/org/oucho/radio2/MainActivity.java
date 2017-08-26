@@ -42,8 +42,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -106,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     private MediaPlayer mediaPlayer;
     private SharedPreferences preferences;
     private NavigationView mNavigationView;
-    private PlayerStateReceiver player_state_receiver;
+    private PlayerReceiver playerReceiver;
 
     private ImageView img_play;
     private ImageView img_pause;
@@ -114,6 +117,14 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     private Context mContext;
 
     private ActionBar actionBar;
+
+    private TextView error0;
+    private TextView error1;
+
+    private static EditText editText;
+    private LinearLayout searchLayout;
+
+    public boolean isFocusedSearch;
 
 
     @Override
@@ -163,14 +174,18 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         VolumeControl niveau_Volume = new VolumeControl(this, new Handler());
         getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
 
-        player_state_receiver = new PlayerStateReceiver();
-        IntentFilter filter = new IntentFilter(INTENT_STATE);
+        playerReceiver = new PlayerReceiver();
+        IntentFilter filter = new IntentFilter();
         filter.addAction(INTENT_STATE);
         filter.addAction(INTENT_TITRE);
         filter.addAction(INTENT_ERROR);
+        registerReceiver(playerReceiver, filter);
 
-        registerReceiver(player_state_receiver, filter);
+        error0 = (TextView) findViewById(R.id.error0);
+        error1 = (TextView) findViewById(R.id.error1);
 
+        editText = (EditText) findViewById(R.id.search_radio);
+        searchLayout = (LinearLayout) findViewById(R.id.search_layout);
 
         volumeTimer = new VolumeTimer();
 
@@ -191,6 +206,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         showCurrentBitRate();
         showBitrate = true;
+
+        search();
 
         volume();
         State.getState(mContext);
@@ -270,24 +287,11 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         mediaPlayer.release();
 
         try {
-            unregisterReceiver(player_state_receiver);
+            unregisterReceiver(playerReceiver);
         } catch (IllegalArgumentException ignore) {}
 
     }
 
-    @Override
-    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-            return true;
-        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-            moveTaskToBack(true);
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -335,11 +339,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
                 break;
             case R.id.nav_radio_list:
             case R.id.nav_radio_list0:
-                Fragment fragment = TuneInFragment.newInstance();
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom);
-                ft.replace(R.id.content_main, fragment);
-                ft.commit();
+                loadSearch();
                 break;
             case R.id.nav_update:
                 CheckUpdate.withInfo(this);
@@ -356,14 +356,110 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         return true;
     }
 
+    private void loadSearch() {
 
-       /* **********************************************************************************************
+        Fragment fragment = TuneInFragment.newInstance();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom);
+        ft.replace(R.id.content_main, fragment);
+        ft.commit();
+        searchLayout.setVisibility(View.VISIBLE);
+        //editText.requestFocus();
+    }
+
+
+
+
+
+
+    private void search() {
+
+        //editText.requestFocus();
+
+
+        editText.setOnFocusChangeListener(focusListener);
+
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+
+                    String text = editText.getText().toString();
+
+                    Intent search = new Intent();
+                    search.setAction(INTENT_SEARCH);
+                    search.putExtra("search", text);
+                    sendBroadcast(search);
+
+                    View view = getCurrentFocus();
+
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
+    }
+
+
+
+    private View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus){
+                isFocusedSearch = true;
+                Log.d(TAG, "focus = " + true);
+            } else {
+                isFocusedSearch = false;
+                Log.d(TAG, "focus = " + false);
+
+            }
+        }
+    };
+
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+
+        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            onBackPressed();
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (isFocusedSearch) {
+
+            Intent focus = new Intent();
+            focus.setAction(INTENT_FOCUS);
+            sendBroadcast(focus);
+
+        } else {
+
+            moveTaskToBack(true);
+        }
+    }
+
+    /* **********************************************************************************************
     *
     * Broadcast receiver
     *
     * *********************************************************************************************/
 
-    private class PlayerStateReceiver extends BroadcastReceiver {
+    private class PlayerReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -373,9 +469,11 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
             if (INTENT_ERROR.equals(receiveIntent)) {
 
-                String error = intent.getStringExtra("error");
+                String erreur = intent.getStringExtra("error");
 
-                Toast.makeText(mContext, "Erreur de connexion: " + error, Toast.LENGTH_SHORT).show();
+                error0.setVisibility(View.VISIBLE);
+                error1.setVisibility(View.VISIBLE);
+                error1.setText(erreur);
             }
 
             if (INTENT_TITRE.equals(receiveIntent)) {
@@ -384,9 +482,14 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
                 actionBar.setTitle( titre );
 
                 if (titre.equals(getResources().getString(R.string.app_name))) {
+                    error0.setVisibility(View.GONE);
+                    error1.setVisibility(View.GONE);
+                    error1.setText("");
+
+                    searchLayout.setVisibility(View.GONE);
+
                     updateListView();
                 }
-
             }
 
             if (INTENT_STATE.equals(receiveIntent)) {
@@ -491,7 +594,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         player.putExtra("action", ACTION_STOP);
         startService(player);
 
-        unregisterReceiver(player_state_receiver);
+        unregisterReceiver(playerReceiver);
 
         finish();
     }
@@ -566,11 +669,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
                 switch (item.getItemId()) {
                     case R.id.add_browse:
-                        Fragment fragment = TuneInFragment.newInstance();
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom);
-                        ft.replace(R.id.content_main, fragment);
-                        ft.commit();
+                        loadSearch();
                         break;
                     case R.id.add_manual:
                         editRadio(null);
@@ -1138,25 +1237,30 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         assert viewSleepTimer != null;
         viewSleepTimer.setVisibility(View.VISIBLE);
 
-        sleepTimerCounter = new CountDownTimer(scheduledFuture.getDelay(TimeUnit.MILLISECONDS), 1000) {
-            @Override
-            public void onTick(long seconds) {
+        try {
+            sleepTimerCounter = new CountDownTimer(scheduledFuture.getDelay(TimeUnit.MILLISECONDS), 1000) {
+                @Override
+                public void onTick(long seconds) {
 
-                long secondes = seconds;
+                    long secondes = seconds;
 
-                secondes = secondes / 1000;
+                    secondes = secondes / 1000;
 
-                String textTemps = "zZz " + String.format(getString(R.string.timer_info), ((secondes % 3600) / 60), ((secondes % 3600) % 60));
+                    String textTemps = "zZz " + String.format(getString(R.string.timer_info), ((secondes % 3600) / 60), ((secondes % 3600) % 60));
 
-                viewSleepTimer.setText(textTemps);
-            }
+                    viewSleepTimer.setText(textTemps);
+                }
 
-            @Override
-            public void onFinish() {
-                viewSleepTimer.setVisibility(View.INVISIBLE);
-            }
+                @Override
+                public void onFinish() {
+                    viewSleepTimer.setVisibility(View.INVISIBLE);
+                }
 
-        }.start();
+            }.start();
+        } catch (RuntimeException e) {
+            running = false;
+        }
+
     }
 
 
