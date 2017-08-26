@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-
+    
     <group
         android:id="@+id/add_music"
         android:visible="false">
@@ -12,32 +11,32 @@
             android:title="@string/action_music"/>
 
         <item
-            android:id="@+id/nav_radio_list0"
-            android:icon="@drawable/tunein"
-            android:title="Liste de radio"/>
+            android:id="@+id/nav_export"
+            android:icon="@drawable/ic_save_black_24dp"
+            android:title="@string/exporterMenu"/>
+
+        <item
+            android:id="@+id/nav_import"
+            android:icon="@drawable/ic_input_black_24dp"
+            android:title="@string/importerMenu"/>
 
     </group>
 
     <group android:id="@+id/haut_default">
 
         <item
-            android:id="@+id/nav_radio_list"
-            android:icon="@drawable/tunein"
-            android:title="Liste de radio"/>
+            android:id="@+id/nav_export0"
+            android:icon="@drawable/ic_save_black_24dp"
+            android:title="@string/exporterMenu"/>
 
-
+        <item
+            android:id="@+id/nav_import0"
+            android:icon="@drawable/ic_input_black_24dp"
+            android:title="@string/importerMenu"/>
 
     </group>
 
-    <item
-        android:id="@+id/nav_export"
-        android:icon="@drawable/ic_save_black_24dp"
-        android:title="@string/exporterMenu"/>
 
-    <item
-        android:id="@+id/nav_import"
-        android:icon="@drawable/ic_input_black_24dp"
-        android:title="@string/importerMenu"/>
 
     <item
         android:id="@+id/nav_update"

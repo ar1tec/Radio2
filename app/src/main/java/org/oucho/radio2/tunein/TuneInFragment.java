@@ -365,9 +365,6 @@ public class TuneInFragment extends Fragment implements RadioKeys {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-                Log.d(TAG, "onBackPressed");
-
-
                 AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
                 if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {

@@ -332,14 +332,12 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
                 startActivity(music);
                 break;
             case R.id.nav_export:
+            case R.id.nav_export0:
                 exporter();
                 break;
             case R.id.nav_import:
+            case R.id.nav_import0:
                 importer();
-                break;
-            case R.id.nav_radio_list:
-            case R.id.nav_radio_list0:
-                loadSearch();
                 break;
             case R.id.nav_update:
                 CheckUpdate.withInfo(this);
@@ -363,8 +361,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         ft.setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom);
         ft.replace(R.id.content_main, fragment);
         ft.commit();
+
         searchLayout.setVisibility(View.VISIBLE);
-        //editText.requestFocus();
     }
 
 
@@ -374,11 +372,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
     private void search() {
 
-        //editText.requestFocus();
-
-
         editText.setOnFocusChangeListener(focusListener);
-
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
             @Override
@@ -415,11 +409,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         public void onFocusChange(View v, boolean hasFocus) {
             if (hasFocus){
                 isFocusedSearch = true;
-                Log.d(TAG, "focus = " + true);
             } else {
                 isFocusedSearch = false;
-                Log.d(TAG, "focus = " + false);
-
             }
         }
     };
