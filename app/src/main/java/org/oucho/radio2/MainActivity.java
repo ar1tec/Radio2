@@ -36,6 +36,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -471,7 +472,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             if (INTENT_TITRE.equals(receiveIntent)) {
 
                 String titre = intent.getStringExtra("titre");
-                actionBar.setTitle( titre );
+                actionBar.setTitle(Html.fromHtml(titre));
 
                 if (titre.equals(getResources().getString(R.string.app_name))) {
                     error0.setVisibility(View.GONE);
