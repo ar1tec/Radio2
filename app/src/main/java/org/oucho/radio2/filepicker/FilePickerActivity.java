@@ -2,10 +2,8 @@ package org.oucho.radio2.filepicker;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -24,9 +22,6 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -43,7 +38,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -181,56 +175,49 @@ public class FilePickerActivity extends AppCompatActivity {
     private void newFolder() {
 
         if (!intent.getBooleanExtra(FilePicker.DISABLE_NEW_FOLDER_BUTTON, false)) {
-            new_folder.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            new_folder.setOnClickListener(v -> {
 
-                    View alertView = LayoutInflater.from(FilePickerActivity.this).inflate(R.layout.file_picker_new_folder, null);
-                    final TextView name = alertView.findViewById(R.id.name);
+                View alertView = LayoutInflater.from(FilePickerActivity.this).inflate(R.layout.file_picker_new_folder, null);
+                final TextView name = alertView.findViewById(R.id.name);
 
-                    AlertDialog.Builder alert = new AlertDialog.Builder(FilePickerActivity.this);
-                    alert.setTitle(R.string.new_folder);
-                    alert.setView(alertView);
-                    alert.setPositiveButton(android.R.string.ok, new Dialog.OnClickListener() {
+                AlertDialog.Builder alert = new AlertDialog.Builder(FilePickerActivity.this);
+                alert.setTitle(R.string.new_folder);
+                alert.setView(alertView);
+                alert.setPositiveButton(android.R.string.ok, (dialog, which) -> {
 
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                    if (name.length() > 0) {
+                        File file = new File(mCurrentDirectory, name.getText().toString());
 
-                            if (name.length() > 0) {
-                                File file = new File(mCurrentDirectory, name.getText().toString());
+                        if (file.exists()) {
+                            Toast.makeText(FilePickerActivity.this, R.string.folder_already_exists, Toast.LENGTH_SHORT).show();
+                        } else {
 
-                                if (file.exists()) {
-                                    Toast.makeText(FilePickerActivity.this, R.string.folder_already_exists, Toast.LENGTH_SHORT).show();
-                                } else {
+                            boolean folderExisted = file.exists() || file.mkdir();
 
-                                    boolean folderExisted = file.exists() || file.mkdir();
+                            try {
 
-                                    try {
+                                if (!folderExisted) {
+                                    throw new IOException("Unable to create path");
+                                }
+                            } catch (IOException e) {
+                                Log.e("FilePickerActivity", "Error: " + e);
+                            }
 
-                                        if (!folderExisted) {
-                                            throw new IOException("Unable to create path");
-                                        }
-                                    } catch (IOException e) {
-                                        Log.e("FilePickerActivity", "Error: " + e);
-                                    }
+                            if (file.isDirectory()) {
+                                readDirectory(mCurrentDirectory);
+                                Toast.makeText(FilePickerActivity.this, R.string.folder_created, Toast.LENGTH_SHORT).show();
 
-                                    if (file.isDirectory()) {
-                                        readDirectory(mCurrentDirectory);
-                                        Toast.makeText(FilePickerActivity.this, R.string.folder_created, Toast.LENGTH_SHORT).show();
+                            } else {
 
-                                    } else {
+                                Toast.makeText(FilePickerActivity.this, R.string.folder_not_created, Toast.LENGTH_SHORT).show();
 
-                                        Toast.makeText(FilePickerActivity.this, R.string.folder_not_created, Toast.LENGTH_SHORT).show();
+                            }
+                        } //if (file.exists())
+                    } // if (name.length() > 0)
+                }); //alert.setPositiveButton
 
-                                    }
-                                } //if (file.exists())
-                            } // if (name.length() > 0)
-                        }
-                    }); //alert.setPositiveButton
-
-                    alert.setNegativeButton(android.R.string.cancel, null);
-                    alert.show();
-                }
+                alert.setNegativeButton(android.R.string.cancel, null);
+                alert.show();
             }); // new_folder.setOnClickListener
 
         } else {
@@ -246,41 +233,35 @@ public class FilePickerActivity extends AppCompatActivity {
     private void triRépertoire() {
 
         if (!intent.getBooleanExtra(FilePicker.DISABLE_SORT_BUTTON, false)) {
-            OnClickListener listener = new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(FilePickerActivity.this);
-                    alert.setTitle(R.string.sort);
-                    alert.setItems(R.array.sorting_types, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case 0:
-                                    mOptSortType = FilePicker.SORT_NAME_ASC;
-                                    break;
-                                case 1:
-                                    mOptSortType = FilePicker.SORT_NAME_DESC;
-                                    break;
-                                case 2:
-                                    mOptSortType = FilePicker.SORT_SIZE_ASC;
-                                    break;
-                                case 3:
-                                    mOptSortType = FilePicker.SORT_SIZE_DESC;
-                                    break;
-                                case 4:
-                                    mOptSortType = FilePicker.SORT_DATE_ASC;
-                                    break;
-                                case 5:
-                                    mOptSortType = FilePicker.SORT_DATE_DESC;
-                                    break;
-                                default:
-                                    break;
-                            }
-                            sort();
-                        }
-                    });
-                    alert.show();
-                }
+            OnClickListener listener = v -> {
+                AlertDialog.Builder alert = new AlertDialog.Builder(FilePickerActivity.this);
+                alert.setTitle(R.string.sort);
+                alert.setItems(R.array.sorting_types, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            mOptSortType = FilePicker.SORT_NAME_ASC;
+                            break;
+                        case 1:
+                            mOptSortType = FilePicker.SORT_NAME_DESC;
+                            break;
+                        case 2:
+                            mOptSortType = FilePicker.SORT_SIZE_ASC;
+                            break;
+                        case 3:
+                            mOptSortType = FilePicker.SORT_SIZE_DESC;
+                            break;
+                        case 4:
+                            mOptSortType = FilePicker.SORT_DATE_ASC;
+                            break;
+                        case 5:
+                            mOptSortType = FilePicker.SORT_DATE_DESC;
+                            break;
+                        default:
+                            break;
+                    }
+                    sort();
+                });
+                alert.show();
             };
 
             sort1.setOnClickListener(listener);
@@ -300,12 +281,7 @@ public class FilePickerActivity extends AppCompatActivity {
     private void setCancel1() {
 
         if (intent.getBooleanExtra(FilePicker.ENABLE_QUIT_BUTTON, false)) {
-            cancel1.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    complete(null);
-                }
-            });
+            cancel1.setOnClickListener(v -> complete(null));
 
         } else {
 
@@ -319,14 +295,9 @@ public class FilePickerActivity extends AppCompatActivity {
      * ******************************************/
     private void setCancel2() {
 
-        cancel2.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                disableMultiChoice();
-                showSecondHeader(false);
-            }
-
+        cancel2.setOnClickListener(v -> {
+            disableMultiChoice();
+            showSecondHeader(false);
         });
     }
 
@@ -337,23 +308,20 @@ public class FilePickerActivity extends AppCompatActivity {
         if (mOptOnlyOneItem && mOptChoiceType == FilePicker.CHOICE_TYPE_DIRECTORIES) {
             ok1.setVisibility(ImageButton.VISIBLE);
             ok1_delimiter.setVisibility(ImageButton.VISIBLE);
-            ok1.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ArrayList<String> list = new ArrayList<>();
-                    String parent;
-                    File parentFile = mCurrentDirectory.getParentFile();
-                    if (parentFile == null) {
-                        parent = "";
-                        list.add("/");
-                    } else {
-                        parent = parentFile.getAbsolutePath();
-                        if (!parent.endsWith("/")) parent += "/";
-                        list.add(mCurrentDirectory.getName());
-                    }
-                    FilePickerParcelObject object = new FilePickerParcelObject(parent, list, 1);
-                    complete(object);
+            ok1.setOnClickListener(v -> {
+                ArrayList<String> list = new ArrayList<>();
+                String parent;
+                File parentFile = mCurrentDirectory.getParentFile();
+                if (parentFile == null) {
+                    parent = "";
+                    list.add("/");
+                } else {
+                    parent = parentFile.getAbsolutePath();
+                    if (!parent.endsWith("/")) parent += "/";
+                    list.add(mCurrentDirectory.getName());
                 }
+                FilePickerParcelObject object = new FilePickerParcelObject(parent, list, 1);
+                complete(object);
             });
 
         } else {
@@ -367,14 +335,11 @@ public class FilePickerActivity extends AppCompatActivity {
      * Ok2
      * ******************************************/
     private void setOk2() {
-        ok2.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mSelected.size() > 0) {
-                    complete(null);
-                } else {
-                    disableMultiChoice();
-                }
+        ok2.setOnClickListener(v -> {
+            if (mSelected.size() > 0) {
+                complete(null);
+            } else {
+                disableMultiChoice();
             }
         });
     }
@@ -389,37 +354,28 @@ public class FilePickerActivity extends AppCompatActivity {
             deselect.setVisibility(ImageButton.GONE);
             invert.setVisibility(ImageButton.GONE);
         } else {
-            select_all.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mSelected.clear();
-                    for (int i = 0; i < mFilesList.size(); i++)
-                        mSelected.add(mFilesList.get(i).getName());
-                    ((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
-                }
+            select_all.setOnClickListener(v -> {
+                mSelected.clear();
+                for (int i = 0; i < mFilesList.size(); i++)
+                    mSelected.add(mFilesList.get(i).getName());
+                ((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
             });
 
 
-            deselect.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mSelected.clear();
-                    ((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
-                }
+            deselect.setOnClickListener(v -> {
+                mSelected.clear();
+                ((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
             });
 
 
-            invert.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ArrayList<String> tmp = new ArrayList<>();
-                    for (int i = 0; i < mFilesList.size(); i++) {
-                        String filename = mFilesList.get(i).getName();
-                        if (!mSelected.contains(filename)) tmp.add(filename);
-                    }
-                    mSelected = tmp;
-                    ((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
+            invert.setOnClickListener(v -> {
+                ArrayList<String> tmp = new ArrayList<>();
+                for (int i = 0; i < mFilesList.size(); i++) {
+                    String filename = mFilesList.get(i).getName();
+                    if (!mSelected.contains(filename)) tmp.add(filename);
                 }
+                mSelected = tmp;
+                ((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
             });
         }
     }
@@ -516,36 +472,32 @@ public class FilePickerActivity extends AppCompatActivity {
 	}
 
 	private void sort() {
-		Collections.sort(mFilesList, new Comparator<File>() {
+		Collections.sort(mFilesList, (file1, file2) -> {
 
-			@Override
-			public int compare(File file1, File file2) {
+            boolean isDirectory1 = file1.isDirectory();
+            boolean isDirectory2 = file2.isDirectory();
 
-				boolean isDirectory1 = file1.isDirectory();
-				boolean isDirectory2 = file2.isDirectory();
+            if (isDirectory1 && !isDirectory2)
+                return -1;
 
-				if (isDirectory1 && !isDirectory2)
-					return -1;
+            if (!isDirectory1 && isDirectory2)
+                return 1;
 
-				if (!isDirectory1 && isDirectory2)
-					return 1;
-
-				switch (mOptSortType) {
-				case FilePicker.SORT_NAME_DESC:
-					return file2.getName().toLowerCase(Locale.getDefault()).compareTo(file1.getName().toLowerCase(Locale.getDefault()));
-				case FilePicker.SORT_SIZE_ASC:
-					return Long.valueOf(file1.length()).compareTo(file2.length());
-				case FilePicker.SORT_SIZE_DESC:
-					return Long.valueOf(file2.length()).compareTo(file1.length());
-				case FilePicker.SORT_DATE_ASC:
-					return Long.valueOf(file1.lastModified()).compareTo(file2.lastModified());
-				case FilePicker.SORT_DATE_DESC:
-					return Long.valueOf(file2.lastModified()).compareTo(file1.lastModified());
-				}
-				// Default, FilePicker.SORT_NAME_ASC
-				return file1.getName().toLowerCase(Locale.getDefault()).compareTo(file2.getName().toLowerCase(Locale.getDefault()));
-			}
-		});
+            switch (mOptSortType) {
+            case FilePicker.SORT_NAME_DESC:
+                return file2.getName().toLowerCase(Locale.getDefault()).compareTo(file1.getName().toLowerCase(Locale.getDefault()));
+            case FilePicker.SORT_SIZE_ASC:
+                return Long.valueOf(file1.length()).compareTo(file2.length());
+            case FilePicker.SORT_SIZE_DESC:
+                return Long.valueOf(file2.length()).compareTo(file1.length());
+            case FilePicker.SORT_DATE_ASC:
+                return Long.valueOf(file1.lastModified()).compareTo(file2.lastModified());
+            case FilePicker.SORT_DATE_DESC:
+                return Long.valueOf(file2.lastModified()).compareTo(file1.lastModified());
+            }
+            // Default, FilePicker.SORT_NAME_ASC
+            return file1.getName().toLowerCase(Locale.getDefault()).compareTo(file2.getName().toLowerCase(Locale.getDefault()));
+        });
 		((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
 	}
 
@@ -558,72 +510,65 @@ public class FilePickerActivity extends AppCompatActivity {
 
         mAbsListView.setAdapter(adapter);
 
-		mAbsListView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				if (position < mFilesList.size()) {
-					File file = mFilesList.get(position);
-					if (mIsMultiChoice) {
-						CheckBox checkBox = view.findViewById(R.id.checkbox);
-						if (checkBox.isChecked()) {
-							checkBox.setChecked(false);
-							mSelected.remove(file.getName());
-						} else {
-							if (mOptOnlyOneItem) {
-								mSelected.clear();
-								((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
-							}
-							checkBox.setChecked(true);
-							mSelected.add(file.getName());
-						}
-					} else {
-						if (file.isDirectory()) {
-							int currentPosition = mAbsListView.getFirstVisiblePosition();
-							mListPositioins.put(mCurrentDirectory.getAbsolutePath(), currentPosition);
-							readDirectory(file);
-							updateTitle();
-							mAbsListView.setSelection(0);
-						} else {
-							mSelected.add(file.getName());
-							complete(null);
-						}
-					}
-				}
-			}
-		});
+		mAbsListView.setOnItemClickListener((parent, view, position, id) -> {
+            if (position < mFilesList.size()) {
+                File file = mFilesList.get(position);
+                if (mIsMultiChoice) {
+                    CheckBox checkBox = view.findViewById(R.id.checkbox);
+                    if (checkBox.isChecked()) {
+                        checkBox.setChecked(false);
+                        mSelected.remove(file.getName());
+                    } else {
+                        if (mOptOnlyOneItem) {
+                            mSelected.clear();
+                            ((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
+                        }
+                        checkBox.setChecked(true);
+                        mSelected.add(file.getName());
+                    }
+                } else {
+                    if (file.isDirectory()) {
+                        int currentPosition = mAbsListView.getFirstVisiblePosition();
+                        mListPositioins.put(mCurrentDirectory.getAbsolutePath(), currentPosition);
+                        readDirectory(file);
+                        updateTitle();
+                        mAbsListView.setSelection(0);
+                    } else {
+                        mSelected.add(file.getName());
+                        complete(null);
+                    }
+                }
+            }
+        });
 
 		if (mOptChoiceType != FilePicker.CHOICE_TYPE_FILES || !mOptOnlyOneItem) {
 
             if (!mOptOnlyOneItem) {
 
-                mAbsListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                        if (!mIsMultiChoice) {
-                            mIsMultiChoice = true;
-                            if (position < mFilesList.size()) {
-                                File file = mFilesList.get(position);
-                                if (mOptChoiceType != FilePicker.CHOICE_TYPE_FILES || file.isFile())
-                                    mSelected.add(file.getName());
-                            }
-
-                            if (mOptChoiceType == FilePicker.CHOICE_TYPE_FILES && !mOptOnlyOneItem) {
-                                ArrayList<File> tmpList = new ArrayList<>();
-                                for (int i = 0; i < mFilesList.size(); i++) {
-                                    File file = mFilesList.get(i);
-                                    if (file.isFile()) tmpList.add(file);
-                                }
-                                mFilesList = tmpList;
-                            }
-
-                            ((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
-
-                            showSecondHeader(true);
-                            return true;
+                mAbsListView.setOnItemLongClickListener((parent, view, position, id) -> {
+                    if (!mIsMultiChoice) {
+                        mIsMultiChoice = true;
+                        if (position < mFilesList.size()) {
+                            File file = mFilesList.get(position);
+                            if (mOptChoiceType != FilePicker.CHOICE_TYPE_FILES || file.isFile())
+                                mSelected.add(file.getName());
                         }
-                        return false;
+
+                        if (mOptChoiceType == FilePicker.CHOICE_TYPE_FILES && !mOptOnlyOneItem) {
+                            ArrayList<File> tmpList = new ArrayList<>();
+                            for (int i = 0; i < mFilesList.size(); i++) {
+                                File file = mFilesList.get(i);
+                                if (file.isFile()) tmpList.add(file);
+                            }
+                            mFilesList = tmpList;
+                        }
+
+                        ((BaseAdapter) mAbsListView.getAdapter()).notifyDataSetChanged();
+
+                        showSecondHeader(true);
+                        return true;
                     }
+                    return false;
                 });
             }
         }

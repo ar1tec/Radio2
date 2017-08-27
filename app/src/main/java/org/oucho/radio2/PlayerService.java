@@ -287,12 +287,7 @@ public class PlayerService extends Service implements RadioKeys, Player.EventLis
       }
 
       Handler handler = new Handler();
-      handler.postDelayed(new Runnable() {
-       public void run() {
-
-          removeNotification(context);
-         }
-      }, 500);
+      handler.postDelayed(() -> removeNotification(context), 500);
 
 
 

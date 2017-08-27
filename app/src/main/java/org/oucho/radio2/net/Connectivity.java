@@ -1,6 +1,5 @@
 package org.oucho.radio2.net;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -126,33 +125,29 @@ public class Connectivity extends BroadcastReceiver {
 
 
       handler = new Handler();
-      handler.postDelayed(new Runnable() {
+      handler.postDelayed(() -> {
 
-         @SuppressLint("SetTextI18n")
-         public void run() {
+         if (State.isOnline(context)) {
 
-            if (State.isOnline(context)) {
+            Log.d("Connectivity", "dropped_connection(), isOnline");
 
-               Log.d("Connectivity", "dropped_connection(), isOnline");
+            Intent player = new Intent(context, PlayerService.class);
+            player.putExtra("action", "stop");
+            context.startService(player);
 
-               Intent player = new Intent(context, PlayerService.class);
-               player.putExtra("action", "stop");
-               context.startService(player);
+            Intent player2 = new Intent(context, PlayerService.class);
+            player2.putExtra("action", "play");
+            context.startService(player2);
 
-               Intent player2 = new Intent(context, PlayerService.class);
-               player2.putExtra("action", "play");
-               context.startService(player2);
+            reconnect();
 
-               reconnect();
+         } else {
 
-            } else {
-
-               Intent player3 = new Intent(context, PlayerService.class);
-               player3.putExtra("action", "stop");
-               context.startService(player3);
-            }
-
+            Intent player3 = new Intent(context, PlayerService.class);
+            player3.putExtra("action", "stop");
+            context.startService(player3);
          }
+
       }, 2000);
 
    }
@@ -160,21 +155,16 @@ public class Connectivity extends BroadcastReceiver {
    private void reconnect() {
 
       handler = new Handler();
-      handler.postDelayed(new Runnable() {
+      handler.postDelayed(() -> {
 
-         @SuppressLint("SetTextI18n")
-         public void run() {
+         Log.d("Connectivity", "reconnect(int delay), reconnexion x seconde");
 
-            Log.d("Connectivity", "reconnect(int delay), reconnexion x seconde");
+         if (!State.isPlaying()) {
 
-            if (!State.isPlaying()) {
-
-               Intent player2 = new Intent(context, PlayerService.class);
-               player2.putExtra("action", "play");
-               context.startService(player2);
-            }
+            Intent player2 = new Intent(context, PlayerService.class);
+            player2.putExtra("action", "play");
+            context.startService(player2);
          }
-
       }, 5000);
 
    }

@@ -57,13 +57,7 @@ public class FastScroller extends LinearLayout {
     private ViewPropertyAnimator mScrollbarAnimator;
     private ViewPropertyAnimator mBubbleAnimator;
 
-    private final Runnable mScrollbarHider = new Runnable() {
-
-        @Override
-        public void run() {
-            hideScrollbar();
-        }
-    };
+    private final Runnable mScrollbarHider = this::hideScrollbar;
 
     private final RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
 

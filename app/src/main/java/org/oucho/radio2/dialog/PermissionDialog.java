@@ -14,14 +14,8 @@ public class PermissionDialog implements RadioKeys {
 
 public void check(Context context, final Activity activity) {
         DialogUtils.showPermissionDialog(activity, context.getString(R.string.permission_write_external_storage),
-                new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions(activity,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-                    }
-                });
+                (dialog, which) -> ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE));
     }
 
     private static class DialogUtils {

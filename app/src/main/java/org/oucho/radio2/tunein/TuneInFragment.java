@@ -16,7 +16,6 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -50,7 +49,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
     private Context mContext;
 
     private Receiver receiver;
-    FastScrollRecyclerView mRecyclerView;
+    private FastScrollRecyclerView mRecyclerView;
 
     public TuneInFragment() {
     }
@@ -182,38 +181,34 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         android.widget.PopupMenu mCoverPopupMenu = new android.widget.PopupMenu(mContext, view);
 
         mCoverPopupMenu.getMenu().add(1, 1, 0, "Ajouter à la liste");
-        mCoverPopupMenu.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
+        mCoverPopupMenu.setOnMenuItemClickListener(item0 -> {
 
-            @Override
-            public boolean onMenuItemClick(final MenuItem item0) {
+            String[] parts = item.split("\" ");
 
-                String[] parts = item.split("\" ");
+            if  (item.contains("type=\"audio\"")) {
 
-                if  (item.contains("type=\"audio\"")) {
+                String text = parts[1];
+                String name = text.replace("text=\"" , "");
+                String url = null;
+                String url_image = null;
 
-                    String text = parts[1];
-                    String name = text.replace("text=\"" , "");
-                    String url = null;
-                    String url_image = null;
+                Log.d(TAG, "name: " + name);
 
-                    Log.d(TAG, "name: " + name);
+                for (String part : parts) {
 
-                    for (String part : parts) {
-
-                        if (part.contains("URL=\"")) {
-                            url = part.replace("URL=\"", "");
-                        }
-
-                        if (part.contains("image=\"")) {
-                            url_image = part.replace("image=\"", "");
-                        }
+                    if (part.contains("URL=\"")) {
+                        url = part.replace("URL=\"", "");
                     }
 
-                    new saveItem().execute(url, name, url_image, mContext);
+                    if (part.contains("image=\"")) {
+                        url_image = part.replace("image=\"", "");
+                    }
                 }
 
-                return true;
+                new saveItem().execute(url, name, url_image, mContext);
             }
+
+            return true;
         });
 
         mCoverPopupMenu.show();
@@ -343,56 +338,52 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         //noinspection ConstantConditions
         getView().setFocusableInTouchMode(true);
         getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
+        getView().setOnKeyListener((v, keyCode, event) -> {
 
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
+            AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
-                AudioManager audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                    //noinspection ConstantConditions
-                    audioManager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
-                }
-
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                    //noinspection ConstantConditions
-                    audioManager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND);
-                }
-
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-
-                    if (historique.size() > 1) {
-
-                        String last = historique.get(historique.size() -2);
-
-                        Bundle args = new Bundle();
-                        args.putString("url", last);
-
-                        // supprime les 2 derniers.
-                        historique.remove(historique.size() - 1);
-                        historique.remove(historique.size() - 1);
-
-                        load(args);
-
-                        return true;
-
-                    } else {
-
-                        Intent intent = new Intent();
-                        intent.setAction(INTENT_TITRE);
-                        intent.putExtra("titre", getResources().getString(R.string.app_name));
-                        mContext.sendBroadcast(intent);
-
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        ft.setCustomAnimations(R.anim.slide_out_bottom, R.anim.slide_out_bottom);
-                        ft.remove(TuneInFragment.this);
-                        ft.commit();
-                    }
-
-                }
-                return true;
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+                //noinspection ConstantConditions
+                audioManager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
             }
+
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                //noinspection ConstantConditions
+                audioManager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND);
+            }
+
+            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+
+                if (historique.size() > 1) {
+
+                    String last = historique.get(historique.size() -2);
+
+                    Bundle args = new Bundle();
+                    args.putString("url", last);
+
+                    // supprime les 2 derniers.
+                    historique.remove(historique.size() - 1);
+                    historique.remove(historique.size() - 1);
+
+                    load(args);
+
+                    return true;
+
+                } else {
+
+                    Intent intent = new Intent();
+                    intent.setAction(INTENT_TITRE);
+                    intent.putExtra("titre", getResources().getString(R.string.app_name));
+                    mContext.sendBroadcast(intent);
+
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.setCustomAnimations(R.anim.slide_out_bottom, R.anim.slide_out_bottom);
+                    ft.remove(TuneInFragment.this);
+                    ft.commit();
+                }
+
+            }
+            return true;
         });
     }
 

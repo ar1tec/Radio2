@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -86,11 +85,9 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
                 popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete, popup.getMenu());
             }
 
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                public boolean onMenuItemClick(MenuItem item) {
-                    clickListener.onPlayableItemMenuClick(radio, item.getItemId());
-                    return true;
-                }
+            popup.setOnMenuItemClickListener(item -> {
+                clickListener.onPlayableItemMenuClick(radio, item.getItemId());
+                return true;
             });
 
             popup.show();

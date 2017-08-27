@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -368,32 +367,28 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     private void search() {
 
         editText.setOnFocusChangeListener(focusListener);
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        editText.setOnEditorActionListener((v, actionId, event) -> {
 
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                String text = editText.getText().toString();
 
-                    String text = editText.getText().toString();
+                Intent search = new Intent();
+                search.setAction(INTENT_SEARCH);
+                search.putExtra("search", text);
+                sendBroadcast(search);
 
-                    Intent search = new Intent();
-                    search.setAction(INTENT_SEARCH);
-                    search.putExtra("search", text);
-                    sendBroadcast(search);
+                View view = getCurrentFocus();
 
-                    View view = getCurrentFocus();
-
-                    if (view != null) {
-                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                        assert imm != null;
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
-
-                    return true;
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    assert imm != null;
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
-                return false;
+
+                return true;
             }
+            return false;
         });
 
     }
@@ -643,24 +638,20 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         popup.getMenuInflater().inflate(R.menu.add_radio, popup.getMenu());
 
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        popup.setOnMenuItemClickListener(item -> {
 
-            @Override
-            public boolean onMenuItemClick(final MenuItem item) {
-
-                switch (item.getItemId()) {
-                    case R.id.add_browse:
-                        loadSearch();
-                        break;
-                    case R.id.add_manual:
-                        editRadio(null);
-                        break;
-                    default:
-                        break;
-                }
-
-                return true;
+            switch (item.getItemId()) {
+                case R.id.add_browse:
+                    loadSearch();
+                    break;
+                case R.id.add_manual:
+                    editRadio(null);
+                    break;
+                default:
+                    break;
             }
+
+            return true;
         });
 
         popup.show();
@@ -716,11 +707,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         final ImageView editLogo = edit_radio_view.findViewById(R.id.logo);
         final TextView text = edit_radio_view.findViewById(R.id.texte);
 
-        editLogo.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                addImg();
-            }
-        });
+        editLogo.setOnClickListener(v -> addImg());
 
         if(oldRadio != null) {
             editTextUrl.setText(oldRadio.getUrl());
@@ -735,39 +722,33 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             }
         }
 
-        edit_radio_dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                String radio_url = editTextUrl.getText().toString();
-                String radio_name = editTextName.getText().toString();
-                byte[] radio_logo = null;
+        edit_radio_dialog.setPositiveButton(R.string.ok, (dialog, id) -> {
+            String radio_url = editTextUrl.getText().toString();
+            String radio_name = editTextName.getText().toString();
+            byte[] radio_logo = null;
 
-                if (logoRadio != null) {
-                    radio_logo = ImageFactory.getBytes(logoRadio);
-                }
-
-                if("".equals(radio_url) || "http://".equals(radio_url)) {
-                    Toast.makeText(mContext, R.string.errorInvalidURL, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if("".equals(radio_name))
-                    radio_name = radio_url;
-
-                if(oldRadio != null) {
-                    Radio.deleteRadio(mContext, oldRadio);
-                }
-
-                Radio newRadio = new Radio(radio_url, radio_name, radio_logo);
-                Radio.addNewRadio(mContext, newRadio);
-                updateListView();
+            if (logoRadio != null) {
+                radio_logo = ImageFactory.getBytes(logoRadio);
             }
+
+            if("".equals(radio_url) || "http://".equals(radio_url)) {
+                Toast.makeText(mContext, R.string.errorInvalidURL, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if("".equals(radio_name))
+                radio_name = radio_url;
+
+            if(oldRadio != null) {
+                Radio.deleteRadio(mContext, oldRadio);
+            }
+
+            Radio newRadio = new Radio(radio_url, radio_name, radio_logo);
+            Radio.addNewRadio(mContext, newRadio);
+            updateListView();
         });
 
-        edit_radio_dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                updateListView();
-            }
-        });
+        edit_radio_dialog.setNegativeButton(R.string.cancel, (dialog, id) -> updateListView());
 
 
         AlertDialog dialog = edit_radio_dialog.create();
@@ -950,11 +931,9 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     private void deleteRadio(final Radio radio) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getResources().getString(R.string.deleteRadioConfirm));
-        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Radio.deleteRadio(mContext, radio);
-                updateListView();
-            }
+        builder.setPositiveButton(R.string.delete, (dialog, which) -> {
+            Radio.deleteRadio(mContext, radio);
+            updateListView();
         });
         builder.setNegativeButton(R.string.cancel, null);
         builder.show();
@@ -1026,25 +1005,21 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         final int uid = android.os.Process.myUid();
         final long received = TrafficStats.getUidRxBytes(uid) / 1024;
 
-        handler.postDelayed(new Runnable() {
+        handler.postDelayed(() -> {
+            long current = TrafficStats.getUidRxBytes(uid) / 1024;
+            long total = current - received;
+            long ByteToBit = total * 8;
+            TextView BitRate = (TextView) findViewById(R.id.bitrate);
 
-            @SuppressLint("SetTextI18n")
-            public void run() {
-                long current = TrafficStats.getUidRxBytes(uid) / 1024;
-                long total = current - received;
-                long ByteToBit = total * 8;
-                TextView BitRate = (TextView) findViewById(R.id.bitrate);
-
-                if (ByteToBit <= 1024 ) {
-                    String bitrate = String.valueOf(ByteToBit);
-                    assert BitRate != null;
-                    BitRate.setText(bitrate + " Kb/s");
-                } else {
-                    long megaBit = ByteToBit / 1024;
-                    String bitrate = String.valueOf(megaBit);
-                    assert BitRate != null;
-                    BitRate.setText(bitrate + " Mb/s");
-                }
+            if (ByteToBit <= 1024 ) {
+                String bitrate = String.valueOf(ByteToBit);
+                assert BitRate != null;
+                BitRate.setText(bitrate + " Kb/s");
+            } else {
+                long megaBit = ByteToBit / 1024;
+                String bitrate = String.valueOf(megaBit);
+                assert BitRate != null;
+                BitRate.setText(bitrate + " Mb/s");
             }
         }, 1000);
     }
@@ -1105,20 +1080,14 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setPositiveButton(start, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        builder.setPositiveButton(start, (dialog, which) -> {
 
-                int mins = mSeekArc.getProgress();
-                startTimer(mins);
-            }
+            int mins = mSeekArc.getProgress();
+            startTimer(mins);
         });
 
-        builder.setNegativeButton(cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // This constructor is intentionally empty, pourquoi ? parce que !
-            }
+        builder.setNegativeButton(cancel, (dialog, which) -> {
+            // This constructor is intentionally empty, pourquoi ? parce que !
         });
 
         builder.setView(view);
@@ -1170,20 +1139,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         final TextView timeLeft = view.findViewById(R.id.time_left);
 
-        final AlertDialog timerDialog = new AlertDialog.Builder(this).setPositiveButton(continuer, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-
-        }).setNegativeButton(cancelTimer, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                stopSleepTimer();
-            }
-        }).setView(view).create();
+        final AlertDialog timerDialog = new AlertDialog.Builder(this).setPositiveButton(continuer, (dialog, which) -> dialog.dismiss()).setNegativeButton(cancelTimer, (dialog, which) -> stopSleepTimer()).setView(view).create();
 
         new CountDownTimer(scheduledFuture.getDelay(TimeUnit.MILLISECONDS), 1000) {
             @Override
