@@ -400,11 +400,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
     private final View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
         public void onFocusChange(View v, boolean hasFocus) {
-            if (hasFocus){
-                isFocusedSearch = true;
-            } else {
-                isFocusedSearch = false;
-            }
+            isFocusedSearch = hasFocus;
         }
     };
 

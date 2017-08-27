@@ -137,7 +137,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                 for (String part : parts) {
 
                     if (part.contains("URL=\"")) {
-                        url = part.replace("URL=\"", "");
+                        url = part.replace("URL=\"", "").replace("\"", "");
                     }
                 }
 
