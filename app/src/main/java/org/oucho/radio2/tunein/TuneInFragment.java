@@ -31,13 +31,12 @@ import org.oucho.radio2.utils.ImageFactory;
 import org.oucho.radio2.utils.fastscroll.FastScrollRecyclerView;
 
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import java.util.Scanner;
 
 
 public class TuneInFragment extends Fragment implements RadioKeys {
@@ -231,23 +230,19 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
             try {
 
-                OkHttpClient getUrl = new OkHttpClient();
-                Request requestUrl = new Request.Builder()
-                        .url(httpRequest)
-                        .build();
-                Response response = getUrl.newCall(requestUrl).execute();
-                //noinspection ConstantConditions
-                url_radio = response.body().string();
+                URL getUrl = new URL(httpRequest);
+                HttpURLConnection connUrl = (HttpURLConnection) getUrl.openConnection();
+                connUrl.connect();
+                InputStream streamUrl = connUrl.getInputStream();
+                url_radio = convertStreamToString(streamUrl);
+                streamUrl.close();
 
-
-                OkHttpClient getImg = new OkHttpClient();
-                Request requestImg = new Request.Builder()
-                        .url(url_image)
-                        .build();
-                Response responseImg = getImg.newCall(requestImg).execute();
-                @SuppressWarnings("ConstantConditions") InputStream inputStream = responseImg.body().byteStream();
-                bmImg = BitmapFactory.decodeStream(inputStream);
-                inputStream.close();
+                URL getImg = new URL(url_image);
+                HttpURLConnection connImg = (HttpURLConnection) getImg.openConnection();
+                connImg.connect();
+                InputStream streamImg = connImg.getInputStream();
+                bmImg = BitmapFactory.decodeStream(streamImg);
+                streamImg.close();
 
                 String img = ImageFactory.byteToString(ImageFactory.getBytes(ImageFactory.getResizedBitmap(context, bmImg)));
                 String[] rustine = url_radio.split("\n"); // a tendance à doubler l'url
@@ -287,13 +282,12 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
             try {
 
-                OkHttpClient getUrl = new OkHttpClient();
-                Request requestUrl = new Request.Builder()
-                        .url(httpRequest)
-                        .build();
-                Response responseUrl = getUrl.newCall(requestUrl).execute();
-                //noinspection ConstantConditions
-                data = responseUrl.body().string();
+                URL getUrl = new URL(httpRequest);
+                HttpURLConnection connUrl = (HttpURLConnection) getUrl.openConnection();
+                connUrl.connect();
+                InputStream streamUrl = connUrl.getInputStream();
+                data = convertStreamToString(streamUrl);
+                streamUrl.close();
 
                 Log.d(TAG, "playItem url: " + data);
 
@@ -322,7 +316,10 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         }
     }
 
-
+    private static String convertStreamToString(InputStream is) {
+        Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
 
     @Override
     public void onResume() {

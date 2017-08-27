@@ -5,14 +5,14 @@ import android.content.Intent;
 import android.text.Html;
 import android.util.Log;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import java.util.Scanner;
 
 import static org.oucho.radio2.interfaces.RadioKeys.INTENT_ERROR;
 import static org.oucho.radio2.interfaces.RadioKeys.INTENT_TITRE;
@@ -43,17 +43,18 @@ public class TuneInLoader extends BaseLoader<List<String>> {
 
         try {
 
-            Log.d(TAG, "loadInBackground(): " + urlRadioTime);
+            URL url = new URL(urlRadioTime);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty("User-Agent", "Radio/2.0 (Android 5+)");
+            conn.setRequestProperty("Accept-Language", langue + "-" + pays);
+            conn.setDoInput(true);
+            conn.connect();
 
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url(urlRadioTime)
-                    .header("Accept-Language", langue + "-" + pays)
-                    .build();
-            Response response = client.newCall(request).execute();
+            InputStream stream = conn.getInputStream();
 
-            //noinspection ConstantConditions
-            liste = parse(response.body().string());
+            liste = parse(convertStreamToString(stream));
+
+            stream.close();
 
         } catch (SocketTimeoutException e) {
 
@@ -117,4 +118,8 @@ public class TuneInLoader extends BaseLoader<List<String>> {
         return liste;
     }
 
+    private static String convertStreamToString(InputStream is) {
+        Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
 }
