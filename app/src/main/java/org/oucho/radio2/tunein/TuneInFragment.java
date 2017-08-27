@@ -23,6 +23,9 @@ import android.widget.ProgressBar;
 import org.oucho.radio2.PlayerService;
 import org.oucho.radio2.R;
 import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.picasso.Cache;
+import org.oucho.radio2.picasso.LruCache;
+import org.oucho.radio2.picasso.Picasso;
 import org.oucho.radio2.tunein.adapters.BaseAdapter;
 import org.oucho.radio2.tunein.adapters.TuneInAdapter;
 import org.oucho.radio2.tunein.loaders.TuneInLoader;
@@ -226,12 +229,11 @@ public class TuneInFragment extends Fragment implements RadioKeys {
             Context context = (Context) objects[3];
             Bitmap bmImg;
 
-
-
             try {
 
                 URL getUrl = new URL(httpRequest);
                 HttpURLConnection connUrl = (HttpURLConnection) getUrl.openConnection();
+                connUrl.setRequestProperty("User-Agent", USER_AGENT);
                 connUrl.connect();
                 InputStream streamUrl = connUrl.getInputStream();
                 url_radio = convertStreamToString(streamUrl);
@@ -239,6 +241,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
                 URL getImg = new URL(url_image);
                 HttpURLConnection connImg = (HttpURLConnection) getImg.openConnection();
+                connImg.setRequestProperty("User-Agent", USER_AGENT);
                 connImg.connect();
                 InputStream streamImg = connImg.getInputStream();
                 bmImg = BitmapFactory.decodeStream(streamImg);
@@ -284,6 +287,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
                 URL getUrl = new URL(httpRequest);
                 HttpURLConnection connUrl = (HttpURLConnection) getUrl.openConnection();
+                connUrl.setRequestProperty("User-Agent", USER_AGENT);
                 connUrl.connect();
                 InputStream streamUrl = connUrl.getInputStream();
                 data = convertStreamToString(streamUrl);

@@ -724,7 +724,6 @@ public class PlayerService extends Service implements RadioKeys, Player.EventLis
 
           Log.d(TAG, "if( logo_radio == null && !img.equalsIgnoreCase(\"\") )");
 
-
           byte[] img_byte_array = Base64.decode(img, Base64.DEFAULT);
 
          logo_radio = BitmapFactory.decodeByteArray(img_byte_array, 0, img_byte_array.length);

@@ -8,9 +8,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import org.oucho.radio2.R;
+import org.oucho.radio2.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +80,6 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
                     Picasso.with(viewHolder.itemView.getContext()).load(url_image).fit().centerCrop().into(viewHolder.image);
                 }
             }
-
         }
 
         if  (!typeAudio) {

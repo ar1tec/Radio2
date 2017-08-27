@@ -16,6 +16,7 @@ import java.util.Scanner;
 
 import static org.oucho.radio2.interfaces.RadioKeys.INTENT_ERROR;
 import static org.oucho.radio2.interfaces.RadioKeys.INTENT_TITRE;
+import static org.oucho.radio2.interfaces.RadioKeys.USER_AGENT;
 
 
 public class TuneInLoader extends BaseLoader<List<String>> {
@@ -45,9 +46,8 @@ public class TuneInLoader extends BaseLoader<List<String>> {
 
             URL url = new URL(urlRadioTime);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestProperty("User-Agent", "Radio/2.0 (Android 5+)");
+            conn.setRequestProperty("User-Agent", USER_AGENT);
             conn.setRequestProperty("Accept-Language", langue + "-" + pays);
-            conn.setDoInput(true);
             conn.connect();
 
             InputStream stream = conn.getInputStream();

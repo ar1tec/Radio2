@@ -32,15 +32,15 @@
                 android:id="@+id/station"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:layout_marginTop="7dp"
+                android:gravity="center_horizontal"
                 android:text="Radio"
                 android:textColor="@color/grey_800"
                 android:textSize="36sp"
                 android:typeface="normal"
-                android:gravity="center_horizontal"
-                android:layout_centerHorizontal="true"
                 tools:ignore="HardcodedText" />
 
             <ImageView

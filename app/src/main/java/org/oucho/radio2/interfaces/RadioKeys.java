@@ -18,6 +18,8 @@ public interface RadioKeys {
     String ACTION_RESTART = "restart";
     String ACTION_QUIT = "quit";
 
+    String USER_AGENT = "Radio/2.0 (Android 5+)";
+
     String INTENT_STATE = "org.oucho.radio2.INTENT_STATE";
     String INTENT_TITRE = "org.oucho.radio2.INTENT_TITRE";
     String INTENT_ERROR = "org.oucho.radio2.INTENT_ERROR";
