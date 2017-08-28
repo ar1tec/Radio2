@@ -61,7 +61,7 @@
         android:layout_alignParentBottom="true"
         android:background="@color/white"
         android:clipToPadding="false"
-        android:elevation="8dp">
+        android:elevation="14dp">
 
         <ImageButton
             android:id="@+id/stop_radio"

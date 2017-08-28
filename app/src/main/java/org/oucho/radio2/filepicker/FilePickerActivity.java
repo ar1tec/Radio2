@@ -85,7 +85,8 @@ public class FilePickerActivity extends AppCompatActivity {
     private Intent intent;
 
 
-	@SuppressWarnings("ConstantConditions")
+	@SuppressLint("InflateParams")
+    @SuppressWarnings("ConstantConditions")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -177,6 +178,7 @@ public class FilePickerActivity extends AppCompatActivity {
         if (!intent.getBooleanExtra(FilePicker.DISABLE_NEW_FOLDER_BUTTON, false)) {
             new_folder.setOnClickListener(v -> {
 
+                @SuppressLint("InflateParams")
                 View alertView = LayoutInflater.from(FilePickerActivity.this).inflate(R.layout.file_picker_new_folder, null);
                 final TextView name = alertView.findViewById(R.id.name);
 

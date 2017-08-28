@@ -1,6 +1,7 @@
 package org.oucho.radio2;
 
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -299,6 +300,7 @@ public class PlayerService extends Service implements RadioKeys, Player.EventLis
 
    }
 
+   @SuppressLint("StaticFieldLeak")
    private void pause() {
 
       if ( mExoPlayer == null || State.is(State.STATE_PAUSE) || ! isPlaying() )
@@ -488,6 +490,7 @@ public class PlayerService extends Service implements RadioKeys, Player.EventLis
       }
    }
 
+   @SuppressLint("StaticFieldLeak")
    private void stop_soon() {
 
       if ( stopSoonTask != null )
@@ -597,6 +600,7 @@ public class PlayerService extends Service implements RadioKeys, Player.EventLis
    }
 
 
+   @SuppressLint("StaticFieldLeak")
    private class InitializeExoPlayerHelper extends AsyncTask<Void, Void, Boolean> {
 
       @Override

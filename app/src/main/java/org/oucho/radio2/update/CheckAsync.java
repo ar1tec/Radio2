@@ -1,11 +1,13 @@
 package org.oucho.radio2.update;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 
 @SuppressWarnings("unused")
 class CheckAsync {
 
+    @SuppressLint("StaticFieldLeak")
     static class LatestAppVersion extends AsyncTask<Void, Void, Update> {
         private final Context context;
         private final String xmlUrl;

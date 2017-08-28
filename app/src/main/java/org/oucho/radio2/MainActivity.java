@@ -41,6 +41,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -80,11 +82,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+
 public class MainActivity extends AppCompatActivity implements RadioKeys, NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private static final int FILE_PICKER_RESULT = 0;
     private static final String TAG = "MainActivity";
-
 
     private String radio_name;
     private String playing_state;
@@ -361,6 +363,9 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         ft.replace(R.id.content_main, fragment);
         ft.commit();
 
+        Animation animFadeIn = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
+        animFadeIn.setDuration(400);
+        searchLayout.setAnimation(animFadeIn);
         searchLayout.setVisibility(View.VISIBLE);
     }
 
@@ -440,7 +445,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         @Override
         public void onReceive(Context context, Intent intent) {
 
-
             String receiveIntent = intent.getAction();
 
             if (INTENT_ERROR.equals(receiveIntent)) {
@@ -462,6 +466,9 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
                     error1.setVisibility(View.GONE);
                     error1.setText("");
 
+                    Animation animFadeOut = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_out);
+                    animFadeOut.setDuration(400);
+                    searchLayout.setAnimation(animFadeOut);
                     searchLayout.setVisibility(View.GONE);
 
                     updateListView();
@@ -556,8 +563,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
    /* *******
     * Quitter
     * *******/
-
-
     private void exit() {
         mediaPlayer.release();
 

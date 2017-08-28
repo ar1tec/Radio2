@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.oucho.radio2.R;
-import org.oucho.radio2.picasso.Picasso;
+import org.oucho.radio2.angelo.Angelo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +77,7 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
 
                 if (part.contains("image=\"")) {
                     String url_image = part.replace("image=\"", "");
-                    Picasso.with(viewHolder.itemView.getContext()).load(url_image).fit().centerCrop().into(viewHolder.image);
+                    Angelo.with(viewHolder.itemView.getContext()).load(url_image).error(R.drawable.ic_mic_blue_grey_400_24dp).fit().centerCrop().into(viewHolder.image);
                 }
             }
         }
@@ -132,7 +132,7 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            triggerOnItemClickListener(position, v);
+            triggerOnItemClickListener(position);
         }
 
         @Override

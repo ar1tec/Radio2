@@ -18,14 +18,13 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 
 import org.oucho.radio2.PlayerService;
 import org.oucho.radio2.R;
 import org.oucho.radio2.interfaces.RadioKeys;
-import org.oucho.radio2.picasso.Cache;
-import org.oucho.radio2.picasso.LruCache;
-import org.oucho.radio2.picasso.Picasso;
 import org.oucho.radio2.tunein.adapters.BaseAdapter;
 import org.oucho.radio2.tunein.adapters.TuneInAdapter;
 import org.oucho.radio2.tunein.loaders.TuneInLoader;
@@ -46,9 +45,9 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
     private final List<String> historique = new ArrayList<>();
     private static final String TAG = "TuneInFragment";
-    private ProgressBar mProgressBar;
     private TuneInAdapter mAdapter;
     private Context mContext;
+    private LinearLayout progressBar;
 
     private Receiver receiver;
     private FastScrollRecyclerView mRecyclerView;
@@ -82,7 +81,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
         mRecyclerView.setAdapter(mAdapter);
 
-        mProgressBar = rootView.findViewById(R.id.progressBar);
+        progressBar = rootView.findViewById(R.id.progressBar_layout);
 
         Bundle args = new Bundle();
         args.putString("url", "http://opml.radiotime.com");
@@ -95,7 +94,10 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
 
     private void load(Bundle args) {
-        mProgressBar.setVisibility(View.VISIBLE);
+        Animation animFadeIn = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
+        animFadeIn.setDuration(200);
+        progressBar.setAnimation(animFadeIn);
+        progressBar.setVisibility(View.VISIBLE);
         getLoaderManager().restartLoader(0, args, mLoaderCallbacks);
     }
 
@@ -114,7 +116,10 @@ public class TuneInFragment extends Fragment implements RadioKeys {
             if (list != null)
                 mAdapter.setData(list);
 
-            mProgressBar.setVisibility(View.GONE);
+            Animation animFadeOut = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_out);
+            animFadeOut.setDuration(200);
+            progressBar.setAnimation(animFadeOut);
+            progressBar.setVisibility(View.GONE);
 
             mRecyclerView.scrollToPosition(0);
         }
@@ -126,7 +131,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
     private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
-        public void onItemClick(int position, View view) {
+        public void onItemClick(int position) {
 
             String item = mAdapter.getItem(position);
             String[] parts = item.split("\" ");
@@ -147,7 +152,6 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
                 load(args);
             }
-
 
             if  (item.contains("type=\"audio\"")) {
 
@@ -406,12 +410,10 @@ public class TuneInFragment extends Fragment implements RadioKeys {
             if (INTENT_SEARCH.equals(receiveIntent)) {
 
                 String text = intent.getStringExtra("search");
-
                 search(text);
             }
 
             if (INTENT_FOCUS.equals(receiveIntent)) {
-
                 //noinspection ConstantConditions
                 getView().setFocusableInTouchMode(true);
                 getView().requestFocus();

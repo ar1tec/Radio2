@@ -324,14 +324,6 @@ public class FastScroller extends LinearLayout {
         }
     }
 
-    private void showBubble() {
-        mBubbleView.setVisibility(VISIBLE);
-        mBubbleAnimator = mBubbleView.animate().alpha(1f)
-                .setDuration(sBubbleAnimDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                });
-    }
-
     private void hideBubble() {
         mBubbleAnimator = mBubbleView.animate().alpha(0f)
                 .setDuration(sBubbleAnimDuration)
