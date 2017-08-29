@@ -897,7 +897,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         player.putExtra("name", name);
         startService(player);
 
-        if (logo != null) {
+        if (ImageFactory.byteToString(logo) != null) {
 
             String encodedImage = ImageFactory.byteToString(logo);
 

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.util.Base64;
+import android.util.Log;
 
 import org.oucho.radio2.R;
 
@@ -12,6 +13,8 @@ import java.io.ByteArrayOutputStream;
 
 
 public class ImageFactory {
+
+    private static final String TAG = "ImageFactory";
 
     public static Bitmap getResizedBitmap(Context context, Bitmap image) { // redimessione l'image par matrice (plus propre qu'un simple redimenssionnement)
 
@@ -51,8 +54,15 @@ public class ImageFactory {
     // convert from bitmap to byte array
     public static byte[] getBytes(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
-        return stream.toByteArray();
+
+        try {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+            return stream.toByteArray();
+        } catch (NullPointerException e) {
+            Log.e(TAG, "Error bitmap to byte[] conversion: " + e);
+            return null;
+        }
+       // bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
     }
 
     // convert from byte array to bitmap
@@ -62,22 +72,18 @@ public class ImageFactory {
 
     // convert from string to bitmap
     public static Bitmap stringToBitmap(String image) {
-
         byte[] img = Base64.decode(image, Base64.DEFAULT);
-
         return getImage(img);
     }
 
 
     // convert from byte array to string
     public static String byteToString(byte[] logo) {
-
         return bitmapToString(getImage(logo));
     }
 
     // convert from byte string to byte
     public static byte[] stringToByte(String logo) {
-
         return Base64.decode(logo, Base64.DEFAULT);
     }
 
@@ -86,7 +92,12 @@ public class ImageFactory {
 
         byte[] two = getBytes(image);
 
-        return Base64.encodeToString(two, Base64.DEFAULT);
+        try {
+            return Base64.encodeToString(two, Base64.DEFAULT);
+        } catch (NullPointerException e) {
+            Log.w(TAG, "Error bitmap to String conversion: " + e);
+            return null;
+        }
     }
 
     // convert from drawable to string
