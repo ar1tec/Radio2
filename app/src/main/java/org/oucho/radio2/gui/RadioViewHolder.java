@@ -57,6 +57,9 @@ class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
             imageDefault.setVisibility(View.INVISIBLE);
             logoRadio.setImageBitmap(ImageFactory.getImage(radio.getLogo()));
             logoRadio.setVisibility(View.VISIBLE);
+        } else {
+            imageDefault.setVisibility(View.VISIBLE);
+            logoRadio.setVisibility(View.INVISIBLE);
         }
 
         if (radio.getTitle().equals(nomRadio)  ) {

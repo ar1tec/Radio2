@@ -124,7 +124,7 @@ public class DatabaseSave {
 
         void addRadio(String name, String url, String image) throws IOException {
 
-            String stg = "<name>" + name + "</name>"+ "\n"
+            String stg = "<name>" + name.replace("&", "&amp;") + "</name>"+ "\n"
                     + "<url>" + url + "</url>"+ "\n"
                     + "<image>" + image + "</image>" + "\n";
 
@@ -148,7 +148,6 @@ public class DatabaseSave {
                 mbufferos.close();
             }
         }
-
     }
 
 }

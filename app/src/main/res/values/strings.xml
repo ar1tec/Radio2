@@ -144,6 +144,9 @@
     <string name="add_mpd">Send tot MPD Remote</string>
     <string name="add_radio_browse">Browse</string>
     <string name="add_radio_manual">Add manually</string>
+    <string name="addRadio_error_url">The address of this radio is incorrect</string>
+    <string name="error_connexion">Connection problem</string>
+    <string name="search">Search</string>
 
 
 </resources>

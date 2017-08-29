@@ -15,91 +15,91 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Radio implements PlayableItem, RadioKeys {
-	private final String url;
-	private final String name;
+    private final String url;
+    private final String name;
     private final byte[] img;
 
-	public Radio(String url, String name, byte[] img) {
-		this.url = url;
-		this.name = name;
+    public Radio(String url, String name, byte[] img) {
+        this.url = url;
+        this.name = name;
         this.img = img;
-	}
+    }
 
-	public static ArrayList<Radio> getRadios(Context context) {
-		RadiosDatabase radiosDatabase = new RadiosDatabase(context);
-		SQLiteDatabase db = radiosDatabase.getReadableDatabase();
+    public static ArrayList<Radio> getRadios(Context context) {
+        RadiosDatabase radiosDatabase = new RadiosDatabase(context);
+        SQLiteDatabase db = radiosDatabase.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT url, name, image FROM " + TABLE_NAME + " ORDER BY NAME", null);
         ArrayList<Radio> radios = new ArrayList<>();
         while (cursor.moveToNext()) {
-        	Radio radio = new Radio(cursor.getString(0), cursor.getString(1), cursor.getBlob(2));
-        	radios.add(radio);
+            Radio radio = new Radio(cursor.getString(0), cursor.getString(1), cursor.getBlob(2));
+            radios.add(radio);
         }
         db.close();
         cursor.close();
         return radios;
-	}
+    }
 
-	public static List<String> getListe(Context context) {
-		RadiosDatabase radiosDatabase = new RadiosDatabase(context);
-		SQLiteDatabase db = radiosDatabase.getReadableDatabase();
+    public static List<String> getListe(Context context) {
+        RadiosDatabase radiosDatabase = new RadiosDatabase(context);
+        SQLiteDatabase db = radiosDatabase.getReadableDatabase();
 
-		Cursor cursor = db.rawQuery("SELECT url FROM " + TABLE_NAME + " ORDER BY NAME", null);
+        Cursor cursor = db.rawQuery("SELECT url FROM " + TABLE_NAME + " ORDER BY NAME", null);
 
-		List<String> lst = new ArrayList<>();
+        List<String> lst = new ArrayList<>();
 
-		while (cursor.moveToNext()) {
-			String radio = cursor.getString(0);
-			lst.add(radio);
-		}
+        while (cursor.moveToNext()) {
+            String radio = cursor.getString(0);
+            lst.add(radio);
+        }
 
-		db.close();
-		cursor.close();
-		return lst;
-	}
+        db.close();
+        cursor.close();
+        return lst;
+    }
 
-	public static void addNewRadio(Context context, Radio radio) {
+    public static void addNewRadio(Context context, Radio radio) {
 
         Log.d("Radio", "loading: " + radio);
 
-		RadiosDatabase radiosDatabase = new RadiosDatabase(context);
-		ContentValues values = new ContentValues();
-		values.put("url", radio.url);
-		values.put("name", radio.name);
+        RadiosDatabase radiosDatabase = new RadiosDatabase(context);
+        ContentValues values = new ContentValues();
+        values.put("url", radio.url);
+        values.put("name", radio.name);
         values.put("image", radio.img);
 
-		try (SQLiteDatabase db = radiosDatabase.getWritableDatabase()) {
-			db.insertOrThrow(TABLE_NAME, null, values);
+        try (SQLiteDatabase db = radiosDatabase.getWritableDatabase()) {
+            db.insertOrThrow(TABLE_NAME, null, values);
 
             String text = context.getResources().getString(R.string.addRadio_fromApp, radio.getTitle());
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
-		} catch (Exception e) {
+        } catch (Exception e) {
 
             String text = context.getResources().getString(R.string.addRadio_error);
             Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 
             Log.d("Radio", "Error: " + e);
-		}
-	}
+        }
+    }
 
-	public static void deleteRadio(Context context, Radio radio) {
-		RadiosDatabase radiosDatabase = new RadiosDatabase(context);
-		SQLiteDatabase db = radiosDatabase.getWritableDatabase();
-		db.delete(TABLE_NAME, "url = '" + radio.getUrl() + "'", null);
-		db.close();
-	}
+    public static void deleteRadio(Context context, Radio radio) {
+        RadiosDatabase radiosDatabase = new RadiosDatabase(context);
+        SQLiteDatabase db = radiosDatabase.getWritableDatabase();
+        db.delete(TABLE_NAME, "url = '" + radio.getUrl() + "'", null);
+        db.close();
+    }
 
 
-	@Override
-	public String getTitle() {
-		return name;
-	}
+    @Override
+    public String getTitle() {
+        return name;
+    }
 
-	@Override
-	public String getUrl() {
-		return url;
-	}
+    @Override
+    public String getUrl() {
+        return url;
+    }
 
-	@Override
+    @Override
     public byte[] getLogo() {
         return img;
     }

@@ -16,7 +16,7 @@
 
     <string name="addRadio_fromApp">La radio %1$s ajoutée</string>
     <string name="addRadio_error">Cette radio est déjà enregistrée</string>
-    <string name="addRadio_error_url">L\'adresse de cette radio est vide</string>
+    <string name="addRadio_error_url">L\'adresse de cette radio est incorrect</string>
 
     <string name="add_mpd">Envoyer vers MPD Client</string>
 

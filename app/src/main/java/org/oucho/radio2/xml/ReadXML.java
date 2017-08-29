@@ -1,6 +1,5 @@
 package org.oucho.radio2.xml;
 
-
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
@@ -65,17 +64,17 @@ public class ReadXML {
 
             /* ************* Read XML *************/
 
-            BufferedReader br = new BufferedReader(new StringReader(XMLData));
-            InputSource is = new InputSource(br);
+            BufferedReader bufferedReader = new BufferedReader(new StringReader(XMLData));
+            InputSource inputSource = new InputSource(bufferedReader);
 
             /* ***********  Parse XML **************/
+            XMLParser parser = new XMLParser();
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
 
-            XMLParser parser=new XMLParser();
-            SAXParserFactory factory=SAXParserFactory.newInstance();
-            SAXParser sp=factory.newSAXParser();
-            XMLReader reader=sp.getXMLReader();
+            XMLReader reader = saxParser.getXMLReader();
             reader.setContentHandler(parser);
-            reader.parse(is);
+            reader.parse(inputSource);
 
             /* ************ Get Parse data in a ArrayList **********/
             myData = parser.list;
@@ -88,11 +87,10 @@ public class ReadXML {
 
                     if (xmlRowData != null) {
 
-                        String  url   = xmlRowData.getUrl();
-                        String  name   = xmlRowData.getName();
+                        String url = xmlRowData.getUrl();
+                        String name = xmlRowData.getName().replace("&amp;", "&");
                         String image = xmlRowData.getImage();
                         byte[] img = null;
-
 
                         if (image != null)
                             img = Base64.decode(image, Base64.DEFAULT);
@@ -101,10 +99,7 @@ public class ReadXML {
                         Radio.addNewRadio(context, newRadio);
                     }
                 }
-
             }
-
-            Toast.makeText(context, context.getString(R.string.importer), Toast.LENGTH_SHORT).show();
 
         } catch(Exception e) {
             Log.e("ReadXML", "Exception parse xml :" + e);

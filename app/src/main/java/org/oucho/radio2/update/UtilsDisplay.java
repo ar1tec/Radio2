@@ -24,7 +24,6 @@ class UtilsDisplay {
 
     static void showUpdateNotAvailableDialog(final Context context, String title, String content) {
 
-
         new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(content)

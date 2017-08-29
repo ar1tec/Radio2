@@ -139,6 +139,9 @@
     <string name="add_mpd">Senden an MPD Remote</string>
     <string name="add_radio_browse">Reise</string>
     <string name="add_radio_manual">Manuell hinzufügen</string>
+    <string name="addRadio_error_url">Die Adresse dieses Radios ist falsch</string>
+    <string name="error_connexion">Verbindungsproblem</string>
+    <string name="search">Suchen</string>
 
 
 </resources>

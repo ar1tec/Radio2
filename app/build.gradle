@@ -8,8 +8,8 @@ android {
         applicationId "org.oucho.radio2"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 30
-        versionName "2.12.0"
+        versionCode 31
+        versionName "2.12.1"
         setProperty("archivesBaseName", "Radio_$versionName")
     }
 
@@ -35,8 +35,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:26.+'
     compile 'com.android.support:design:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-
+    // externe
     compile 'com.google.android.exoplayer:exoplayer:r2.5.1'
-
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
 }
