@@ -27,6 +27,7 @@ public class FilePickerParcelObject implements Parcelable {
 		parcel.writeInt(count);
 	}
 
+	@SuppressWarnings("unused")
 	public static final Parcelable.Creator<FilePickerParcelObject> CREATOR = new Parcelable.Creator<FilePickerParcelObject>() {
 		public FilePickerParcelObject createFromParcel(Parcel in) {
 			return new FilePickerParcelObject(in);

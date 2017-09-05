@@ -45,12 +45,6 @@ class AppUpdate {
         return this;
     }
 
-    @SuppressWarnings("unused")
-    public AppUpdate init() {
-        start();
-        return this;
-    }
-
     /**
      * Execute AppUpdate in background.
      */

@@ -86,7 +86,6 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity implements RadioKeys, NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private static final int FILE_PICKER_RESULT = 0;
-    private static final String TAG = "MainActivity";
 
     private String radio_name;
     private String playing_state;
@@ -123,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     private TextView error0;
     private TextView error1;
 
-    private static EditText editText;
+    private EditText editText;
     private LinearLayout searchLayout;
 
     private boolean isFocusedSearch;

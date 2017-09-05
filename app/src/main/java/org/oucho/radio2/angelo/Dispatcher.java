@@ -1,6 +1,5 @@
 package org.oucho.radio2.angelo;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +26,6 @@ import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
 import static org.oucho.radio2.angelo.BitmapHunter.forRequest;
 import static org.oucho.radio2.angelo.MemoryPolicy.shouldWriteToMemoryCache;
 import static org.oucho.radio2.angelo.Utils.getService;
-import static org.oucho.radio2.angelo.Utils.hasPermission;
 
 class Dispatcher {
     private static final int RETRY_DELAY = 500;
@@ -59,9 +57,8 @@ class Dispatcher {
     private final Handler mainThreadHandler;
     private final Cache cache;
     private final List<BitmapHunter> batch;
-    private final boolean scansNetworkChanges;
 
-    Dispatcher(Context context, ExecutorService service, Handler mainThreadHandler, Downloader downloader, Cache cache) {
+    Dispatcher(Context context, ExecutorService service, Downloader downloader, Cache cache) {
         DispatcherThread dispatcherThread = new DispatcherThread();
         dispatcherThread.start();
         Utils.flushStackLocalLeaks(dispatcherThread.getLooper());
@@ -73,10 +70,9 @@ class Dispatcher {
         this.pausedTags = new HashSet<>();
         this.handler = new DispatcherHandler(dispatcherThread.getLooper(), this);
         this.downloader = downloader;
-        this.mainThreadHandler = mainThreadHandler;
+        this.mainThreadHandler = Angelo.HANDLER;
         this.cache = cache;
         this.batch = new ArrayList<>(4);
-        this.scansNetworkChanges = hasPermission(context, Manifest.permission.ACCESS_NETWORK_STATE);
         NetworkBroadcastReceiver receiver = new NetworkBroadcastReceiver(this);
         receiver.register();
     }
@@ -224,22 +220,22 @@ class Dispatcher {
             return;
         }
 
-        NetworkInfo networkInfo = null;
-        if (scansNetworkChanges) {
-            ConnectivityManager connectivityManager = getService(context, CONNECTIVITY_SERVICE);
-            networkInfo = connectivityManager.getActiveNetworkInfo();
-        }
+        ConnectivityManager connectivityManager = getService(context, CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
         if (hunter.shouldRetry(networkInfo)) {
 
             if (hunter.getException() instanceof NetworkRequestHandler.ContentLengthException) {
                 hunter.networkPolicy |= NetworkPolicy.NO_CACHE.index;
             }
+
             hunter.future = service.submit(hunter);
+
         } else {
-            // Mark for replay only if we observe network info changes and support replay.
-            boolean willReplay = scansNetworkChanges && hunter.supportsReplay();
+
+            boolean willReplay = hunter.supportsReplay();
             performError(hunter);
+
             if (willReplay) {
                 markForReplay(hunter);
             }
@@ -247,9 +243,11 @@ class Dispatcher {
     }
 
     private void performComplete(BitmapHunter hunter) {
+
         if (shouldWriteToMemoryCache(hunter.getMemoryPolicy())) {
             cache.set(hunter.getKey(), hunter.getResult());
         }
+
         hunterMap.remove(hunter.getKey());
         batch(hunter);
     }
@@ -289,12 +287,15 @@ class Dispatcher {
 
     private void markForReplay(BitmapHunter hunter) {
         Action action = hunter.getAction();
+
         if (action != null) {
             markForReplay(action);
         }
+
         List<Action> joined = hunter.getActions();
+
         if (joined != null) {
-            //noinspection ForLoopReplaceableByForEach
+
             for (int i = 0, n = joined.size(); i < n; i++) {
                 Action join = joined.get(i);
                 markForReplay(join);
@@ -402,19 +403,17 @@ class Dispatcher {
 
         void register() {
             IntentFilter filter = new IntentFilter();
-
-            if (dispatcher.scansNetworkChanges) {
-                filter.addAction(CONNECTIVITY_ACTION);
-            }
+            filter.addAction(CONNECTIVITY_ACTION);
             dispatcher.context.registerReceiver(this, filter);
         }
 
-        @Override public void onReceive(Context context, Intent intent) {
-            // On some versions of Android this may be called with a null Intent,
-            // also without extras (getExtras() == null), in such case we use defaults.
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
             if (intent == null) {
                 return;
             }
+
             final String action = intent.getAction();
 
             if (CONNECTIVITY_ACTION.equals(action)) {

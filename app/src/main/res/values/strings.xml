@@ -37,13 +37,16 @@
 
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="stop">Stop</string>
+
     <string name="disconnected">Disconnected</string>
     <string name="completed">Completed</string>
 
     <string name="about_message">
 
         \n
-        Radio 2.12.0, Web-Radio for Android\n
+        Radio 2.12.3, Web-Radio for Android\n
         Copyright &#169; 2017  Old-Geek\n
         \n
         This program is free software: you can redistribute it and/or modify
@@ -94,7 +97,6 @@
     <string name="appupdater_btn_dismiss">Later</string>
 
     <!-- import/export DB -->
-    <string name="importer">Import successful</string>
     <string name="importer_erreur">Import error</string>
 
     <string name="exporter">Export successful</string>

@@ -34,7 +34,7 @@
 
     <string name="about_message">
         \n
-        Radio 2.12.0, web radio pour android\n
+        Radio 2.12.3, web radio pour android\n
         Copyright &#169; 2017  Old-Geek\n
         \n
         This program is free software: you can redistribute it and/or modify
@@ -85,7 +85,6 @@
     <string name="appupdater_btn_dismiss">Plus tard</string>
 
     <!-- import/export DB -->
-    <string name="importer">Liste restauré avec succès</string>
     <string name="importer_erreur">Erreur: fichier incorrect</string>
 
     <string name="exporter">Liste sauvegardé avec succès</string>
@@ -148,7 +147,8 @@
     <string name="error_connexion">Problème de connexion</string>
 
     <string name="search">Chercher</string>
-
+    <string name="pause">Pause</string>
+    <string name="stop">Stop</string>
 
 
 </resources>

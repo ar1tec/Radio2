@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.text.Html;
 import android.util.Log;
 
+import org.oucho.radio2.interfaces.RadioKeys;
+
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
@@ -14,26 +16,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-import static org.oucho.radio2.interfaces.RadioKeys.INTENT_ERROR;
-import static org.oucho.radio2.interfaces.RadioKeys.INTENT_TITRE;
-import static org.oucho.radio2.interfaces.RadioKeys.USER_AGENT;
 
+public class TuneInLoader extends BaseLoader<List<String>> implements RadioKeys {
 
-public class TuneInLoader extends BaseLoader<List<String>> {
-
-    private final String TAG = "TuneInLoader";
-
-    private final Context mContext;
-
+    private static final String TAG = "TuneInLoader";
     private final String urlRadioTime;
 
     public TuneInLoader(Context context, String url) {
         super(context);
-        this.mContext = context;
         this.urlRadioTime = url;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<String> loadInBackground() {
 
@@ -61,7 +54,7 @@ public class TuneInLoader extends BaseLoader<List<String>> {
             Intent error = new Intent();
             error.setAction(INTENT_ERROR);
             error.putExtra("error", "TimeoutException " + e);
-            mContext.sendBroadcast(error);
+            getContext().sendBroadcast(error);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,7 +81,7 @@ public class TuneInLoader extends BaseLoader<List<String>> {
             Intent intent = new Intent();
             intent.setAction(INTENT_TITRE);
             intent.putExtra("titre", titre);
-            mContext.sendBroadcast(intent);
+            getContext().sendBroadcast(intent);
         }
 
         if (status.equals("400")) {
@@ -97,7 +90,7 @@ public class TuneInLoader extends BaseLoader<List<String>> {
             Intent intent = new Intent();
             intent.setAction("org.oucho.radio2.INTENT_TITRE");
             intent.putExtra("Titre", "Error");
-            mContext.sendBroadcast(intent);
+            getContext().sendBroadcast(intent);
             return null;
         }
 

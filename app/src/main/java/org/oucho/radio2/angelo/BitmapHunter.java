@@ -128,7 +128,7 @@ class BitmapHunter implements Runnable {
                 dispatcher.dispatchComplete(this);
             }
         } catch (NetworkRequestHandler.ResponseException e) {
-            if (!NetworkPolicy.isOfflineOnly(e.networkPolicy) || e.code != 504) {
+            if (e.code != 504) {
                 exception = e;
             }
             dispatcher.dispatchFailed(this);
@@ -295,16 +295,8 @@ class BitmapHunter implements Runnable {
         return memoryPolicy;
     }
 
-    Request getData() {
-        return data;
-    }
-
     Action getAction() {
         return action;
-    }
-
-    Angelo getAngelo() {
-        return angelo;
     }
 
     List<Action> getActions() {

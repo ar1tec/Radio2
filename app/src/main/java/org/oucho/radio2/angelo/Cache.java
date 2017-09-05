@@ -10,7 +10,4 @@ interface Cache {
     /** Store an image in the cache for the specified {@code key}. */
     void set(String key, Bitmap bitmap);
 
-    /** Returns the current size of the cache in bytes. */
-    int size();
-
 }

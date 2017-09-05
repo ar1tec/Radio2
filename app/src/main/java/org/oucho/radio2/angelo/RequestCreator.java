@@ -49,17 +49,13 @@ public class RequestCreator {
     private Object tag;
 
     RequestCreator(Angelo angelo, Uri uri, int resourceId) {
-        if (angelo.shutdown) {
-            throw new IllegalStateException(
-                    "Angelo instance already shut down. Cannot submit new requests.");
-        }
         this.angelo = angelo;
-        this.data = new Request.Builder(uri, resourceId, angelo.defaultBitmapConfig);
+        this.data = new Request.Builder(uri, resourceId);
     }
 
     @VisibleForTesting RequestCreator() {
         this.angelo = null;
-        this.data = new Request.Builder(null, 0, null);
+        this.data = new Request.Builder(null, 0);
     }
 
     public RequestCreator noPlaceholder() {
@@ -227,8 +223,6 @@ public class RequestCreator {
         return this;
     }
 
-
-    // TODO show example of calling resize after a transform in the javadoc
     public RequestCreator transform(@NonNull Transformation transformation) {
         data.transform(transformation);
         return this;
@@ -240,8 +234,7 @@ public class RequestCreator {
     }
 
 
-    public RequestCreator memoryPolicy(@NonNull MemoryPolicy policy,
-                                       @NonNull MemoryPolicy... additional) {
+    public RequestCreator memoryPolicy(@NonNull MemoryPolicy policy, @NonNull MemoryPolicy... additional) {
         this.memoryPolicy |= policy.index;
         if (additional.length > 0) {
             for (MemoryPolicy memoryPolicy : additional) {
@@ -282,7 +275,6 @@ public class RequestCreator {
 
 
     public Bitmap get() throws IOException {
-        long started = System.nanoTime();
         checkNotMain();
 
         if (deferred) {
@@ -306,7 +298,6 @@ public class RequestCreator {
 
 
     private void fetch(@Nullable Callback callback) {
-        long started = System.nanoTime();
 
         if (deferred) {
             throw new IllegalStateException("Fit cannot be used with fetch.");
@@ -341,7 +332,6 @@ public class RequestCreator {
 
 
     public void into(Target target) {
-        long started = System.nanoTime();
         checkMain();
 
         if (target == null) {
@@ -401,7 +391,6 @@ public class RequestCreator {
      * given {@code viewId}. This is used for loading bitmaps into a {@link Notification}.
      */
     private void into(RemoteViews remoteViews, @IdRes int viewId, int notificationId, Notification notification, @Nullable String notificationTag, Callback callback) {
-        long started = System.nanoTime();
 
         if (remoteViews == null) {
             throw new IllegalArgumentException("RemoteViews must not be null.");
@@ -437,7 +426,6 @@ public class RequestCreator {
 
 
     private void into(RemoteViews remoteViews, @IdRes int viewId, int[] appWidgetIds, Callback callback) {
-        long started = System.nanoTime();
 
         if (remoteViews == null) {
             throw new IllegalArgumentException("remoteViews must not be null.");
@@ -470,7 +458,7 @@ public class RequestCreator {
 
 
     void into(ImageView target, Callback callback) {
-        long started = System.nanoTime();
+
         checkMain();
 
         if (target == null) {
@@ -540,22 +528,10 @@ public class RequestCreator {
         }
     }
 
-    /** Create the request optionally passing it through the request transformer. */
     private Request createRequest() {
-        int id = nextId.getAndIncrement();
-
         Request request = data.build();
-        request.id = id;
-
         assert angelo != null;
-        Request transformed = angelo.transformRequest(request);
-        if (transformed != request) {
-            // If the request was changed, copy over the id and timestamp from the original.
-            transformed.id = id;
-
-        }
-
-        return transformed;
+        return angelo.transformRequest(request);
     }
 
     private void performRemoteViewInto(RemoteViewsAction action) {

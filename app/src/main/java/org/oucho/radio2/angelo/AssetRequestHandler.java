@@ -33,9 +33,7 @@ class AssetRequestHandler extends RequestHandler {
     @Override public Result load(Request request, int networkPolicy) throws IOException {
         if (assetManager == null) {
             synchronized (lock) {
-                if (assetManager == null) {
-                    assetManager = context.getAssets();
-                }
+                assetManager = context.getAssets();
             }
         }
         Source source = Okio.source(assetManager.open(getFilePath(request)));

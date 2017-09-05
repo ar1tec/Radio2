@@ -14,7 +14,7 @@ public class CustomHttpDataSource implements DataSource.Factory {
     private static int readTimeoutMillis;
     private static boolean allowCrossProtocolRedirects;
 
-    private void setUserAgent(String value) {
+    private static void setUserAgent(String value) {
         userAgent = value;
     }
 
@@ -43,10 +43,11 @@ public class CustomHttpDataSource implements DataSource.Factory {
         setAllowCrossProtocolRedirects();
     }
 
-
     @Override
     public DefaultHttpDataSource createDataSource() {
 
         return new DefaultHttpDataSource(userAgent, null, listener, connectTimeoutMillis, readTimeoutMillis, allowCrossProtocolRedirects, null);
     }
+
+
 }

@@ -88,9 +88,4 @@ public class LruCache implements Cache {
         }
     }
 
-    @Override
-    public final synchronized int size() {
-        return size;
-    }
-
 }

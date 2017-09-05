@@ -18,8 +18,8 @@ public abstract class RequestHandler {
         private final Bitmap bitmap;
         private final Source source;
 
-        Result(@NonNull Bitmap bitmap, @NonNull Angelo.LoadedFrom loadedFrom) {
-            this(checkNotNull(bitmap, "bitmap == null"), null, loadedFrom);
+        Result(@NonNull Bitmap bitmap) {
+            this(checkNotNull(bitmap, "bitmap == null"), null, Angelo.LoadedFrom.DISK);
         }
 
         Result(@NonNull Source source, @NonNull Angelo.LoadedFrom loadedFrom) {

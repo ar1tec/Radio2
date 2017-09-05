@@ -17,7 +17,6 @@ import java.util.List;
 
 public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  {
 
-    private static final String TAG = "TuneInAdapter";
     private List<String> categorieList = new ArrayList<>();
 
     private boolean typeAudio = true;

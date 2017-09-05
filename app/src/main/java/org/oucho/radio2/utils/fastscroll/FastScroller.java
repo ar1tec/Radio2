@@ -182,13 +182,13 @@ public class FastScroller extends LinearLayout {
     }
 
 
-    public void setHideScrollbar(boolean hideScrollbar) {
+    private void setHideScrollbar(boolean hideScrollbar) {
         mHideScrollbar = hideScrollbar;
         mScrollbar.setVisibility(hideScrollbar ? GONE : VISIBLE);
     }
 
 
-    public void setHandleColor(@ColorInt int color) {
+    private void setHandleColor(@ColorInt int color) {
         mHandleColor = color;
 
         if (mHandleImage == null) {
@@ -201,7 +201,7 @@ public class FastScroller extends LinearLayout {
     }
 
 
-    public void setBubbleColor(@ColorInt int color) {
+    private void setBubbleColor(@ColorInt int color) {
         mBubbleColor = color;
 
         if (mBubbleImage == null) {
@@ -214,7 +214,7 @@ public class FastScroller extends LinearLayout {
     }
 
 
-    public void setBubbleTextColor(@ColorInt int color) {
+    private void setBubbleTextColor(@ColorInt int color) {
         mBubbleView.setTextColor(color);
     }
 
@@ -225,8 +225,15 @@ public class FastScroller extends LinearLayout {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean performClick() {
+        super.performClick();
 
+        return true;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        super.performClick();
 
         switch (event.getAction()) {
         case MotionEvent.ACTION_DOWN:
@@ -404,14 +411,14 @@ public class FastScroller extends LinearLayout {
         boolean hideScrollbar = true;
 
         if (attrs != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FastScrollRecyclerView, 0, 0);
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FastScroller, 0, 0);
 
             if (typedArray != null) {
                 try {
-                    bubbleColor = typedArray.getColor(R.styleable.FastScrollRecyclerView_bubbleColor, bubbleColor);
-                    handleColor = typedArray.getColor(R.styleable.FastScrollRecyclerView_handleColor, handleColor);
-                    textColor = typedArray.getColor(R.styleable.FastScrollRecyclerView_bubbleTextColor, textColor);
-                    hideScrollbar = typedArray.getBoolean(R.styleable.FastScrollRecyclerView_hideScrollbar, true);
+                    bubbleColor = typedArray.getColor(R.styleable.FastScroller_bubbleColor, bubbleColor);
+                    handleColor = typedArray.getColor(R.styleable.FastScroller_handleColor, handleColor);
+                    textColor = typedArray.getColor(R.styleable.FastScroller_bubbleTextColor, textColor);
+                    hideScrollbar = typedArray.getBoolean(R.styleable.FastScroller_hideScrollbar, true);
                 } finally {
                     typedArray.recycle();
                 }

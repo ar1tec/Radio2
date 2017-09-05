@@ -14,9 +14,6 @@ import static java.util.Collections.unmodifiableList;
 
 public final class Request {
 
-    int id;
-    int networkPolicy;
-
     public final Uri uri;
 
     final int resourceId;
@@ -177,10 +174,9 @@ public final class Request {
         private Bitmap.Config config;
         private Priority priority;
 
-        Builder(Uri uri, int resourceId, Bitmap.Config bitmapConfig) {
+        Builder(Uri uri, int resourceId) {
             this.uri = uri;
             this.resourceId = resourceId;
-            this.config = bitmapConfig;
         }
 
         boolean hasImage() {
@@ -195,20 +191,13 @@ public final class Request {
             return priority != null;
         }
 
-        /**
-         * Set the stable key to be used instead of the URI or resource ID when caching.
-         * Two requests with the same value are considered to be for the same resource.
-         */
-        Builder stableKey(@Nullable String stableKey) {
+
+        void stableKey(@Nullable String stableKey) {
             this.stableKey = stableKey;
-            return this;
         }
 
-        /**
-         * Resize the image to the specified size in pixels.
-         * Use 0 as desired dimension to resize keeping aspect ratio.
-         */
-        Builder resize(@Px int targetWidth, @Px int targetHeight) {
+
+        void resize(@Px int targetWidth, @Px int targetHeight) {
             if (targetWidth < 0) {
                 throw new IllegalArgumentException("Width must be positive number or 0.");
             }
@@ -220,78 +209,55 @@ public final class Request {
             }
             this.targetWidth = targetWidth;
             this.targetHeight = targetHeight;
-            return this;
         }
 
-        /**
-         * Crops an image inside of the bounds specified by {@link #resize(int, int)} rather than
-         * distorting the aspect ratio. This cropping technique scales the image so that it fills the
-         * requested bounds, aligns it using provided gravity parameter and then crops the extra.
-         */
-        Builder centerCrop(int alignGravity) {
+        void centerCrop(int alignGravity) {
             if (centerInside) {
                 throw new IllegalStateException("Center crop can not be used after calling centerInside");
             }
             centerCrop = true;
             centerCropGravity = alignGravity;
-            return this;
         }
 
-        /**
-         * Centers an image inside of the bounds specified by {@link #resize(int, int)}. This scales
-         * the image so that both dimensions are equal to or less than the requested bounds.
-         */
-        Builder centerInside() {
+        void centerInside() {
             if (centerCrop) {
                 throw new IllegalStateException("Center inside can not be used after calling centerCrop");
             }
             centerInside = true;
-            return this;
         }
 
-        /**
-         * Only resize an image if the original image size is bigger than the target size
-         * specified by {@link #resize(int, int)}.
-         */
-        Builder onlyScaleDown() {
+        void onlyScaleDown() {
             if (targetHeight == 0 && targetWidth == 0) {
                 throw new IllegalStateException("onlyScaleDown can not be applied without resize");
             }
             onlyScaleDown = true;
-            return this;
         }
 
         /** Rotate the image by the specified degrees. */
-        Builder rotate(float degrees) {
+        void rotate(float degrees) {
             rotationDegrees = degrees;
-            return this;
         }
 
         /** Rotate the image by the specified degrees around a pivot point. */
-        Builder rotate(float degrees, float pivotX, float pivotY) {
+        void rotate(float degrees, float pivotX, float pivotY) {
             rotationDegrees = degrees;
             rotationPivotX = pivotX;
             rotationPivotY = pivotY;
             hasRotationPivot = true;
-            return this;
         }
 
-        Builder purgeable() {
+        void purgeable() {
             purgeable = true;
-            return this;
         }
 
-        /** Decode the image using the specified config. */
-        Builder config(Bitmap.Config config) {
+        void config(Bitmap.Config config) {
             if (config == null) {
                 throw new IllegalArgumentException("config == null");
             }
             this.config = config;
-            return this;
         }
 
-        /** Execute request using the specified priority. */
-        Builder priority(Priority priority) {
+        void priority(Priority priority) {
             if (priority == null) {
                 throw new IllegalArgumentException("Priority invalid.");
             }
@@ -299,15 +265,10 @@ public final class Request {
                 throw new IllegalStateException("Priority already set.");
             }
             this.priority = priority;
-            return this;
         }
 
-        /**
-         * Add a custom transformation to be applied to the image.
-         * <p>
-         * Custom transformations will always be run after the built-in transformations.
-         */
-        Builder transform(Transformation transformation) {
+
+        void transform(Transformation transformation) {
             if (transformation == null) {
                 throw new IllegalArgumentException("Transformation must not be null.");
             }
@@ -318,7 +279,6 @@ public final class Request {
                 transformations = new ArrayList<>(2);
             }
             transformations.add(transformation);
-            return this;
         }
 
         /**
@@ -326,14 +286,13 @@ public final class Request {
          * <p>
          * Custom transformations will always be run after the built-in transformations.
          */
-        Builder transform(List<? extends Transformation> transformations) {
+        void transform(List<? extends Transformation> transformations) {
             if (transformations == null) {
                 throw new IllegalArgumentException("Transformation list must not be null.");
             }
             for (int i = 0, size = transformations.size(); i < size; i++) {
                 transform(transformations.get(i));
             }
-            return this;
         }
 
         /** Create the immutable {@link Request} object. */
@@ -342,12 +301,10 @@ public final class Request {
                 throw new IllegalStateException("Center crop and center inside can not be used together.");
             }
             if (centerCrop && (targetWidth == 0 && targetHeight == 0)) {
-                throw new IllegalStateException(
-                        "Center crop requires calling resize with positive width and height.");
+                throw new IllegalStateException("Center crop requires calling resize with positive width and height.");
             }
             if (centerInside && (targetWidth == 0 && targetHeight == 0)) {
-                throw new IllegalStateException(
-                        "Center inside requires calling resize with positive width and height.");
+                throw new IllegalStateException("Center inside requires calling resize with positive width and height.");
             }
             if (priority == null) {
                 priority = Priority.NORMAL;

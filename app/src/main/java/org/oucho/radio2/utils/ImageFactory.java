@@ -59,15 +59,20 @@ public class ImageFactory {
             bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
             return stream.toByteArray();
         } catch (NullPointerException e) {
-            Log.e(TAG, "Error bitmap to byte[] conversion: " + e);
+            Log.w(TAG, "Bitmap to byte[] conversion: " + e);
             return null;
         }
-       // bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
     }
 
     // convert from byte array to bitmap
     public static Bitmap getImage(byte[] image) {
-        return BitmapFactory.decodeByteArray(image, 0, image.length);
+
+        try {
+            return BitmapFactory.decodeByteArray(image, 0, image.length);
+        } catch (NullPointerException e) {
+            Log.w(TAG, "byte[] to bitmap conversion: " + e);
+            return null;
+        }
     }
 
     // convert from string to bitmap
@@ -95,7 +100,7 @@ public class ImageFactory {
         try {
             return Base64.encodeToString(two, Base64.DEFAULT);
         } catch (NullPointerException e) {
-            Log.w(TAG, "Error bitmap to String conversion: " + e);
+            Log.w(TAG, "Bitmap to String conversion: " + e);
             return null;
         }
     }
@@ -106,10 +111,7 @@ public class ImageFactory {
 
         Bitmap one = BitmapFactory.decodeResource(context.getResources(), drawable);
         byte[] two = getBytes(one);
-
         return Base64.encodeToString(two, Base64.DEFAULT);
     }
-
-
 
 }

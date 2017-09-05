@@ -179,10 +179,6 @@ final class Utils {
         return (T) context.getSystemService(service);
     }
 
-    static boolean hasPermission(Context context, String permission) {
-        return context.checkCallingOrSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
-    }
-
     static boolean isWebPFile(BufferedSource source) throws IOException {
         return source.rangeEquals(0, WEBP_FILE_HEADER_RIFF) && source.rangeEquals(8, WEBP_FILE_HEADER_WEBP);
     }

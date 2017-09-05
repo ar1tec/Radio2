@@ -3,7 +3,6 @@ package org.oucho.radio2.angelo;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -39,24 +38,22 @@ public class Angelo {
         RequestTransformer IDENTITY = request -> request;
     }
 
-
     public enum Priority {
         LOW,
         NORMAL
     }
 
-    static final String TAG = "Angelo";
-
     static final Handler HANDLER = new Handler(Looper.getMainLooper()) {
 
+        @SuppressWarnings("unchecked")
         @Override
         public void handleMessage(Message msg) {
 
             switch (msg.what) {
                 case HUNTER_BATCH_COMPLETE: {
-                    @SuppressWarnings("unchecked")
+
                     List<BitmapHunter> batch = (List<BitmapHunter>) msg.obj;
-                    //noinspection ForLoopReplaceableByForEach
+
                     for (int i = 0, n = batch.size(); i < n; i++) {
                         BitmapHunter hunter = batch.get(i);
                         hunter.angelo.complete(hunter);
@@ -69,8 +66,8 @@ public class Angelo {
                     break;
                 }
                 case REQUEST_BATCH_RESUME:
-                    @SuppressWarnings("unchecked") List<Action> batch = (List<Action>) msg.obj;
-                    //noinspection ForLoopReplaceableByForEach
+                    List<Action> batch = (List<Action>) msg.obj;
+
                     for (int i = 0, n = batch.size(); i < n; i++) {
                         Action action = batch.get(i);
                         action.angelo.resumeAction(action);
@@ -94,20 +91,13 @@ public class Angelo {
     private final Map<Object, Action> targetToAction;
     private final Map<ImageView, DeferredRequestCreator> targetToDeferredRequestCreator;
     final ReferenceQueue<Object> referenceQueue;
-    final Bitmap.Config defaultBitmapConfig;
 
-
-    boolean shutdown;
-
-    private Angelo(Context context, Dispatcher dispatcher, Cache cache,
-                   RequestTransformer requestTransformer,
-                   Bitmap.Config defaultBitmapConfig) {
+    private Angelo(Context context, Dispatcher dispatcher, Cache cache, RequestTransformer requestTransformer) {
 
         this.context = context;
         this.dispatcher = dispatcher;
         this.cache = cache;
         this.requestTransformer = requestTransformer;
-        this.defaultBitmapConfig = defaultBitmapConfig;
 
         int builtInHandlers = 7; // Adjust this as internal handlers are added or removed.
         List<RequestHandler> allRequestHandlers = new ArrayList<>(builtInHandlers);
@@ -123,22 +113,20 @@ public class Angelo {
         this.targetToAction = new WeakHashMap<>();
         this.targetToDeferredRequestCreator = new WeakHashMap<>();
         this.referenceQueue = new ReferenceQueue<>();
-        CleanupThread cleanupThread = new CleanupThread(referenceQueue, HANDLER);
+        CleanupThread cleanupThread = new CleanupThread(referenceQueue);
         cleanupThread.start();
     }
 
-    /** Cancel any existing requests for the specified target {@link ImageView}. */
     void cancelRequest(ImageView view) {
-        // checkMain() is called from cancelExistingRequest()
+
         if (view == null) {
             throw new IllegalArgumentException("view cannot be null.");
         }
         cancelExistingRequest(view);
     }
 
-    /** Cancel any existing requests for the specified {@link Target} instance. */
     void cancelRequest(Target target) {
-        // checkMain() is called from cancelExistingRequest()
+
         if (target == null) {
             throw new IllegalArgumentException("target cannot be null.");
         }
@@ -160,7 +148,6 @@ public class Angelo {
         return load(Uri.parse(path));
     }
 
-
     List<RequestHandler> getRequestHandlers() {
         return requestHandlers;
     }
@@ -177,7 +164,7 @@ public class Angelo {
     }
 
     void defer(ImageView view, DeferredRequestCreator request) {
-        // If there is already a deferred request, cancel it.
+
         if (targetToDeferredRequestCreator.containsKey(view)) {
             cancelExistingRequest(view);
         }
@@ -187,7 +174,6 @@ public class Angelo {
     void enqueueAndSubmit(Action action) {
         Object target = action.getTarget();
         if (target != null && targetToAction.get(target) != action) {
-            // This will also check we are on the main thread.
             cancelExistingRequest(target);
             targetToAction.put(target, action);
         }
@@ -222,7 +208,7 @@ public class Angelo {
         }
 
         if (hasMultiple) {
-            //noinspection ForLoopReplaceableByForEach
+
             for (int i = 0, n = joined.size(); i < n; i++) {
                 Action join = joined.get(i);
                 deliverAction(result, from, join, exception);
@@ -277,14 +263,13 @@ public class Angelo {
         }
     }
 
-
     private static class CleanupThread extends Thread {
         private final ReferenceQueue<Object> referenceQueue;
         private final Handler handler;
 
-        CleanupThread(ReferenceQueue<Object> referenceQueue, Handler handler) {
+        CleanupThread(ReferenceQueue<Object> referenceQueue) {
             this.referenceQueue = referenceQueue;
-            this.handler = handler;
+            this.handler = Angelo.HANDLER;
             setDaemon(true);
             setName(THREAD_PREFIX + "refQueue");
         }
@@ -314,7 +299,6 @@ public class Angelo {
         }
     }
 
-
     public static Angelo with(Context context) {
         if (singleton == null) {
             synchronized (Angelo.class) {
@@ -329,14 +313,12 @@ public class Angelo {
         return singleton;
     }
 
-    /** Fluent API for creating {@link Angelo} instances. */
     public static class Builder {
         private final Context context;
         private Downloader downloader;
         private ExecutorService service;
         private Cache cache;
         private RequestTransformer transformer;
-        private Bitmap.Config defaultBitmapConfig;
 
         public Builder(Context context) {
             if (context == null) {
@@ -344,7 +326,6 @@ public class Angelo {
             }
             this.context = context.getApplicationContext();
         }
-
 
         public Angelo build() {
             Context context = this.context;
@@ -362,23 +343,17 @@ public class Angelo {
                 transformer = RequestTransformer.IDENTITY;
             }
 
+            Dispatcher dispatcher = new Dispatcher(context, service, downloader, cache);
 
-            Dispatcher dispatcher = new Dispatcher(context, service, HANDLER, downloader, cache);
-
-            return new Angelo(context, dispatcher, cache, transformer, defaultBitmapConfig);
+            return new Angelo(context, dispatcher, cache, transformer);
         }
     }
 
-
     public enum LoadedFrom {
-        MEMORY(Color.GREEN),
-        DISK(Color.BLUE),
-        NETWORK(Color.RED);
+        MEMORY(),
+        DISK(),
+        NETWORK();
 
-        final int debugColor;
-
-        LoadedFrom(int debugColor) {
-            this.debugColor = debugColor;
-        }
+        LoadedFrom() {}
     }
 }

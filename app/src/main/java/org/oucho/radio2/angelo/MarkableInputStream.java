@@ -9,7 +9,6 @@ import java.io.InputStream;
 
 final class MarkableInputStream extends InputStream {
     private static final int DEFAULT_BUFFER_SIZE = 4096;
-    private static final int DEFAULT_LIMIT_INCREMENT = 1024;
     private final InputStream in;
 
     private long offset;
@@ -17,30 +16,19 @@ final class MarkableInputStream extends InputStream {
     private long limit;
     private long defaultMark = -1;
     private boolean allowExpire = true;
-    private int limitIncrement = -1;
+    private final int limitIncrement = 1024;
 
     MarkableInputStream(InputStream in) {
-        this(in, DEFAULT_BUFFER_SIZE);
-    }
-
-    private MarkableInputStream(InputStream in, int size) {
-        this(in, size, DEFAULT_LIMIT_INCREMENT);
-    }
-
-    private MarkableInputStream(InputStream in, int size, int limitIncrement) {
         if (!in.markSupported()) {
-            in = new BufferedInputStream(in, size);
+            in = new BufferedInputStream(in, DEFAULT_BUFFER_SIZE);
         }
         this.in = in;
-        this.limitIncrement = limitIncrement;
     }
 
-    /** Marks this place in the stream so we can reset back to it later. */
     @Override
     public void mark(int readLimit) {
         defaultMark = savePosition(readLimit);
     }
-
 
     long savePosition(int readLimit) {
         long offsetLimit = offset + readLimit;
@@ -70,13 +58,11 @@ final class MarkableInputStream extends InputStream {
         }
     }
 
-    /** Resets the stream to the most recent {@link #mark mark}. */
     @Override
     public void reset() throws IOException {
         reset(defaultMark);
     }
 
-    /** Resets the stream to the position recorded by {@code token}. */
     void reset(long token) throws IOException {
         if (offset > limit || token < reset) {
             throw new IOException("Cannot reset");
@@ -86,7 +72,6 @@ final class MarkableInputStream extends InputStream {
         offset = token;
     }
 
-    /** Skips {@code target - current} bytes and returns. */
     private void skip(long current, long target) throws IOException {
         while (current < target) {
             long skipped = in.skip(target - current);

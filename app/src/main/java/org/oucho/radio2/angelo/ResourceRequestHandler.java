@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import java.io.IOException;
 
 import static android.content.ContentResolver.SCHEME_ANDROID_RESOURCE;
-import static org.oucho.radio2.angelo.Angelo.LoadedFrom.DISK;
 
 class ResourceRequestHandler extends RequestHandler {
     private final Context context;
@@ -24,7 +23,7 @@ class ResourceRequestHandler extends RequestHandler {
     @Override public Result load(Request request, int networkPolicy) throws IOException {
         Resources res = Utils.getResources(context, request);
         int id = Utils.getResourceId(res, request);
-        return new Result(decodeResource(res, id, request), DISK);
+        return new Result(decodeResource(res, id, request));
     }
 
     private static Bitmap decodeResource(Resources resources, int id, Request data) {

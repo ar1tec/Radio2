@@ -9,5 +9,4 @@ interface Downloader {
     @NonNull Response load(@NonNull okhttp3.Request request) throws IOException;
 
 
-    void shutdown();
 }

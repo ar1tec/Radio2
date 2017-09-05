@@ -32,7 +32,7 @@ class NetworkRequestHandler extends RequestHandler {
         if (!response.isSuccessful()) {
             assert body != null;
             body.close();
-            throw new ResponseException(response.code(), request.networkPolicy);
+            throw new ResponseException(response.code());
         }
 
         // Cache response is only null when the response comes fully from the network. Both completely
@@ -44,7 +44,7 @@ class NetworkRequestHandler extends RequestHandler {
         assert body != null;
         if (loadedFrom == DISK && body.contentLength() == 0) {
             body.close();
-            throw new ContentLengthException("Received response with 0 content-length header.");
+            throw new ContentLengthException();
         }
 
         return new Result(body.source(), loadedFrom);
@@ -87,19 +87,17 @@ class NetworkRequestHandler extends RequestHandler {
     }
 
     static class ContentLengthException extends IOException {
-        ContentLengthException(String message) {
-            super(message);
+        ContentLengthException() {
+            super("Received response with 0 content-length header.");
         }
     }
 
     static final class ResponseException extends IOException {
         final int code;
-        final int networkPolicy;
 
-        ResponseException(int code, int networkPolicy) {
+        ResponseException(int code) {
             super("HTTP " + code);
             this.code = code;
-            this.networkPolicy = networkPolicy;
         }
     }
 }
