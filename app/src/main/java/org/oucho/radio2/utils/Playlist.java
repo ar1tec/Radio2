@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.List;
+
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.webkit.URLUtil;
 import android.net.Uri;
@@ -19,8 +21,9 @@ public class Playlist extends AsyncTask<Void, Void, String> {
     private static final int M3U     = 1;
     private static final int PLS     = 2;
 
-    private PlayerService player = null;
-    private String start_url = null;
+    @SuppressLint("StaticFieldLeak")
+    private final PlayerService player;
+    private final String start_url;
     private int then = 0;
 
     //private static Random random = null;
@@ -30,7 +33,6 @@ public class Playlist extends AsyncTask<Void, Void, String> {
 
     public Playlist(PlayerService a_player, String a_url) {
         super();
-
         player = a_player;
         start_url = a_url;
         then = Counter.now();

@@ -219,7 +219,7 @@ public class PlayerService extends Service implements RadioKeys, EventListener, 
             WifiLocker.lock(context);
 
 
-        playlist_task = new Playlist(this,url).start();
+        playlist_task = new Playlist(this, url).start();
 
         Intent music = new Intent();
         music.setAction("org.oucho.musicplayer.STOP");

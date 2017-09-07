@@ -16,7 +16,7 @@ final class MarkableInputStream extends InputStream {
     private long limit;
     private long defaultMark = -1;
     private boolean allowExpire = true;
-    private final int limitIncrement = 1024;
+    private static final int limitIncrement = 1024;
 
     MarkableInputStream(InputStream in) {
         if (!in.markSupported()) {
