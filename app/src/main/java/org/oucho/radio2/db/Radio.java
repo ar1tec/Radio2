@@ -8,13 +8,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.oucho.radio2.R;
-import org.oucho.radio2.interfaces.PlayableItem;
-import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.radio.RadioKeys;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class Radio implements PlayableItem, RadioKeys {
+public class Radio implements RadioKeys {
     private final String url;
     private final String name;
     private final byte[] img;
@@ -39,23 +37,6 @@ public class Radio implements PlayableItem, RadioKeys {
         return radios;
     }
 
-    public static List<String> getListe(Context context) {
-        RadiosDatabase radiosDatabase = new RadiosDatabase(context);
-        SQLiteDatabase db = radiosDatabase.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT url FROM " + TABLE_NAME + " ORDER BY NAME", null);
-
-        List<String> lst = new ArrayList<>();
-
-        while (cursor.moveToNext()) {
-            String radio = cursor.getString(0);
-            lst.add(radio);
-        }
-
-        db.close();
-        cursor.close();
-        return lst;
-    }
 
     public static void addNewRadio(Context context, Radio radio) {
 
@@ -88,18 +69,14 @@ public class Radio implements PlayableItem, RadioKeys {
         db.close();
     }
 
-
-    @Override
     public String getTitle() {
         return name;
     }
 
-    @Override
     public String getUrl() {
         return url;
     }
 
-    @Override
     public byte[] getLogo() {
         return img;
     }

@@ -13,14 +13,14 @@ public abstract class BaseAdapter<V extends RecyclerView.ViewHolder> extends Rec
         mOnItemClickListener = listener;
     }
 
-    void triggerOnItemClickListener(int position) {
+    protected void triggerOnItemClickListener(int position, View view) {
         if(mOnItemClickListener != null) {
-            mOnItemClickListener.onItemClick(position);
+            mOnItemClickListener.onItemClick(position, view);
         }
     }
 
     public interface OnItemClickListener {
-        void onItemClick(int position);
+        void onItemClick(int position, View view);
     }
 
 

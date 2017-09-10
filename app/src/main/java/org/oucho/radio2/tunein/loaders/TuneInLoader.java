@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.text.Html;
 import android.util.Log;
 
-import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.radio.RadioKeys;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;

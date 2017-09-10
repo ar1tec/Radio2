@@ -1,4 +1,4 @@
-package org.oucho.radio2;
+package org.oucho.radio2.radio;
 
 import android.app.Application;
 

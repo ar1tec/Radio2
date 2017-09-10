@@ -10,7 +10,7 @@ import android.os.AsyncTask;
 import android.webkit.URLUtil;
 import android.net.Uri;
 
-import org.oucho.radio2.PlayerService;
+import org.oucho.radio2.radio.PlayerService;
 import org.oucho.radio2.net.HttpGetter;
 
 public class Playlist extends AsyncTask<Void, Void, String> {

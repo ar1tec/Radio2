@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import org.oucho.radio2.R;
 import org.oucho.radio2.db.Radio;
-import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.utils.ImageFactory;
 
 

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.radio.RadioKeys;
 
 public class RadiosDatabase extends SQLiteOpenHelper implements RadioKeys {
 

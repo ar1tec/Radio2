@@ -1,4 +1,4 @@
-package org.oucho.radio2.interfaces;
+package org.oucho.radio2.radio;
 
 
 public interface RadioKeys {

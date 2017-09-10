@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
 
-import org.oucho.radio2.PlayerService;
-import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.radio.PlayerService;
+import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.utils.State;
 
 import java.util.concurrent.ScheduledFuture;

@@ -709,7 +709,8 @@ public class FilePickerActivity extends AppCompatActivity {
             return formatter.format(lastModified);
         }
 
-		class ThumbnailLoader extends AsyncTask<File, Void, Bitmap> {
+		@SuppressLint("StaticFieldLeak")
+        class ThumbnailLoader extends AsyncTask<File, Void, Bitmap> {
 			private final WeakReference<ImageView> imageViewReference;
 
 			ThumbnailLoader(ImageView imageView) {

@@ -9,7 +9,7 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.util.Log;
 
-import org.oucho.radio2.PlayerService;
+import org.oucho.radio2.radio.PlayerService;
 import org.oucho.radio2.utils.Counter;
 import org.oucho.radio2.utils.State;
 

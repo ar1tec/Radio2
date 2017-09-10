@@ -1,4 +1,4 @@
-package org.oucho.radio2;
+package org.oucho.radio2.radio;
 
 
 import android.annotation.SuppressLint;
@@ -51,8 +51,9 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 
+import org.oucho.radio2.MainActivity;
+import org.oucho.radio2.R;
 import org.oucho.radio2.utils.ImageFactory;
-import org.oucho.radio2.interfaces.RadioKeys;
 import org.oucho.radio2.net.Connectivity;
 import org.oucho.radio2.net.CustomHttpDataSource;
 import org.oucho.radio2.net.WifiLocker;
@@ -72,7 +73,9 @@ import static com.google.android.exoplayer2.Player.STATE_BUFFERING;
 import static com.google.android.exoplayer2.Player.STATE_ENDED;
 import static com.google.android.exoplayer2.Player.STATE_IDLE;
 import static com.google.android.exoplayer2.Player.STATE_READY;
+import static org.oucho.radio2.utils.State.isPaused;
 import static org.oucho.radio2.utils.State.isPlaying;
+import static org.oucho.radio2.utils.State.isWantPlaying;
 
 public class PlayerService extends Service implements RadioKeys, EventListener, OnAudioFocusChangeListener {
 
@@ -169,8 +172,30 @@ public class PlayerService extends Service implements RadioKeys, EventListener, 
             voldown = intent.getFloatExtra("voldown", 1.0f);
 
         if (action != null && action.equals(ACTION_PLAY)) {
-            intentPlay(intent); // récupère les infos pour les variables url, name etc.
-            startPlayback(getUrl());
+            if (isPlaying() || isPaused() || isWantPlaying()) {
+
+                Counter.timePasses();
+                launch_url = null;
+                audio_manager.abandonAudioFocus(this);
+
+                mExoPlayer.stop();
+
+                if ( playlist_task != null ) {
+                    playlist_task.cancel(true);
+                    playlist_task = null;
+                }
+
+                Handler handler = new Handler();
+                handler.postDelayed(() -> {
+                    intentPlay(intent);
+                    startPlayback(getUrl());
+
+                }, 250);
+
+            } else {
+                intentPlay(intent); // récupère les infos pour les variables url, name etc.
+                startPlayback(getUrl());
+            }
         }
 
         if (action != null && action.equals(ACTION_STOP)) {

@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".RadioApplication"
+        android:name=".radio.RadioApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,10 +28,10 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.oucho.radio2.RadioActivity" />
+                android:value="org.oucho.radio2.radio.RadioActivity" />
         </activity>
 
-        <activity android:name=".RadioActivity">
+        <activity android:name=".radio.RadioActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -88,7 +88,7 @@
             android:label="@string/select_file"
             android:theme="@style/AppThemeFilePicker" />
 
-        <service android:name=".PlayerService" />
+        <service android:name=".radio.PlayerService" />
 
         <receiver
             android:name=".receiver.StopReceiver"

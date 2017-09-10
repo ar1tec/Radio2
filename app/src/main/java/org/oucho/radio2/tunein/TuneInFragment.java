@@ -22,9 +22,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
-import org.oucho.radio2.PlayerService;
+import org.oucho.radio2.radio.PlayerService;
 import org.oucho.radio2.R;
-import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.tunein.adapters.BaseAdapter;
 import org.oucho.radio2.tunein.adapters.TuneInAdapter;
 import org.oucho.radio2.tunein.loaders.TuneInLoader;
@@ -131,7 +131,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
     private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
         @Override
-        public void onItemClick(int position) {
+        public void onItemClick(int position, View v) {
 
             String item = mAdapter.getItem(position);
             String[] parts = item.split("\" ");

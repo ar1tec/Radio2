@@ -131,7 +131,7 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            triggerOnItemClickListener(position);
+            triggerOnItemClickListener(position, v);
         }
 
         @Override

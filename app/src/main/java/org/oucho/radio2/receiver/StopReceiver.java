@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import org.oucho.radio2.PlayerService;
-import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.radio.PlayerService;
+import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.utils.State;
 
 public class StopReceiver extends BroadcastReceiver implements RadioKeys {

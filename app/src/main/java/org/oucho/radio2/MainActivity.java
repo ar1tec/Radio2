@@ -58,11 +58,11 @@ import org.oucho.radio2.dialog.PermissionDialog;
 import org.oucho.radio2.filepicker.FilePicker;
 import org.oucho.radio2.filepicker.FilePickerActivity;
 import org.oucho.radio2.filepicker.FilePickerParcelObject;
-import org.oucho.radio2.gui.RadioAdapter;
-import org.oucho.radio2.interfaces.ListsClickListener;
-import org.oucho.radio2.interfaces.PlayableItem;
-import org.oucho.radio2.interfaces.RadioKeys;
+import org.oucho.radio2.radio.PlayerService;
+import org.oucho.radio2.radio.RadioAdapter;
+import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.tunein.TuneInFragment;
+import org.oucho.radio2.tunein.adapters.BaseAdapter;
 import org.oucho.radio2.update.CheckUpdate;
 import org.oucho.radio2.utils.CustomLayoutManager;
 import org.oucho.radio2.utils.ImageFactory;
@@ -76,7 +76,6 @@ import org.oucho.radio2.xml.ReadXML;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
     private boolean showBitrate = false;
     private boolean music_app_is_installed = false;
-    private static boolean mpd_app_is_installed = false;
+    private boolean mpd_app_is_installed = false;
     private static boolean running;
 
     private ScheduledFuture scheduledFuture;
@@ -126,6 +125,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     private LinearLayout searchLayout;
 
     private boolean isFocusedSearch;
+
+    private RadioAdapter mAdapter;
 
 
     @Override
@@ -168,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         music_app_is_installed = checkIfAppIsInstalled(app_music);
 
         String app_mpd = "org.oucho.mpdclient";
-        setMpdAppIsInstalled(checkIfAppIsInstalled(app_mpd));
+        mpd_app_is_installed = checkIfAppIsInstalled(app_mpd);
 
         setNavigationMenu();
 
@@ -190,9 +191,14 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         volumeTimer = new VolumeTimer();
 
+        mAdapter = new RadioAdapter();
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
 
         mRecyclerView.setLayoutManager(new CustomLayoutManager(this));
+
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
+
+        mRecyclerView.setAdapter(mAdapter);
 
         img_play = (ImageView) findViewById(R.id.play_radio);
         img_pause = (ImageView) findViewById(R.id.pause_radio);
@@ -354,6 +360,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         return true;
     }
 
+
     private void loadSearch() {
 
         Fragment fragment = TuneInFragment.newInstance();
@@ -512,8 +519,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
                 player_status.setText(locale_string);
 
                 updateRadioName();
-                updateListView();
                 updatePlayPauseIcon();
+                updateListView();
 
                 try {
                     if (playing_state.equals("Loading...")) {
@@ -580,7 +587,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     }
 
 
-        /* **********************************************************************************************
+   /* **********************************************************************************************
     * Gestion des clicks sur l'interface
     * *********************************************************************************************/
 
@@ -661,19 +668,77 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         popup.show();
     }
 
+    private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(int position, View view) {
+            Radio radio = mAdapter.getItem(position);
+
+            switch (view.getId()) {
+                case R.id.fond:
+                    play(radio);
+                    break;
+                case R.id.buttonMenu:
+                    popupRadioItem(view, radio);
+                    break;
+                default:
+                    break;
+            }
+
+        }
+    };
+
+
+    private void popupRadioItem(final View v, Radio radio) {
+
+        final PopupMenu popup = new PopupMenu(MainActivity.this, v);
+
+        if (mpd_app_is_installed) {
+            popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete_mpd, popup.getMenu());
+        } else {
+            popup.getMenuInflater().inflate(R.menu.contextmenu_editdelete, popup.getMenu());
+        }
+        popup.setOnMenuItemClickListener(item -> {
+
+            switch (item.getItemId()) {
+                case R.id.menu_edit:
+                    editRadio(radio);
+                    break;
+                case R.id.menu_delete:
+                    deleteRadio(radio);
+                    break;
+                case R.id.menu_add_mpd:
+                    String radio_name = radio.getTitle();
+                    String radio_url = radio.getUrl();
+                    sendRadioToMpdApp(radio_name, radio_url);
+                    break;
+                default:
+                    break;
+            }
+
+            return true;
+        });
+
+        popup.show();
+    }
+
+
+    private void sendRadioToMpdApp(String radio_name, String radio_url) {
+        Intent sendRadioToMpd = new Intent();
+        sendRadioToMpd.setAction("org.oucho.MPDclient.ADD_RADIO");
+        sendRadioToMpd.putExtra("name", radio_name);
+        sendRadioToMpd.putExtra("url", radio_url);
+        mContext.sendBroadcast(sendRadioToMpd);
+    }
        /* *********************************************************************************************
     * Mise à jour de la vue de la liste des radios
     * ********************************************************************************************/
 
     private void updateListView() {
-        ArrayList<Object> items = new ArrayList<>();
-        items.addAll(Radio.getRadios(mContext));
+        ArrayList<Radio> radioList = new ArrayList<>();
+        radioList.addAll(Radio.getRadios(mContext));
 
-        mRecyclerView.setAdapter(new RadioAdapter(this, items, radio_name, clickListener));
-
-        // pas fichu de trouver une façon d'extraire directement de l'Object
-        List<String> lst = new ArrayList<>();
-        lst.addAll(Radio.getListe(mContext));
+        mAdapter.setData(radioList);
 
         String url = PlayerService.getUrl();
 
@@ -681,10 +746,12 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             url = preferences.getString("url", null);
         }
 
-        for (int i = 0; i < items.size(); i++) {
-            if (lst.get(i).equals(url))
-                mRecyclerView.scrollToPosition( i );
+        for (int i = 0; i < radioList.size(); i++) {
+
+            if (radioList.get(i).getUrl().equals(url))
+                mRecyclerView.smoothScrollToPosition(i);
         }
+
     }
 
 
@@ -836,46 +903,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     }
 
 
-
-
-   /* *********************************************************************************************
-    * Click radio et menu radio
-    * ********************************************************************************************/
-
-    private final ListsClickListener clickListener = new ListsClickListener() {
-
-        @Override
-        public void onPlayableItemClick(PlayableItem item) {
-            play((Radio)item);
-        }
-
-        @Override
-        public void onPlayableItemMenuClick(PlayableItem item, int menuId) {
-            switch(menuId) {
-                case R.id.menu_edit:
-                    editRadio((Radio)item);
-                    break;
-                case R.id.menu_delete:
-                    deleteRadio((Radio)item);
-                    break;
-                case R.id.menu_add_mpd:
-                    String radio_name = item.getTitle();
-                    String radio_url = item.getUrl();
-                    sendRadioToMpdApp(radio_name, radio_url);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
-    private void sendRadioToMpdApp(String radio_name, String radio_url) {
-        Intent sendRadioToMpd = new Intent();
-        sendRadioToMpd.setAction("org.oucho.MPDclient.ADD_RADIO");
-        sendRadioToMpd.putExtra("name", radio_name);
-        sendRadioToMpd.putExtra("url", radio_url);
-        mContext.sendBroadcast(sendRadioToMpd);
-    }
 
    /* **********************************************************************************************
     * Lecture de la radio
@@ -1327,7 +1354,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         }
     }
 
-    /* *********************************************************************************************
+/* *********************************************************************************************
  * Arrêt de la radio
  * ********************************************************************************************/
     public static void stop(Context context) {
@@ -1391,12 +1418,4 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         }
     }
 
-
-    public static boolean getMpdAppIsInstalled() {
-        return mpd_app_is_installed;
-    }
-
-    private static void setMpdAppIsInstalled(boolean value) {
-        mpd_app_is_installed = value;
-    }
 }
