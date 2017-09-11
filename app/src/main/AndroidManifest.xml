@@ -88,7 +88,7 @@
             android:label="@string/select_file"
             android:theme="@style/AppThemeFilePicker" />
 
-        <service android:name=".radio.PlayerService" />
+        <service android:name=".radio.RadioService" />
 
         <receiver
             android:name=".receiver.StopReceiver"

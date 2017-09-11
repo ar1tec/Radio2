@@ -9,7 +9,7 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.util.Log;
 
-import org.oucho.radio2.radio.PlayerService;
+import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.utils.Counter;
 import org.oucho.radio2.utils.State;
 
@@ -18,17 +18,17 @@ public class Connectivity extends BroadcastReceiver {
    private static ConnectivityManager connectivity = null;
 
    private Context context = null;
-   private PlayerService playerService = null;
+   private RadioService radioService = null;
    private static final int TYPE_NONE = -1;
 
    private static int previous_type = TYPE_NONE;
 
    private Handler handler;
 
-   public Connectivity(Context a_context, PlayerService a_player) {
+   public Connectivity(Context a_context, RadioService a_player) {
 
       context = a_context;
-      playerService = a_player;
+      radioService = a_player;
 
       initConnectivity(context);
       context.registerReceiver(this, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -101,7 +101,7 @@ public class Connectivity extends BroadcastReceiver {
       int type = getType(intent);
       int then = 0;
 
-      boolean want_network_playing = State.isWantPlaying() && playerService.isNetworkUrl();
+      boolean want_network_playing = State.isWantPlaying() && radioService.isNetworkUrl();
 
       if ( type == TYPE_NONE && getPreviousType() != TYPE_NONE && want_network_playing )
          dropped_connection();
@@ -131,11 +131,11 @@ public class Connectivity extends BroadcastReceiver {
 
             Log.d("Connectivity", "dropped_connection(), isOnline");
 
-            Intent player = new Intent(context, PlayerService.class);
+            Intent player = new Intent(context, RadioService.class);
             player.putExtra("action", "stop");
             context.startService(player);
 
-            Intent player2 = new Intent(context, PlayerService.class);
+            Intent player2 = new Intent(context, RadioService.class);
             player2.putExtra("action", "play");
             context.startService(player2);
 
@@ -143,7 +143,7 @@ public class Connectivity extends BroadcastReceiver {
 
          } else {
 
-            Intent player3 = new Intent(context, PlayerService.class);
+            Intent player3 = new Intent(context, RadioService.class);
             player3.putExtra("action", "stop");
             context.startService(player3);
          }
@@ -161,7 +161,7 @@ public class Connectivity extends BroadcastReceiver {
 
          if (!State.isPlaying()) {
 
-            Intent player2 = new Intent(context, PlayerService.class);
+            Intent player2 = new Intent(context, RadioService.class);
             player2.putExtra("action", "play");
             context.startService(player2);
          }
@@ -174,11 +174,11 @@ public class Connectivity extends BroadcastReceiver {
 
       Log.d("Connectivity", "restart");
 
-      Intent playerS = new Intent(context, PlayerService.class);
+      Intent playerS = new Intent(context, RadioService.class);
       playerS.putExtra("action", "stop");
       context.startService(playerS);
 
-      Intent playerP = new Intent(context, PlayerService.class);
+      Intent playerP = new Intent(context, RadioService.class);
       playerP.putExtra("action", "play");
       context.startService(playerP);
 

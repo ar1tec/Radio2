@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
 
-import org.oucho.radio2.radio.PlayerService;
+import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.utils.State;
 
@@ -19,7 +19,7 @@ public class VolumeTimer implements RadioKeys {
     public void setVolume(Context contex, float volume) {
 
         if (State.isPlaying() || State.isPaused()) {
-            Intent niveau = new Intent(contex, PlayerService.class);
+            Intent niveau = new Intent(contex, RadioService.class);
             niveau.putExtra("voldown", volume);
             contex.startService(niveau);
         }

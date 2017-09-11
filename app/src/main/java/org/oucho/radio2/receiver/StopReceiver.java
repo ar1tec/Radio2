@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import org.oucho.radio2.radio.PlayerService;
+import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.utils.State;
 
@@ -18,7 +18,7 @@ public class StopReceiver extends BroadcastReceiver implements RadioKeys {
         if ( "org.oucho.radio2.STOP".equals(action) && ( State.isPlaying() || State.isPaused() ) ) {
 
             String halt = intent.getStringExtra("halt");
-            Intent player = new Intent(context, PlayerService.class);
+            Intent player = new Intent(context, RadioService.class);
             player.putExtra("action", halt);
             context.startService(player);
         }

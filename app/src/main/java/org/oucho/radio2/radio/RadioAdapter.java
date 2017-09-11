@@ -1,6 +1,7 @@
 package org.oucho.radio2.radio;
 
 
+import android.content.SharedPreferences;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,10 +19,13 @@ import org.oucho.radio2.utils.ImageFactory;
 
 import java.util.ArrayList;
 
+import static android.content.Context.MODE_PRIVATE;
+import static org.oucho.radio2.radio.RadioKeys.PREF_FILE;
+
 public class RadioAdapter extends BaseAdapter<RadioAdapter.RadioViewHolder> {
 
     private ArrayList<Radio> radioList = new ArrayList<>();
-
+    private SharedPreferences preferences;
 
     public void setData(ArrayList<Radio> data) {
 
@@ -54,14 +58,13 @@ public class RadioAdapter extends BaseAdapter<RadioAdapter.RadioViewHolder> {
             viewHolder.logoRadio.setVisibility(View.INVISIBLE);
         }
 
-        if (radio.getTitle().equals(PlayerService.getName())  ) {
-
+        preferences = viewHolder.fond.getContext().getSharedPreferences(PREF_FILE, MODE_PRIVATE);
+        String url = preferences.getString("url", "url");
+        if (radio.getUrl().equals(url)  ) {
             viewHolder.fond.setBackgroundColor(ContextCompat.getColor(viewHolder.fond.getContext(), R.color.colorAccent));
             viewHolder.text.setTextColor(ContextCompat.getColor(viewHolder.text.getContext(), R.color.white));
             viewHolder.menu.setImageDrawable(viewHolder.menu.getContext().getApplicationContext().getDrawable(R.drawable.ic_more_vert_white_24dp));
-
         } else {
-
             viewHolder.fond.setBackgroundColor(ContextCompat.getColor(viewHolder.fond.getContext(), R.color.white));
             viewHolder.text.setTextColor(ContextCompat.getColor(viewHolder.text.getContext(), R.color.grey_800));
             viewHolder.menu.setImageDrawable(viewHolder.menu.getContext().getDrawable(R.drawable.ic_more_vert_grey_400_24dp));

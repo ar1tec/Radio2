@@ -58,11 +58,11 @@ import org.oucho.radio2.dialog.PermissionDialog;
 import org.oucho.radio2.filepicker.FilePicker;
 import org.oucho.radio2.filepicker.FilePickerActivity;
 import org.oucho.radio2.filepicker.FilePickerParcelObject;
-import org.oucho.radio2.radio.PlayerService;
+import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.radio.RadioAdapter;
 import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.tunein.TuneInFragment;
-import org.oucho.radio2.tunein.adapters.BaseAdapter;
+import org.oucho.radio2.tunein.adapters.BaseAdapter.OnItemClickListener;
 import org.oucho.radio2.update.CheckUpdate;
 import org.oucho.radio2.utils.CustomLayoutManager;
 import org.oucho.radio2.utils.ImageFactory;
@@ -99,7 +99,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
     private ScheduledFuture scheduledFuture;
     private View edit_radio_view;
-    private final Handler handler = new Handler();
+    private final Handler handlerBitrate = new Handler();
+    private final Handler handlerScroll = new Handler();
     private Bitmap logoRadio;
     private VolumeTimer volumeTimer;
     private TextView viewSleepTimer;
@@ -577,7 +578,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         stopSleepTimer();
 
-        Intent player = new Intent(this, PlayerService.class);
+        Intent player = new Intent(this, RadioService.class);
         player.putExtra("action", ACTION_STOP);
         startService(player);
 
@@ -594,7 +595,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     @Override
     public void onClick(View v) {
 
-        Intent action_player = new Intent(this, PlayerService.class);
+        Intent action_player = new Intent(this, RadioService.class);
 
 
         switch (v.getId()) {
@@ -668,7 +669,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         popup.show();
     }
 
-    private final BaseAdapter.OnItemClickListener mOnItemClickListener = new BaseAdapter.OnItemClickListener() {
+    private final OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
 
         @Override
         public void onItemClick(int position, View view) {
@@ -684,7 +685,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
                 default:
                     break;
             }
-
         }
     };
 
@@ -730,9 +730,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         sendRadioToMpd.putExtra("url", radio_url);
         mContext.sendBroadcast(sendRadioToMpd);
     }
-       /* *********************************************************************************************
-    * Mise à jour de la vue de la liste des radios
-    * ********************************************************************************************/
+
 
     private void updateListView() {
         ArrayList<Radio> radioList = new ArrayList<>();
@@ -740,17 +738,25 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         mAdapter.setData(radioList);
 
-        String url = PlayerService.getUrl();
+        handlerScroll.removeCallbacksAndMessages(null);
 
-        if (PlayerService.getUrl() == null) {
-            url = preferences.getString("url", null);
-        }
+        handlerScroll.postDelayed(() -> {
 
-        for (int i = 0; i < radioList.size(); i++) {
+            String url = RadioService.getUrl();
 
-            if (radioList.get(i).getUrl().equals(url))
-                mRecyclerView.smoothScrollToPosition(i);
-        }
+            if (RadioService.getUrl() == null) {
+                url = preferences.getString("url", null);
+            }
+
+            for (int i = 0; i < radioList.size(); i++) {
+
+                if (radioList.get(i).getUrl().equals(url))
+                    mRecyclerView.smoothScrollToPosition(i);
+            }
+
+        }, 250);
+
+
 
     }
 
@@ -916,7 +922,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         SharedPreferences.Editor edit = preferences.edit();
 
-        Intent player = new Intent(this, PlayerService.class);
+        Intent player = new Intent(this, RadioService.class);
 
         player.putExtra("action", ACTION_PLAY);
         player.putExtra("url", url);
@@ -1022,11 +1028,11 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     * *********************************************************************************************/
 
     private void showCurrentBitRate() {
-        handler.postDelayed(new Runnable() {
+        handlerBitrate.postDelayed(new Runnable() {
 
             public void run() {
                 bitRate();
-                handler.postDelayed(this, 2000);
+                handlerBitrate.postDelayed(this, 2000);
             }
         }, 1);
     }
@@ -1036,7 +1042,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         final int uid = android.os.Process.myUid();
         final long received = TrafficStats.getUidRxBytes(uid) / 1024;
 
-        handler.postDelayed(() -> {
+        handlerBitrate.postDelayed(() -> {
             long current = TrafficStats.getUidRxBytes(uid) / 1024;
             long total = current - received;
             long ByteToBit = total * 8;
@@ -1059,7 +1065,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     private void stopBitrate() {
 
         if (showBitrate) {
-            handler.removeCallbacksAndMessages(null);
+            handlerBitrate.removeCallbacksAndMessages(null);
             showBitrate = false;
         }
     }
@@ -1144,7 +1150,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         scheduledFuture = scheduler.schedule(new GetAudioFocusTask(this), delay, TimeUnit.MILLISECONDS);
 
-        PlayerService.timerOnOff(true);
+        RadioService.timerOnOff(true);
         running = true;
         State.getState(mContext);
         showTimeEcran();
@@ -1248,7 +1254,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         running = false;
 
-        PlayerService.timerOnOff(false);
+        RadioService.timerOnOff(false);
         State.getState(mContext);
 
         viewSleepTimer = ((TextView) findViewById(R.id.sleep_timer));
@@ -1360,11 +1366,11 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     public static void stop(Context context) {
         running = false;
 
-        Intent player = new Intent(context, PlayerService.class);
+        Intent player = new Intent(context, RadioService.class);
         player.putExtra("action", "stop");
         context.startService(player);
 
-        PlayerService.timerOnOff(false);
+        RadioService.timerOnOff(false);
         State.getState(context);
     }
 

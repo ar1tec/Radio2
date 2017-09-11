@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import org.oucho.radio2.radio.PlayerService;
+import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.radio.RadioKeys;
 
 public class State implements RadioKeys {
@@ -33,8 +33,8 @@ public class State implements RadioKeys {
 
       Intent intent = new Intent(INTENT_STATE);
       intent.putExtra("state", current_state);
-      intent.putExtra("url", PlayerService.getUrl());
-      intent.putExtra("name", PlayerService.getName());
+      intent.putExtra("url", RadioService.getUrl());
+      intent.putExtra("name", RadioService.getName());
 
       context.sendBroadcast(intent);
    }

@@ -77,7 +77,7 @@ import static org.oucho.radio2.utils.State.isPaused;
 import static org.oucho.radio2.utils.State.isPlaying;
 import static org.oucho.radio2.utils.State.isWantPlaying;
 
-public class PlayerService extends Service implements RadioKeys, EventListener, OnAudioFocusChangeListener {
+public class RadioService extends Service implements RadioKeys, EventListener, OnAudioFocusChangeListener {
 
     private Context context = null;
     private String mUserAgent;
@@ -190,7 +190,7 @@ public class PlayerService extends Service implements RadioKeys, EventListener, 
                     intentPlay(intent);
                     startPlayback(getUrl());
 
-                }, 250);
+                }, 200);
 
             } else {
                 intentPlay(intent); // récupère les infos pour les variables url, name etc.
@@ -618,7 +618,7 @@ public class PlayerService extends Service implements RadioKeys, EventListener, 
 
 
     private void initializeExoPlayer() {
-        PlayerService.InitializeExoPlayerHelper initializeExoPlayerHelper = new PlayerService.InitializeExoPlayerHelper();
+        RadioService.InitializeExoPlayerHelper initializeExoPlayerHelper = new RadioService.InitializeExoPlayerHelper();
         initializeExoPlayerHelper.execute();
     }
 
@@ -651,7 +651,7 @@ public class PlayerService extends Service implements RadioKeys, EventListener, 
         protected void onPostExecute(Boolean sourceIsHLS) {
             prepareExoPLayer(sourceIsHLS, getUrl());
 
-            mExoPlayer.addListener(PlayerService.this);
+            mExoPlayer.addListener(RadioService.this);
         }
 
     }

@@ -10,7 +10,7 @@ import android.os.AsyncTask;
 import android.webkit.URLUtil;
 import android.net.Uri;
 
-import org.oucho.radio2.radio.PlayerService;
+import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.net.HttpGetter;
 
 public class Playlist extends AsyncTask<Void, Void, String> {
@@ -22,7 +22,7 @@ public class Playlist extends AsyncTask<Void, Void, String> {
     private static final int PLS     = 2;
 
     @SuppressLint("StaticFieldLeak")
-    private final PlayerService player;
+    private final RadioService player;
     private final String start_url;
     private int then = 0;
 
@@ -31,7 +31,7 @@ public class Playlist extends AsyncTask<Void, Void, String> {
     private static final String url_regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
     private static Pattern url_pattern = null;
 
-    public Playlist(PlayerService a_player, String a_url) {
+    public Playlist(RadioService a_player, String a_url) {
         super();
         player = a_player;
         start_url = a_url;

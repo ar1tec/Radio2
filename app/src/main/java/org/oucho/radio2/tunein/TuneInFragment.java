@@ -22,7 +22,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
-import org.oucho.radio2.radio.PlayerService;
+import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.R;
 import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.tunein.adapters.BaseAdapter;
@@ -301,7 +301,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
                 String[] rustine = data.split("\n"); // a tendance à doubler l'url
 
-                Intent player = new Intent(context, PlayerService.class);
+                Intent player = new Intent(context, RadioService.class);
 
                 player.putExtra("action", ACTION_PLAY);
                 player.putExtra("url", rustine[0]);
