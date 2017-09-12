@@ -3,17 +3,16 @@
 
 Internet radio for android.
 
-Disponile en: 
-Anglais (en) (Merci à Ho-Ro https://github.com/Ho-Ro)
-
-Allemand (de) (Merci à Ho-Ro https://github.com/Ho-Ro)
-
+Allemand (de) (Danke Ho-Ro https://github.com/Ho-Ro)
 Français (fr)
+Anglais (en) (Thank you Ho-Ro https://github.com/Ho-Ro)
+Esperento (eo)
+
 
 Pre-requis
 --------------
 
-- Android SDK v21
+- Android SDK v21+
 
 
 Screenshots

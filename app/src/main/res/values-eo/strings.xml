@@ -1,0 +1,155 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="app_name">Radioaparato</string>
+
+    <string name="radio_name">Nomo de radio</string>
+    <string name="url">URL</string>
+
+    <string name="edit">redakti</string>
+    <string name="delete">forigu</string>
+
+    <string name="deleteRadioConfirm">Forigu ĉi tiun radion?</string>
+    <string name="addRadio">Aldoni radioon</string>
+    <string name="ok">OK</string>
+    <string name="errorInvalidURL">Bonvolu enmeti validan adreson</string>
+
+
+    <string name="addRadio_fromApp">Radio %1$s aldonita</string>
+    <string name="addRadio_error">Ĉi tiu radio jam estas registrita</string>
+    <string name="addRadio_error_url">La adreso de ĉi tiu radio estas malĝusta</string>
+
+    <string name="add_mpd">Sendu al MPD Client</string>
+
+
+    <!-- nav header activity main -->
+    <string name="by">Old Geek, 2017</string>
+
+    <string name="update">Ĝisdatigu</string>
+
+    <string name="about">Pri</string>
+
+    <string name="exit">Lasi</string>
+
+
+
+    <string name="about_message">
+        \n
+        Radio 2.12.5, web radio pour android\n
+        Copyright &#169; 2017  Old-Geek\n
+        \n
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.\n
+        \n
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+        GNU General Public License for more details.\n
+        \n
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see http://www.gnu.org/licenses\n
+        \n
+        Code source: https://github.com/Old-Geek/Radio2\n
+        \n
+        Picasso: A powerful image downloading and caching library for Android\n
+        Licensed under the Apache License, Version 2.0\n
+        https://github.com/square/picasso\n
+        \n
+        <b>OkHttp:</b> An HTTP and HTTP/2 client for Android and Java applications.\n
+        Licensed under the Apache License, Version 2.0\n
+        https://github.com/square/okhttp\n
+        \n
+        http://www.apache.org/licenses/LICENSE-2.0 \n
+    </string>
+
+
+    <!-- Timer -->
+    <string name="timer_info" formatted="false" tools:ignore="StringFormatInvalid">%02d:%02d</string>
+    <string name="start">komenco</string>
+    <string name="cancel">nuligi</string>
+    <string name="continuer">daŭrigi</string>
+    <string name="cancel_timer">nuligi la temporizilon</string>
+    <string name="impossible">0 neebla</string>
+
+
+    <!-- update -->
+    <string name="appupdater_update_available">Ĝisdatigo havebla</string>
+
+    <string name="appupdater_update_available_description_dialog">Ĝisdatigo %1$s estas havebla. Elŝutante ĉi tiun version de la aplikaĵo, vi havos aliron al la plej novaj kaj pli bonaj %2$s.</string>
+
+    <string name="appupdater_update_available_description_dialog_before_release_notes">Ĝisdatigo %1$s estas havebla.\n\nNOVAĴOJ:\n%2$s</string>
+    <string name="appupdater_update_available_description_snackbar">Ĝisdatigo %1$s estas havebla.</string>
+    <string name="appupdater_update_not_available">Neniu ĝisdatigo havebla</string>
+    <string name="appupdater_update_not_available_description">Vi havas la plej lastan disponeblan version de %s.</string>
+    <string name="appupdater_btn_update">Elŝuti</string>
+    <string name="appupdater_btn_dismiss">Poste</string>
+
+    <!-- import/export DB -->
+    <string name="importer_erreur">Eraro: Malĝusta dosiero</string>
+
+    <string name="exporter">Lerta savis sukcese</string>
+
+    <string name="importerMenu">Importi radilan liston</string>
+    <string name="exporterMenu">Konservu la liston de radioaparatoj</string>
+    <string name="select_file">Elekti rezervon</string>
+
+    <!-- permission -->
+    <string name="permission">Petu permeson</string>
+    <string name="permission_write_external_storage">Ĉi tiu operacio postulas vian permeson por aliri la stokadon.</string>
+
+
+
+
+    <string-array name="size_units">
+        <item>b</item>
+        <item>Kb</item>
+        <item>Mb</item>
+        <item>Gb</item>
+        <item>Tb</item>
+        <item>Pb</item>
+    </string-array>
+
+    <string name="empty_directory">Malplena dosierujo</string>
+    <string name="action_select_all">Elektu ĉion</string>
+    <string name="action_deselect">Malmarku</string>
+    <string name="action_invert_selection">Reverti elekton</string>
+    <string name="new_folder">Nova dosierujo</string>
+    <string name="folder_name_hint">Dosierujo nomo</string>
+    <string name="folder_created">Sukcese kreis dosierujon</string>
+    <string name="folder_not_created">Eraro! La dosierujo ne estis kreita</string>
+    <string name="folder_already_exists">La dosierujo jam ekzistas</string>
+    <string name="sort">Speco</string>
+
+    <string-array name="sorting_types">
+        <item>Per nomo, suprenirante</item>
+        <item>Per nomo, malsuprenirante</item>
+        <item>De grandeco, supreniranta</item>
+        <item>De grandeco, malsupreniranta</item>
+        <item>De dato, supreniranta</item>
+        <item>De dato, malsupreniranta</item>
+    </string-array>
+
+
+    <string name="add_logo">Tuŝu aldoni logoon</string>
+    <string name="station_name">Nomo de la radio-aŭskultado</string>
+    <string name="notif_touch">(Tuŝu malfermi)</string>
+    <string name="loading" tools:ignore="TypographyEllipsis">ŝarĝo...</string>
+    <string name="play">Legado</string>
+    <string name="disconnected">Malkonektita</string>
+    <string name="completed">Kompletigita</string>
+    <string name="action_music">Muziko</string>
+    <string name="navigation_drawer_close">close</string>
+    <string name="navigation_drawer_open">open</string>
+
+    <string name="add_radio_browse">Foliumi la liston</string>
+    <string name="add_radio_manual">Aldonu permane</string>
+
+    <string name="error_connexion">Ligo problemo</string>
+
+    <string name="search">Serĉi</string>
+    <string name="pause">Paŭzo</string>
+    <string name="stop">Ĉesu</string>
+
+
+</resources>

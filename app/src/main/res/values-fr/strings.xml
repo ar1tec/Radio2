@@ -111,7 +111,7 @@
 
     <string name="empty_directory">Répertoire vide</string>
     <string name="action_select_all">Tout sélectionner</string>
-    <string name="action_deselect">Dé-sélectionner</string>
+    <string name="action_deselect">Désélectionner</string>
     <string name="action_invert_selection">Inverser la sélection</string>
     <string name="new_folder">Nouveau répertoire</string>
     <string name="folder_name_hint">Nom du répertoire</string>
