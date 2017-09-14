@@ -95,7 +95,7 @@ public class FilePickerActivity extends AppCompatActivity {
 
         Window window = getWindow();
 
-        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.blue_900));
+        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.grey_900));
 
 		intent = getIntent();
 
