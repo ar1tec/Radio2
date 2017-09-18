@@ -6,10 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import org.oucho.radio2.BuildConfig;
 import org.oucho.radio2.R;
 
 public class AboutDialog extends DialogFragment {
@@ -18,18 +18,14 @@ public class AboutDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        String title = getString(R.string.about);
-
         AlertDialog.Builder about = new AlertDialog.Builder(getActivity());
 
         @SuppressLint("InflateParams")
-        View dialoglayout = getActivity().getLayoutInflater().inflate(R.layout.alertdialog_main_noshadow, null);
-        Toolbar toolbar = dialoglayout.findViewById(R.id.dialog_toolbar_noshadow);
-        toolbar.setTitle(title);
-        toolbar.setTitleTextColor(0xffffffff);
+        View dialoglayout = getActivity().getLayoutInflater().inflate(R.layout.aboutdialog, null);
 
-        final TextView text = dialoglayout.findViewById(R.id.showrules_dialog);
-        text.setText(getString(R.string.about_message));
+        String versionName = BuildConfig.VERSION_NAME;
+        TextView versionView = dialoglayout.findViewById(R.id.version);
+        versionView.setText(versionName);
 
         about.setView(dialoglayout);
 

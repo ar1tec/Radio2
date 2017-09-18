@@ -466,6 +466,10 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             if (INTENT_TITRE.equals(receiveIntent)) {
 
                 String titre = intent.getStringExtra("titre");
+
+                if (titre == null)
+                    return;
+
                 actionBar.setTitle(Html.fromHtml(titre));
 
                 if (titre.equals(getResources().getString(R.string.app_name))) {
