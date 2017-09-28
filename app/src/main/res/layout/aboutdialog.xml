@@ -35,6 +35,9 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:linksClickable="true"
+        android:textColorLink="@color/blue_900_transp"
+        android:autoLink="web" />
 </LinearLayout>
 

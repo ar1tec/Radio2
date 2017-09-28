@@ -145,12 +145,12 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         preferences = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
-        int backgroundColor = ContextCompat.getColor(mContext, R.color.colorPrimary);
+        int textColor = ContextCompat.getColor(mContext, R.color.colorPrimary);
         String title = mContext.getString(R.string.app_name);
 
-        ColorDrawable colorDrawable = new ColorDrawable(backgroundColor);
+        ColorDrawable colorDrawable = new ColorDrawable(textColor);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         actionBar = getSupportActionBar();
@@ -158,12 +158,12 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         actionBar.setBackgroundDrawable(colorDrawable);
         actionBar.setTitle(title);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView = findViewById(R.id.nav_view);
         mNavigationView.inflateMenu(R.menu.navigation);
         mNavigationView.setNavigationItemSelectedListener(this);
 
@@ -184,16 +184,16 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         filter.addAction(INTENT_ERROR);
         registerReceiver(playerReceiver, filter);
 
-        error0 = (TextView) findViewById(R.id.error0);
-        error1 = (TextView) findViewById(R.id.error1);
+        error0 = findViewById(R.id.error0);
+        error1 = findViewById(R.id.error1);
 
-        editText = (EditText) findViewById(R.id.search_radio);
-        searchLayout = (LinearLayout) findViewById(R.id.search_layout);
+        editText = findViewById(R.id.search_radio);
+        searchLayout = findViewById(R.id.search_layout);
 
         volumeTimer = new VolumeTimer();
 
         mAdapter = new RadioAdapter();
-        mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        mRecyclerView = findViewById(R.id.recyclerView);
 
         mRecyclerView.setLayoutManager(new CustomLayoutManager(this));
 
@@ -201,8 +201,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         mRecyclerView.setAdapter(mAdapter);
 
-        img_play = (ImageView) findViewById(R.id.play_radio);
-        img_pause = (ImageView) findViewById(R.id.pause_radio);
+        img_play = findViewById(R.id.play_radio);
+        img_pause = findViewById(R.id.pause_radio);
 
         this.findViewById(R.id.add_radio).setOnClickListener(this);
         this.findViewById(R.id.stop_radio).setOnClickListener(this);
@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         }
 
         if (State.isStopped()) {
-            TextView status = (TextView) findViewById(R.id.etat);
+            TextView status = findViewById(R.id.etat);
             playing_state = "Stop";
             assert status != null;
             status.setText(playing_state);
@@ -488,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
             if (INTENT_STATE.equals(receiveIntent)) {
 
-                TextView player_status = (TextView) findViewById(R.id.etat);
+                TextView player_status = findViewById(R.id.etat);
 
                 boolean closeApplication = intent.getBooleanExtra(ACTION_QUIT, false);
                 playing_state = intent.getStringExtra("state");
@@ -546,7 +546,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
     private void updateRadioName() {
 
-        TextView StationTextView = (TextView) findViewById(R.id.station);
+        TextView StationTextView = findViewById(R.id.station);
 
         if (radio_name == null)
             radio_name = preferences.getString("name", "");
@@ -561,7 +561,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
     @SuppressWarnings("ConstantConditions")
     private void updatePlayPauseIcon() {
-        ImageView img_equalizer = (ImageView) findViewById(R.id.icon_equalizer);
+        ImageView img_equalizer = findViewById(R.id.icon_equalizer);
 
         if (State.isPlaying() || State.isPaused()) {
             img_equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
@@ -889,7 +889,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         assert audioManager != null;
         int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
-        ImageView play = (ImageView) findViewById(R.id.icon_volume);
+        ImageView play = findViewById(R.id.icon_volume);
 
         if (currentVolume == 0) {
             assert play != null;
@@ -1050,7 +1050,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             long current = TrafficStats.getUidRxBytes(uid) / 1024;
             long total = current - received;
             long ByteToBit = total * 8;
-            TextView BitRate = (TextView) findViewById(R.id.bitrate);
+            TextView BitRate = findViewById(R.id.bitrate);
 
             if (ByteToBit <= 1024 ) {
                 String bitrate = String.valueOf(ByteToBit);
@@ -1210,7 +1210,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
     private void showTimeEcran() {
 
-        viewSleepTimer = ((TextView) findViewById(R.id.sleep_timer));
+        viewSleepTimer = findViewById(R.id.sleep_timer);
 
         assert viewSleepTimer != null;
         viewSleepTimer.setVisibility(View.VISIBLE);
@@ -1261,7 +1261,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         RadioService.timerOnOff(false);
         State.getState(mContext);
 
-        viewSleepTimer = ((TextView) findViewById(R.id.sleep_timer));
+        viewSleepTimer = findViewById(R.id.sleep_timer);
         assert viewSleepTimer != null;
         viewSleepTimer.setVisibility(View.INVISIBLE);
 
