@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         }
     }
 
-    public void setHomeButton(Boolean value) {
+    private void setHomeButton(Boolean value) {
 
         bHome = value;
 

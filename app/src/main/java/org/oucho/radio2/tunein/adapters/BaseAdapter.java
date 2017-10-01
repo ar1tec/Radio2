@@ -7,7 +7,6 @@ import android.view.View;
 public abstract class BaseAdapter<V extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<V> {
 
     private OnItemClickListener mOnItemClickListener;
-    private OnItemLongClickListener mOnItemLongClickListener;
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         mOnItemClickListener = listener;
@@ -23,9 +22,5 @@ public abstract class BaseAdapter<V extends RecyclerView.ViewHolder> extends Rec
         void onItemClick(int position, View view);
     }
 
-
-    public interface OnItemLongClickListener {
-        void onItemLongClick(int position, View view);
-    }
 
 }
