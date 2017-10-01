@@ -387,16 +387,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
-
                 setSearch();
-
-                View view = getCurrentFocus();
-
-                if (view != null) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    assert imm != null;
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
 
                 return true;
             }
@@ -415,6 +406,14 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             search.setAction(INTENT_SEARCH);
             search.putExtra("search", textSearch);
             sendBroadcast(search);
+
+            View view = getCurrentFocus();
+
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                assert imm != null;
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         }
 
     }

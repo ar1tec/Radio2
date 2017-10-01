@@ -2,9 +2,7 @@
 <resources>
     <string name="app_name" translatable="false">Radio</string>
     <string name="app_full_name" translatable="false">Internet Radio for Android</string>
-    <string name="app_homepage" translatable="false">https://github.com/Old-Geek/Radio2</string>
-    <string name="app_copyright" translatable="false">&#169; 2016 Old-Geek</string>
-    
+
     <string name="licence_info" translatable="false">
         This program is free software: you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by

@@ -25,7 +25,6 @@ import static org.oucho.radio2.radio.RadioKeys.PREF_FILE;
 public class RadioAdapter extends BaseAdapter<RadioAdapter.RadioViewHolder> {
 
     private ArrayList<Radio> radioList = new ArrayList<>();
-    private SharedPreferences preferences;
 
     public void setData(ArrayList<Radio> data) {
 
@@ -58,7 +57,7 @@ public class RadioAdapter extends BaseAdapter<RadioAdapter.RadioViewHolder> {
             viewHolder.logoRadio.setVisibility(View.INVISIBLE);
         }
 
-        preferences = viewHolder.fond.getContext().getSharedPreferences(PREF_FILE, MODE_PRIVATE);
+        SharedPreferences preferences = viewHolder.fond.getContext().getSharedPreferences(PREF_FILE, MODE_PRIVATE);
         String url = preferences.getString("url", "url");
         if (radio.getUrl().equals(url)  ) {
             viewHolder.fond.setBackgroundColor(ContextCompat.getColor(viewHolder.fond.getContext(), R.color.colorAccent));

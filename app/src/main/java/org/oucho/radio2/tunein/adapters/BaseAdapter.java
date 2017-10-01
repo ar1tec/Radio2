@@ -24,16 +24,6 @@ public abstract class BaseAdapter<V extends RecyclerView.ViewHolder> extends Rec
     }
 
 
-    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
-        mOnItemLongClickListener = listener;
-    }
-
-    void triggerOnItemLongClickListener(int position, View view) {
-        if(mOnItemLongClickListener != null) {
-            mOnItemLongClickListener.onItemLongClick(position, view);
-        }
-    }
-
     public interface OnItemLongClickListener {
         void onItemLongClick(int position, View view);
     }

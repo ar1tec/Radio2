@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -104,13 +105,14 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
         return categorieList.get(position);
     }
 
-    public class TuneInViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class TuneInViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final RelativeLayout relativeLayout;
         private final ImageView image;
         private final TextView detail_subtitle;
         private final TextView details_title;
         private final TextView text;
+        private final ImageButton radio_add;
 
         TuneInViewHolder(View itemView) {
             super(itemView);
@@ -124,26 +126,20 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
 
             relativeLayout = itemView.findViewById(R.id.detail_layout);
 
+            radio_add = itemView.findViewById(R.id.radio_ajout);
+
+            radio_add.setOnClickListener(this);
+
             itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
+
             triggerOnItemClickListener(position, v);
         }
 
-        @Override
-        public boolean onLongClick(View v) {
-            int position = getAdapterPosition();
-            if (categorieList.get(position).contains("type=\"audio\"") ) {
-                triggerOnItemLongClickListener(position, v);
-                return true;
-            } else {
-                return false;
-            }
-        }
     }
 
 }

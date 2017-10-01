@@ -111,7 +111,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="center"
             android:src="@drawable/ic_add_circle_grey_500_36dp"
-            android:tint="@color/grey_600"
+            android:tint="@color/blue_900_transp"
             android:layout_centerHorizontal="true"
             tools:ignore="ContentDescription"/>
 

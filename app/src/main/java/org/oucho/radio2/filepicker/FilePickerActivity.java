@@ -137,32 +137,32 @@ public class FilePickerActivity extends AppCompatActivity {
 
 		readDirectory(path);
 
-		mHeaderTitle = (TextView) findViewById(R.id.title);
+		mHeaderTitle = findViewById(R.id.title);
 		updateTitle();
 
-		new_folder = (ImageButton) findViewById(R.id.menu_new_folder);
+		new_folder = findViewById(R.id.menu_new_folder);
         newFolder();
 
-		sort1 = (ImageButton) findViewById(R.id.menu_sort1);
-		sort2 = (ImageButton) findViewById(R.id.menu_sort2);
+		sort1 = findViewById(R.id.menu_sort1);
+		sort2 = findViewById(R.id.menu_sort2);
         triRépertoire();
 
-		cancel1 = (ImageButton) findViewById(R.id.menu_cancel1);
+		cancel1 = findViewById(R.id.menu_cancel1);
         setCancel1();
 
-		cancel2 = (ImageButton) findViewById(R.id.menu_cancel2);
+		cancel2 = findViewById(R.id.menu_cancel2);
         setCancel2();
 
-		ok1 = (ImageButton) findViewById(R.id.menu_ok1);
+		ok1 = findViewById(R.id.menu_ok1);
 		ok1_delimiter = findViewById(R.id.ok1_delimiter);
         setOk1();
 
-        ok2 = (ImageButton) findViewById(R.id.menu_ok2);
+        ok2 = findViewById(R.id.menu_ok2);
         setOk2();
 
-		select_all = (ImageButton) findViewById(R.id.menu_select_all);
-		deselect = (ImageButton) findViewById(R.id.menu_deselect);
-		invert = (ImageButton) findViewById(R.id.menu_invert);
+		select_all = findViewById(R.id.menu_select_all);
+		deselect = findViewById(R.id.menu_deselect);
+		invert = findViewById(R.id.menu_invert);
         setSelection();
 
         Log.d("Environment", String.valueOf(Environment.getExternalStorageDirectory()) );
@@ -506,7 +506,7 @@ public class FilePickerActivity extends AppCompatActivity {
 
 	private void setAbsListView() {
 
-		mAbsListView = (AbsListView) findViewById(R.id.listview);
+		mAbsListView = findViewById(R.id.listview);
 		mAbsListView.setEmptyView(mEmptyView);
 		FilesListAdapter adapter = new FilesListAdapter(this);
 

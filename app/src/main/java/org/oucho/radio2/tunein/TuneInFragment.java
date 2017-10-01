@@ -77,7 +77,6 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
         mAdapter = new TuneInAdapter();
         mAdapter.setOnItemClickListener(mOnItemClickListener);
-        mAdapter.setOnItemLongClickListener(mOnLongClickListener);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -136,88 +135,75 @@ public class TuneInFragment extends Fragment implements RadioKeys {
             String item = mAdapter.getItem(position);
             String[] parts = item.split("\" ");
 
-            if (item.contains("type=\"link\"")) {
+            if (v.getId() == R.id.radio_ajout) {
 
-                String url = null;
+                add(item);
 
-                for (String part : parts) {
+            } else {
 
-                    if (part.contains("URL=\"")) {
-                        url = part.replace("URL=\"", "").replace("\"", "");
+                if (item.contains("type=\"link\"")) {
+
+                    String url = null;
+
+                    for (String part : parts) {
+
+                        if (part.contains("URL=\"")) {
+                            url = part.replace("URL=\"", "").replace("\"", "");
+                        }
                     }
+
+                    Bundle args = new Bundle();
+                    args.putString("url", url);
+
+                    load(args);
                 }
 
-                Bundle args = new Bundle();
-                args.putString("url", url);
+                if (item.contains("type=\"audio\"")) {
 
-                load(args);
-            }
+                    String text = parts[1];
+                    String name = text.replace("text=\"", "");
 
-            if  (item.contains("type=\"audio\"")) {
+                    String url = null;
 
-                String text = parts[1];
-                String name = text.replace("text=\"" , "");
-
-                String url = null;
-
-                for (String part : parts) {
-                    if (part.contains("URL=\"")) {
-                        url = part.replace("URL=\"", "");
+                    for (String part : parts) {
+                        if (part.contains("URL=\"")) {
+                            url = part.replace("URL=\"", "");
+                        }
                     }
-                }
 
-                new playItem().execute(url, name, mContext);
+                    new playItem().execute(url, name, mContext);
+                }
             }
         }
     };
 
 
-    private final BaseAdapter.OnItemLongClickListener mOnLongClickListener = new BaseAdapter.OnItemLongClickListener() {
-        @Override
-        public void onItemLongClick(int position, View view) {
+    private void add(String item) {
 
-            String item = mAdapter.getItem(position);
-            showPopup(view, item);
-        }
-    };
+        String[] parts = item.split("\" ");
 
+        if  (item.contains("type=\"audio\"")) {
 
-    private void showPopup(final View view,final String item) {
+            String text = parts[1];
+            String name = text.replace("text=\"" , "");
+            String url = null;
+            String url_image = null;
 
-        android.widget.PopupMenu mCoverPopupMenu = new android.widget.PopupMenu(mContext, view);
+            Log.d(TAG, "name: " + name);
 
-        mCoverPopupMenu.getMenu().add(1, 1, 0, "Ajouter à la liste");
-        mCoverPopupMenu.setOnMenuItemClickListener(item0 -> {
+            for (String part : parts) {
 
-            String[] parts = item.split("\" ");
-
-            if  (item.contains("type=\"audio\"")) {
-
-                String text = parts[1];
-                String name = text.replace("text=\"" , "");
-                String url = null;
-                String url_image = null;
-
-                Log.d(TAG, "name: " + name);
-
-                for (String part : parts) {
-
-                    if (part.contains("URL=\"")) {
-                        url = part.replace("URL=\"", "");
-                    }
-
-                    if (part.contains("image=\"")) {
-                        url_image = part.replace("image=\"", "");
-                    }
+                if (part.contains("URL=\"")) {
+                    url = part.replace("URL=\"", "");
                 }
 
-                new saveItem().execute(url, name, url_image, mContext);
+                if (part.contains("image=\"")) {
+                    url_image = part.replace("image=\"", "");
+                }
             }
 
-            return true;
-        });
-
-        mCoverPopupMenu.show();
+            new saveItem().execute(url, name, url_image, mContext);
+        }
     }
 
 
