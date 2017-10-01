@@ -43,7 +43,7 @@ import java.util.Scanner;
 
 public class TuneInFragment extends Fragment implements RadioKeys {
 
-    private final List<String> historique = new ArrayList<>();
+    private List<String> historique = new ArrayList<>();
     private static final String TAG = "TuneInFragment";
     private TuneInAdapter mAdapter;
     private Context mContext;
@@ -84,7 +84,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         progressBar = rootView.findViewById(R.id.progressBar_layout);
 
         Bundle args = new Bundle();
-        args.putString("url", "http://opml.radiotime.com");
+        args.putString("url", HOME);
 
         load(args);
 
@@ -337,6 +337,8 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         IntentFilter filter = new IntentFilter();
         filter.addAction(INTENT_SEARCH);
         filter.addAction(INTENT_FOCUS);
+        filter.addAction(INTENT_HOME);
+
         mContext.registerReceiver(receiver, filter);
 
         // Active la touche back
@@ -413,6 +415,16 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                 search(text);
             }
 
+            if (INTENT_HOME.equals(receiveIntent)) {
+
+                Bundle args = new Bundle();
+                args.putString("url", HOME);
+
+                load(args);
+                historique = new ArrayList<>();
+                historique.add(HOME);
+            }
+
             if (INTENT_FOCUS.equals(receiveIntent)) {
                 //noinspection ConstantConditions
                 getView().setFocusableInTouchMode(true);
@@ -427,7 +439,7 @@ public class TuneInFragment extends Fragment implements RadioKeys {
         String query = search.replace(" ", "%20");
 
         Bundle args = new Bundle();
-        args.putString("url", "http://opml.radiotime.com/Search.ashx?query=" + query);
+        args.putString("url", HOME + "/Search.ashx?query=" + query);
 
         //noinspection ConstantConditions
         getView().setFocusableInTouchMode(true);

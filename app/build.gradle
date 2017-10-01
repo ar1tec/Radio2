@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 30
-        versionName "2.12.7"
+        versionName "2.12.8"
         setProperty("archivesBaseName", "Radio_$versionName")
     }
 

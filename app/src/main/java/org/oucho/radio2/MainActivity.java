@@ -46,8 +46,9 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -112,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     private NavigationView mNavigationView;
     private PlayerReceiver playerReceiver;
 
-    private ImageView img_play;
-    private ImageView img_pause;
+    private ImageButton img_play;
+    private ImageButton img_pause;
 
     private Context mContext;
 
@@ -123,12 +124,11 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     private TextView error1;
 
     private EditText editText;
-    private LinearLayout searchLayout;
+    private RelativeLayout searchLayout;
 
     private boolean isFocusedSearch;
 
     private RadioAdapter mAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,6 +208,10 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         this.findViewById(R.id.stop_radio).setOnClickListener(this);
         this.findViewById(R.id.play_radio).setOnClickListener(this);
         this.findViewById(R.id.pause_radio).setOnClickListener(this);
+
+        this.findViewById(R.id.home_button).setOnClickListener(this);
+        this.findViewById(R.id.search_button).setOnClickListener(this);
+
 
         mediaPlayer = MediaPlayer.create(mContext, R.raw.connexion);
         mediaPlayer.setLooping(true);
@@ -383,12 +387,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
-                String text = editText.getText().toString();
 
-                Intent search = new Intent();
-                search.setAction(INTENT_SEARCH);
-                search.putExtra("search", text);
-                sendBroadcast(search);
+                setSearch();
 
                 View view = getCurrentFocus();
 
@@ -402,6 +402,20 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             }
             return false;
         });
+
+    }
+
+    private void setSearch() {
+
+        String textSearch = editText.getText().toString();
+
+
+        if (!textSearch.equals("")) {
+            Intent search = new Intent();
+            search.setAction(INTENT_SEARCH);
+            search.putExtra("search", textSearch);
+            sendBroadcast(search);
+        }
 
     }
 
@@ -640,6 +654,16 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
             case R.id.add_radio:
                 popupAddRadio(v);
+                break;
+
+            case R.id.search_button:
+                setSearch();
+                break;
+
+            case R.id.home_button:
+                Intent home = new Intent();
+                home.setAction(INTENT_HOME);
+                sendBroadcast(home);
                 break;
 
             default:

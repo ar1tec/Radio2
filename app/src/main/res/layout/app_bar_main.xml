@@ -100,35 +100,49 @@
                 android:layout_marginRight="24dp"
                 tools:ignore="ContentDescription" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/search_layout"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_alignParentBottom="true"
-                android:orientation="horizontal"
                 android:background="@color/white"
                 android:visibility="gone">
 
-                <ImageView
+                <ImageButton
+                    android:id="@+id/home_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:src="@drawable/ic_search_grey_600_24dp"/>
+                    android:layout_marginStart="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_home_grey_600_24dp" />
 
                 <EditText
                     android:id="@+id/search_radio"
-                    android:imeOptions="actionSearch"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
-                    android:maxLines="1"
-                    android:inputType="text"
                     android:hint="@string/search"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColor="@color/grey_800"
                     android:textColorHint="@color/grey_400"
-                    android:textColor="@color/grey_800"/>
+                    android:layout_toEndOf="@+id/home_button"
+                    android:layout_toStartOf="@+id/search_button"/>
 
-            </LinearLayout>
+                <ImageButton
+                    android:id="@+id/search_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="8dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_search_grey_600_24dp" />
+
+            </RelativeLayout>
         </RelativeLayout>
 
 

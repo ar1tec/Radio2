@@ -25,6 +25,9 @@ public interface RadioKeys {
     String INTENT_ERROR = "org.oucho.radio2.INTENT_ERROR";
     String INTENT_SEARCH = "org.oucho.radio2.INTENT_SEARCH";
     String INTENT_FOCUS = "org.oucho.radio2.INTENT_FOCUS";
+    String INTENT_HOME = "org.oucho.radio2.INTENT_HOME";
+
+    String HOME = "http://opml.radiotime.com";
 
 
     String INTENT_ADD_RADIO = "org.oucho.radio2.ADD_RADIO";

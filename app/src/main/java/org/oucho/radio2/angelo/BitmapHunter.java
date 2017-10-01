@@ -97,7 +97,6 @@ class BitmapHunter implements Runnable {
         } else {
             InputStream stream = bufferedSource.inputStream();
             if (calculateSize) {
-                // TODO use an InputStream that buffers with Okio...
                 MarkableInputStream markStream = new MarkableInputStream(stream);
                 stream = markStream;
                 markStream.allowMarksToExpire(false);
