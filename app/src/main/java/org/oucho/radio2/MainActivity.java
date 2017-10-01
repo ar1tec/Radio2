@@ -59,9 +59,9 @@ import org.oucho.radio2.dialog.PermissionDialog;
 import org.oucho.radio2.filepicker.FilePicker;
 import org.oucho.radio2.filepicker.FilePickerActivity;
 import org.oucho.radio2.filepicker.FilePickerParcelObject;
-import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.radio.RadioAdapter;
 import org.oucho.radio2.radio.RadioKeys;
+import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.tunein.TuneInFragment;
 import org.oucho.radio2.tunein.adapters.BaseAdapter.OnItemClickListener;
 import org.oucho.radio2.update.CheckUpdate;
@@ -77,8 +77,6 @@ import org.oucho.radio2.xml.ReadXML;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -117,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
     private ImageButton img_play;
     private ImageButton img_pause;
+    private ImageButton home;
+    private static boolean bHome = false;
 
     private Context mContext;
 
@@ -184,6 +184,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         filter.addAction(INTENT_STATE);
         filter.addAction(INTENT_TITRE);
         filter.addAction(INTENT_ERROR);
+        filter.addAction(INTENT_HOME);
+
         registerReceiver(playerReceiver, filter);
 
         error0 = findViewById(R.id.error0);
@@ -206,12 +208,15 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         img_play = findViewById(R.id.play_radio);
         img_pause = findViewById(R.id.pause_radio);
 
+        home = findViewById(R.id.home_button);
+
+        home.setOnClickListener(this);
+
         this.findViewById(R.id.add_radio).setOnClickListener(this);
         this.findViewById(R.id.stop_radio).setOnClickListener(this);
         this.findViewById(R.id.play_radio).setOnClickListener(this);
         this.findViewById(R.id.pause_radio).setOnClickListener(this);
 
-        this.findViewById(R.id.home_button).setOnClickListener(this);
         this.findViewById(R.id.search_button).setOnClickListener(this);
 
 
@@ -238,6 +243,17 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         } else {
             navigatioMenu.setGroupVisible(R.id.add_music, false);
             navigatioMenu.setGroupVisible(R.id.haut_default, true);
+        }
+    }
+
+    public void setHomeButton(Boolean value) {
+
+        bHome = value;
+
+        if (value) {
+            home.setImageDrawable(getApplicationContext().getDrawable(R.drawable.ic_home_grey_600_24dp));
+        } else {
+            home.setImageDrawable(getApplicationContext().getDrawable(R.drawable.ic_list_grey_50_24dp));
         }
     }
 
@@ -469,6 +485,11 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
             String receiveIntent = intent.getAction();
 
+            if (INTENT_HOME.equals(receiveIntent)) {
+                boolean home = intent.getBooleanExtra("setButton", false);
+                setHomeButton(home);
+            }
+
             if (INTENT_ERROR.equals(receiveIntent)) {
 
                 String erreur = intent.getStringExtra("error");
@@ -662,9 +683,19 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
                 break;
 
             case R.id.home_button:
+
                 Intent home = new Intent();
                 home.setAction(INTENT_HOME);
+
+                if (!bHome) {
+
+                    home.putExtra("go", "back");
+                } else {
+
+                    home.putExtra("go", "home");
+                }
                 sendBroadcast(home);
+
                 break;
 
             default:

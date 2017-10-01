@@ -115,7 +115,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="8dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_home_grey_600_24dp"
+                    android:src="@drawable/ic_list_grey_600_24dp"
                     android:tint="@color/blue_900_transp" />
 
                 <EditText

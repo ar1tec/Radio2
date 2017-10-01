@@ -107,6 +107,12 @@ public class TuneInFragment extends Fragment implements RadioKeys {
 
             String url = args.getString("url");
             historique.add(url);
+
+            if (historique.size() > 1) {
+                setHomeButton(true);
+            } else {
+                setHomeButton(false);
+            }
             return new TuneInLoader(mContext, args.getString("url"));
         }
 
@@ -358,21 +364,19 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                     historique.remove(historique.size() - 1);
                     historique.remove(historique.size() - 1);
 
+                    if (historique.size() > 1) {
+                        setHomeButton(true);
+                    } else {
+                        setHomeButton(false);
+                    }
+
                     load(args);
 
                     return true;
 
                 } else {
 
-                    Intent intent = new Intent();
-                    intent.setAction(INTENT_TITRE);
-                    intent.putExtra("titre", getResources().getString(R.string.app_name));
-                    mContext.sendBroadcast(intent);
-
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.setCustomAnimations(R.anim.slide_out_bottom, R.anim.slide_out_bottom);
-                    ft.remove(TuneInFragment.this);
-                    ft.commit();
+                    goRadioList();
                 }
 
             }
@@ -401,14 +405,25 @@ public class TuneInFragment extends Fragment implements RadioKeys {
                 search(text);
             }
 
-            if (INTENT_HOME.equals(receiveIntent)) {
+            if (INTENT_HOME.equals(receiveIntent) ) {
 
-                Bundle args = new Bundle();
-                args.putString("url", HOME);
+                try {
+                    if (intent.getStringExtra("go").equals("home")) {
+                        historique = new ArrayList<>();
 
-                load(args);
-                historique = new ArrayList<>();
-                historique.add(HOME);
+                        Bundle args = new Bundle();
+                        args.putString("url", HOME);
+                        setHomeButton(false);
+
+                        load(args);
+                    }
+
+                    if (intent.getStringExtra("go").equals("back"))
+                        goRadioList();
+
+                } catch (RuntimeException ignore) {}
+
+
             }
 
             if (INTENT_FOCUS.equals(receiveIntent)) {
@@ -418,6 +433,27 @@ public class TuneInFragment extends Fragment implements RadioKeys {
             }
 
         }
+    }
+
+    private void setHomeButton(Boolean value) {
+        Intent intent = new Intent();
+        intent.setAction(INTENT_HOME);
+        intent.putExtra("setButton", value);
+        mContext.sendBroadcast(intent);
+    }
+
+    private void goRadioList() {
+        Intent intent = new Intent();
+        intent.setAction(INTENT_TITRE);
+        intent.putExtra("titre", getResources().getString(R.string.app_name));
+        mContext.sendBroadcast(intent);
+
+        setHomeButton(false);
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_out_bottom, R.anim.slide_out_bottom);
+        ft.remove(TuneInFragment.this);
+        ft.commit();
     }
 
     private void search(String search) {
