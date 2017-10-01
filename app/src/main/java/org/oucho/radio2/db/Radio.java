@@ -26,7 +26,7 @@ public class Radio implements RadioKeys {
     public static ArrayList<Radio> getRadios(Context context) {
         RadiosDatabase radiosDatabase = new RadiosDatabase(context);
         SQLiteDatabase db = radiosDatabase.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT url, name, image FROM " + TABLE_NAME + " ORDER BY NAME", null);
+        Cursor cursor = db.rawQuery("SELECT url, name, image FROM " + TABLE_NAME + " ORDER BY NAME COLLATE NOCASE", null);
         ArrayList<Radio> radios = new ArrayList<>();
         while (cursor.moveToNext()) {
             Radio radio = new Radio(cursor.getString(0), cursor.getString(1), cursor.getBlob(2));
