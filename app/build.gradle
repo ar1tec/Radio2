@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 30
-        versionName "2.12.9"
+        versionName "2.12.10"
         setProperty("archivesBaseName", "Radio_$versionName")
     }
 
@@ -37,4 +37,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android.exoplayer:exoplayer:r2.5.3'
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
+
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }

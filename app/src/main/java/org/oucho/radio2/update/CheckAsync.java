@@ -1,20 +1,17 @@
 package org.oucho.radio2.update;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.AsyncTask;
 
-@SuppressWarnings("unused")
+import org.oucho.radio2.radio.RadioApplication;
+
+
 class CheckAsync {
 
-    @SuppressLint("StaticFieldLeak")
     static class LatestAppVersion extends AsyncTask<Void, Void, Update> {
-        private final Context context;
         private final String xmlUrl;
         private final AppUpdate.LibraryListener listener;
 
-        LatestAppVersion(Context context, String xmlUrl, AppUpdate.LibraryListener listener) {
-            this.context = context;
+        LatestAppVersion(String xmlUrl, AppUpdate.LibraryListener listener) {
             this.xmlUrl = xmlUrl;
             this.listener = listener;
         }
@@ -23,7 +20,7 @@ class CheckAsync {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            if (UtilsLibrary.isNetworkAvailable(context)) {
+            if (UtilsLibrary.isNetworkAvailable(RadioApplication.getInstance())) {
 
                 if (xmlUrl == null || !UtilsLibrary.isStringAnUrl(xmlUrl)) {
                     listener.onFailed();

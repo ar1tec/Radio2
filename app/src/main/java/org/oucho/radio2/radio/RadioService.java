@@ -20,7 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.webkit.URLUtil;
@@ -753,7 +753,7 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
             logo_radio = BitmapFactory.decodeByteArray(img_byte_array, 0, img_byte_array.length);
         }
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, "notif");
 
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

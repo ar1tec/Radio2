@@ -1,7 +1,6 @@
 package org.oucho.radio2.update;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -10,7 +9,6 @@ import org.oucho.radio2.R;
 class AppUpdate {
     private final Context context;
     private Display display;
-    private String xmlUrl;
     private Boolean showAppUpdated;
     private final String titleUpdate;
     private final String btnDismiss;
@@ -34,9 +32,7 @@ class AppUpdate {
         return this;
     }
 
-    @SuppressWarnings("SameParameterValue")
-    AppUpdate setUpdateXML(@NonNull String xmlUrl) {
-        this.xmlUrl = xmlUrl;
+    AppUpdate setUpdateXML() {
         return this;
     }
 
@@ -45,21 +41,22 @@ class AppUpdate {
         return this;
     }
 
-    /**
-     * Execute AppUpdate in background.
-     */
+
     public void start() {
-        CheckAsync.LatestAppVersion latestAppVersion = new CheckAsync.LatestAppVersion(context, xmlUrl, new LibraryListener() {
+        String xmlUrl = CheckUpdate.updateURL;
+        CheckAsync.LatestAppVersion latestAppVersion = new CheckAsync.LatestAppVersion(xmlUrl, new LibraryListener() {
             @Override
             public void onSuccess(Update update) {
                 if (UtilsLibrary.isUpdateAvailable(UtilsLibrary.getAppInstalledVersion(context), update.getLatestVersion())) {
 
                         switch (display) {
                             case DIALOG:
-                                UtilsDisplay.showUpdateAvailableDialog(context, titleUpdate, getDescriptionUpdate(context, update, Display.DIALOG), btnDismiss, btnUpdate, update.getUrlToDownload());
+                                UtilsDisplay.showUpdateAvailableDialog(context, titleUpdate, getDescriptionUpdate(context, update, Display.DIALOG),
+                                                btnDismiss, btnUpdate, update.getUrlToDownload());
                                 break;
                             case SNACKBAR:
-                                UtilsDisplay.showUpdateAvailableSnackbar(context, getDescriptionUpdate(context, update, Display.SNACKBAR), update.getUrlToDownload());
+                                UtilsDisplay.showUpdateAvailableSnackbar(context, getDescriptionUpdate(context, update, Display.SNACKBAR),
+                                        update.getUrlToDownload());
                                 break;
                         }
 
