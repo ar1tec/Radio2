@@ -36,4 +36,9 @@ public interface RadioKeys {
 
 
     String INTENT_UPDATENOTIF = "org.oucho.radio2.INTENT_STATE";
+    String INTENT_CONTROL_STOP = "org.oucho.radio2.INTENT_STOP";
+    String INTENT_CONTROL_PAUSE = "org.oucho.radio2.INTENT_PAUSE";
+    String INTENT_CONTROL_RESTART = "org.oucho.radio2.INTENT_RESTART";
+
+
 }

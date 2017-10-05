@@ -87,7 +87,6 @@
 
 
     <string name="add_logo">Tippen um ein Logo hinzuzufügen</string>
-    <string name="notif_touch">(Zum Öffnen tippen)</string>
     <string name="station_name">Stationsname</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Laden...</string>
     <string name="play">Play</string>

@@ -30,7 +30,6 @@
 
     <!-- notification -->
     <string name="station_name">Station name</string>
-    <string name="notif_touch">(Tap to open)</string>
 
 
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>

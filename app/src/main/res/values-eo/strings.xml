@@ -98,7 +98,6 @@
 
     <string name="add_logo">Tuŝu aldoni logoon</string>
     <string name="station_name">Nomo de la radio-aŭskultado</string>
-    <string name="notif_touch">(Tuŝu malfermi)</string>
     <string name="loading" tools:ignore="TypographyEllipsis">ŝarĝo...</string>
     <string name="play">Legado</string>
     <string name="disconnected">Malkonektita</string>

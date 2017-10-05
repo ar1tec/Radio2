@@ -96,7 +96,6 @@
 
     <string name="add_logo">Touchez pour ajouter un logo</string>
     <string name="station_name">Nom de la radio à l\'écoute</string>
-    <string name="notif_touch">(Touchez pour ouvrir)</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Chargement...</string>
     <string name="play">Lecture</string>
     <string name="disconnected">Déconnecté</string>

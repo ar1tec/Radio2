@@ -485,6 +485,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
             String receiveIntent = intent.getAction();
 
+            Log.d("MainActivity+ ", receiveIntent);
+
             if (INTENT_HOME.equals(receiveIntent)) {
                 boolean home = intent.getBooleanExtra("setButton", false);
                 setHomeButton(home);

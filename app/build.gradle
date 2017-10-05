@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
 
     defaultConfig {
         applicationId "org.oucho.radio2"
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 30
-        versionName "2.12.10"
+        versionName "2.13.0"
         setProperty("archivesBaseName", "Radio_$versionName")
     }
 

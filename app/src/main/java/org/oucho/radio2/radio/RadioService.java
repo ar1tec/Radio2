@@ -118,7 +118,12 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         setName(préférences.getString("name", default_name));
 
         notificationUpdateReceiver = new NotificationUpdate();
-        IntentFilter filter = new IntentFilter(INTENT_STATE);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(INTENT_STATE);
+        filter.addAction(INTENT_CONTROL_STOP);
+        filter.addAction(INTENT_CONTROL_PAUSE);
+        filter.addAction(INTENT_CONTROL_RESTART);
+
         registerReceiver(notificationUpdateReceiver, filter);
 
         audio_manager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -683,7 +688,18 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         @Override
         public void onReceive(Context context, Intent intent) {
 
+            Log.d(TAG, "onReceive " + intent.getAction());
+
             String receiveIntent = intent.getAction();
+
+            if (INTENT_CONTROL_STOP.equals(receiveIntent))
+                stopPlayback();
+
+            if (INTENT_CONTROL_PAUSE.equals(receiveIntent))
+                pause();
+
+            if (INTENT_CONTROL_RESTART.equals(receiveIntent))
+                restart();
 
             if (INTENT_UPDATENOTIF.equals(receiveIntent)) {
 
@@ -760,6 +776,19 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+
+        Intent playpause = new Intent();
+        if (isPlaying())
+            playpause.setAction(INTENT_CONTROL_PAUSE);
+        else
+            playpause.setAction(INTENT_CONTROL_RESTART);
+        PendingIntent togglePlayIntent = PendingIntent.getBroadcast(context, 0, playpause, PendingIntent.FLAG_CANCEL_CURRENT);
+
+
+        Intent stop = new Intent();
+        stop.setAction(INTENT_CONTROL_STOP);
+        PendingIntent stopIntent = PendingIntent.getBroadcast(context, 0, stop, 0);
+
         notificationBuilder.setContentIntent(pendingIntent);
 
         if (!timer) {
@@ -778,6 +807,28 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
 
         RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
 
+        if (isPlaying()) {
+            contentView.setImageViewResource(R.id.playpause, R.drawable.ic_pause_circle_filled_grey_800_36dp);
+        } else {
+            contentView.setImageViewResource(R.id.playpause, R.drawable.ic_play_circle_filled_grey_800_36dp);
+
+        }
+
+        contentView.setOnClickPendingIntent(R.id.stop, stopIntent);
+        contentView.setOnClickPendingIntent(R.id.playpause, togglePlayIntent);
+
+
+
+
+
+
+        if (isPlaying()) {
+            notificationBuilder.addAction(R.drawable.ic_pause_white_18dp, "", togglePlayIntent);
+        } else {
+            notificationBuilder.addAction(R.drawable.ic_play_arrow_white_18dp, "", togglePlayIntent);
+        }
+
+
         String locale_string;
         if ("Play".equals(action)) {
             locale_string = context.getResources().getString(R.string.play);
@@ -789,6 +840,9 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
 
         contentView.setTextViewText(R.id.notif_name, radio_name);
         contentView.setTextViewText(R.id.notif_text, locale_string);
+
+
+
 
         if (logo_radio != null)
             contentView.setImageViewBitmap(R.id.notif_ombre, logo_radio);
@@ -814,7 +868,6 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
 
         sIsServiceForeground = startForeground;
     }
-
 
     private void removeNotification(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
