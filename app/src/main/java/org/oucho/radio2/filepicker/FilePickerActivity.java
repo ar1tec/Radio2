@@ -704,7 +704,7 @@ public class FilePickerActivity extends AppCompatActivity {
 
         String getDateModification(File file) {
             Date lastModified = new Date(file.lastModified());
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy   HH:mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy   HH:mm", Locale.FRANCE);
 
             return formatter.format(lastModified);
         }

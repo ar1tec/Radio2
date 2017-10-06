@@ -680,15 +680,10 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         return null;
     }
 
-
-
-
     private class NotificationUpdate extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            Log.d(TAG, "onReceive " + intent.getAction());
 
             String receiveIntent = intent.getAction();
 
@@ -817,17 +812,11 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         contentView.setOnClickPendingIntent(R.id.stop, stopIntent);
         contentView.setOnClickPendingIntent(R.id.playpause, togglePlayIntent);
 
-
-
-
-
-
         if (isPlaying()) {
             notificationBuilder.addAction(R.drawable.ic_pause_white_18dp, "", togglePlayIntent);
         } else {
             notificationBuilder.addAction(R.drawable.ic_play_arrow_white_18dp, "", togglePlayIntent);
         }
-
 
         String locale_string;
         if ("Play".equals(action)) {
@@ -840,9 +829,6 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
 
         contentView.setTextViewText(R.id.notif_name, radio_name);
         contentView.setTextViewText(R.id.notif_text, locale_string);
-
-
-
 
         if (logo_radio != null)
             contentView.setImageViewBitmap(R.id.notif_ombre, logo_radio);
@@ -859,7 +845,6 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
 
             if (sIsServiceForeground)
                 stopForeground(false);
-
 
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             assert notificationManager != null;

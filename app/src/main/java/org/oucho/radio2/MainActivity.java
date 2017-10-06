@@ -132,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
     private RadioAdapter mAdapter;
 
+    private VolumeControl niveau_Volume;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         setNavigationMenu();
 
-        VolumeControl niveau_Volume = new VolumeControl(this, new Handler());
+        niveau_Volume = new VolumeControl(this, new Handler());
         getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
 
         playerReceiver = new PlayerReceiver();
@@ -485,8 +487,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
             String receiveIntent = intent.getAction();
 
-            Log.d("MainActivity+ ", receiveIntent);
-
             if (INTENT_HOME.equals(receiveIntent)) {
                 boolean home = intent.getBooleanExtra("setButton", false);
                 setHomeButton(home);
@@ -532,8 +532,10 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
                 playing_state = intent.getStringExtra("state");
                 radio_name = intent.getStringExtra("name");
 
-                if (closeApplication)
-                    finish();
+                if (closeApplication) {
+                    exit();
+                }
+
 
                 // Traduction du texte
                 String locale_string;
@@ -614,6 +616,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     * *******/
     private void exit() {
         mediaPlayer.release();
+        getContentResolver().unregisterContentObserver(niveau_Volume);
 
         if (showBitrate)
             stopBitrate();
@@ -910,7 +913,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             super(handler);
             this.context = context;
 
-            AudioManager audioManager = (AudioManager) this.context.getSystemService(Context.AUDIO_SERVICE);
+            AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
             assert audioManager != null;
             previousVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         }
@@ -1216,7 +1219,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         running = true;
         State.getState(mContext);
         showTimeEcran();
-        volumeTimer.volumeDown(mContext, scheduledFuture, delay);
+        volumeTimer.volumeDown(scheduledFuture, delay);
     }
 
 
@@ -1311,7 +1314,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             sleepTimerCounter = null;
 
             volumeTimer.getVolumeTimer().cancel();
-            volumeTimer.setVolume(mContext, 1.0f);
+            volumeTimer.setVolume(1.0f);
         }
 
         running = false;
