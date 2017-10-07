@@ -15,7 +15,7 @@
         android:layout_alignParentTop="true"
         android:paddingLeft="9dp"
         android:paddingTop="7dp"
-        android:src="@drawable/ic_radio_grey_600_24dp"
+        android:src="@drawable/ic_radio_blue_grey_600_48dp"
         tools:ignore="ContentDescription" />
 
     <LinearLayout
