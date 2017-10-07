@@ -6,7 +6,9 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -672,7 +674,7 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
 
     @SuppressWarnings("SameReturnValue")
     private int done() {
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     @Override
@@ -818,7 +820,7 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
             notificationBuilder.addAction(R.drawable.ic_play_arrow_white_18dp, "", togglePlayIntent);
         }
 
-        String locale_string;
+
         if ("Play".equals(action)) {
             locale_string = context.getResources().getString(R.string.play);
         } else if ("Loading...".equals(action)) {
@@ -830,8 +832,11 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         contentView.setTextViewText(R.id.notif_name, radio_name);
         contentView.setTextViewText(R.id.notif_text, locale_string);
 
-        if (logo_radio != null)
+        if (logo_radio != null) {
             contentView.setImageViewBitmap(R.id.notif_ombre, logo_radio);
+
+            img_logo = logo_radio;
+        }
 
         notification.contentView = contentView;
 
@@ -852,12 +857,31 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         }
 
         sIsServiceForeground = startForeground;
+
+        int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), RadioWidget.class));
+
+        Intent widget = new Intent(this, RadioWidget.class);
+        widget.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        widget.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        sendBroadcast(widget);
     }
+
+    private static String locale_string;
+
+    private static Bitmap img_logo;
 
     private void removeNotification(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         assert notificationManager != null;
         notificationManager.cancel(NOTIFY_ID);
+    }
+
+    public static String getState() {
+        return locale_string;
+    }
+
+    public static Bitmap getLogo() {
+        return img_logo;
     }
 
     public static String getUrl() {

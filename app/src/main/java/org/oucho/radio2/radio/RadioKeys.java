@@ -29,16 +29,10 @@ public interface RadioKeys {
 
     String HOME = "http://opml.radiotime.com";
 
-
     String INTENT_ADD_RADIO = "org.oucho.radio2.ADD_RADIO";
-
-
-
-
     String INTENT_UPDATENOTIF = "org.oucho.radio2.INTENT_STATE";
     String INTENT_CONTROL_STOP = "org.oucho.radio2.INTENT_STOP";
     String INTENT_CONTROL_PAUSE = "org.oucho.radio2.INTENT_PAUSE";
     String INTENT_CONTROL_RESTART = "org.oucho.radio2.INTENT_RESTART";
-
 
 }

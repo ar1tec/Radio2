@@ -1,7 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="radio_name">Nom de la radio</string>
-    <string name="url">URL</string>
 
     <string name="edit">éditer</string>
     <string name="delete">supprimer</string>
@@ -20,7 +19,6 @@
 
 
     <!-- nav header activity main -->
-    <string name="by">Old Geek, 2017</string>
 
     <string name="update">Mise à jour</string>
 
@@ -29,7 +27,6 @@
     <string name="exit">Quitter</string>
 
     <!-- Timer -->
-    <string name="timer_info" formatted="false" tools:ignore="StringFormatInvalid">%02d:%02d</string>
     <string name="start">démarrer</string>
     <string name="cancel">annuler</string>
     <string name="continuer">continuer</string>
@@ -101,8 +98,6 @@
     <string name="disconnected">Déconnecté</string>
     <string name="completed">Complété</string>
     <string name="action_music">Musique</string>
-    <string name="navigation_drawer_close">close</string>
-    <string name="navigation_drawer_open">open</string>
 
     <string name="add_radio_browse">Parcourir la liste</string>
     <string name="add_radio_manual">Ajouter manuellement</string>

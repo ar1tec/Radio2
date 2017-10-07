@@ -17,7 +17,7 @@ public class VolumeTimer implements RadioKeys {
 
     private CountDownTimer volumeTimer;
 
-    private Context mContext = RadioApplication.getInstance();
+    private final Context mContext = RadioApplication.getInstance();
 
     public void setVolume(float volume) {
 

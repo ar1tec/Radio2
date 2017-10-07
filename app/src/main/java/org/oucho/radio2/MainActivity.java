@@ -88,52 +88,50 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
     private static final int FILE_PICKER_RESULT = 0;
 
+    private Context mContext;
+    private ActionBar actionBar;
+    private SharedPreferences preferences;
+
     private String radio_name;
+    private String import_type; // file or img
     private String playing_state;
     private String import_export_radio_list;
-    private String import_type; // file or img
     private final String app_music = "org.oucho.musicplayer";
 
+    private boolean isFocusedSearch;
     private boolean showBitrate = false;
-    private boolean music_app_is_installed = false;
     private boolean mpd_app_is_installed = false;
+    private boolean music_app_is_installed = false;
     private static boolean running;
-
-    private ScheduledFuture scheduledFuture;
-    private View edit_radio_view;
-    private final Handler handlerBitrate = new Handler();
-    private final Handler handlerScroll = new Handler();
-    private Bitmap logoRadio;
-    private VolumeTimer volumeTimer;
-    private TextView viewSleepTimer;
-    private RecyclerView mRecyclerView;
-    private CountDownTimer sleepTimerCounter;
-    private DrawerLayout mDrawerLayout;
-    private MediaPlayer mediaPlayer;
-    private SharedPreferences preferences;
-    private NavigationView mNavigationView;
-    private PlayerReceiver playerReceiver;
-
-    private ImageButton img_play;
-    private ImageButton img_pause;
-    private ImageButton home;
     private static boolean bHome = false;
 
-    private Context mContext;
+    private final Handler handlerScroll = new Handler();
+    private final Handler handlerBitrate = new Handler();
 
-    private ActionBar actionBar;
+    private View edit_radio_view;
+    private RecyclerView mRecyclerView;
+    private NavigationView mNavigationView;
 
     private TextView error0;
     private TextView error1;
-
+    private TextView viewSleepTimer;
     private EditText editText;
-    private RelativeLayout searchLayout;
+    private ImageButton home;
+    private ImageButton img_play;
+    private ImageButton img_pause;
 
-    private boolean isFocusedSearch;
+    private Bitmap logoRadio;
+    private VolumeTimer volumeTimer;
+
+    private CountDownTimer sleepTimerCounter;
+    private DrawerLayout mDrawerLayout;
+    private MediaPlayer mediaPlayer;
+    private PlayerReceiver playerReceiver;
+    private ScheduledFuture scheduledFuture;
 
     private RadioAdapter mAdapter;
-
     private VolumeControl niveau_Volume;
+    private RelativeLayout searchLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -312,13 +310,11 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        mediaPlayer.release();
         getContentResolver().unregisterContentObserver(niveau_Volume);
 
         if (showBitrate)
             stopBitrate();
-
-        mediaPlayer.release();
 
         try {
             unregisterReceiver(playerReceiver);

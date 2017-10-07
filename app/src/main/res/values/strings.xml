@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="radio_name">Name of station</string>
-    <string name="url">URL</string>
+    <string name="url" translatable="false">URL</string>
 
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
@@ -13,11 +13,11 @@
 
     <string name="action_music">Music</string>
 
-    <string name="navigation_drawer_open">open</string>
-    <string name="navigation_drawer_close">close</string>
+    <string name="navigation_drawer_open" translatable="false">open</string>
+    <string name="navigation_drawer_close" translatable="false">close</string>
 
     <!-- nav header activity main -->
-    <string name="by">Old Geek, 2017</string>
+    <string name="by" translatable="false">Old Geek, 2017</string>
 
     <string name="update">Update</string>
 
@@ -41,7 +41,7 @@
     <string name="completed">Completed</string>
 
     <!-- Timer -->
-    <string name="timer_info" formatted="false" tools:ignore="StringFormatInvalid">%02d:%02d</string>
+    <string name="timer_info" formatted="false" translatable="false" tools:ignore="StringFormatInvalid">%02d:%02d</string>
     <string name="start">Start</string>
     <string name="cancel">Cancel</string>
     <string name="continuer">Continue</string>

@@ -1,7 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="radio_name">Nomo de radio</string>
-    <string name="url">URL</string>
 
     <string name="edit">redakti</string>
     <string name="delete">forigu</string>
@@ -20,7 +19,6 @@
 
 
     <!-- nav header activity main -->
-    <string name="by">Old Geek, 2017</string>
 
     <string name="update">Ĝisdatigu</string>
 
@@ -30,7 +28,6 @@
 
 
     <!-- Timer -->
-    <string name="timer_info" formatted="false" tools:ignore="StringFormatInvalid">%02d:%02d</string>
     <string name="start">komenco</string>
     <string name="cancel">nuligi</string>
     <string name="continuer">daŭrigi</string>
@@ -103,8 +100,6 @@
     <string name="disconnected">Malkonektita</string>
     <string name="completed">Kompletigita</string>
     <string name="action_music">Muziko</string>
-    <string name="navigation_drawer_close">close</string>
-    <string name="navigation_drawer_open">open</string>
 
     <string name="add_radio_browse">Foliumi la liston</string>
     <string name="add_radio_manual">Aldonu permane</string>

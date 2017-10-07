@@ -20,4 +20,5 @@
     <dimen name="fastscroll_handle_radius">2dp</dimen>
 
     <dimen name="fastscroll_scrollbar_padding">6dp</dimen>
+
 </resources>

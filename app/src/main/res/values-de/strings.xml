@@ -1,7 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="radio_name">Name der Station</string>
-    <string name="url">URL</string>
 
     <string name="edit">Bearbeiten</string>
     <string name="delete">Löschen</string>
@@ -13,7 +12,6 @@
 
 
     <!-- nav header activity main -->
-    <string name="by">Old Geek, 2017</string>
 
     <string name="update">Aktualisierung</string>
 
@@ -22,7 +20,6 @@
     <string name="exit">Exit</string>
 
     <!-- Timer -->
-    <string name="timer_info" formatted="false" tools:ignore="StringFormatInvalid">%02d:%02d</string>
     <string name="start">Start</string>
     <string name="cancel">Abbrechen</string>
     <string name="continuer">Fortfahren</string>
@@ -93,8 +90,6 @@
     <string name="completed">Completed</string>
     <string name="disconnected">Disconnected</string>
     <string name="action_music">Musik</string>
-    <string name="navigation_drawer_close">close</string>
-    <string name="navigation_drawer_open">open</string>
 
     <string name="addRadio_fromApp">Radio %1$s hinzugefügt</string>
     <string name="addRadio_error">Dieses Radio ist bereits registriert</string>
