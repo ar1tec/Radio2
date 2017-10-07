@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.Settings.System;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -179,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         setNavigationMenu();
 
         niveau_Volume = new VolumeControl(this, new Handler());
-        getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
+        getContentResolver().registerContentObserver(System.CONTENT_URI, true, niveau_Volume);
 
         playerReceiver = new PlayerReceiver();
         IntentFilter filter = new IntentFilter();
@@ -312,6 +313,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     protected void onDestroy() {
         super.onDestroy();
 
+        getContentResolver().unregisterContentObserver(niveau_Volume);
+
         if (showBitrate)
             stopBitrate();
 
@@ -321,6 +324,24 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             unregisterReceiver(playerReceiver);
         } catch (IllegalArgumentException ignore) {}
 
+    }
+
+    private void exit() {
+        mediaPlayer.release();
+        getContentResolver().unregisterContentObserver(niveau_Volume);
+
+        if (showBitrate)
+            stopBitrate();
+
+        stopSleepTimer();
+
+        Intent player = new Intent(this, RadioService.class);
+        player.putExtra("action", ACTION_STOP);
+        startService(player);
+
+        unregisterReceiver(playerReceiver);
+
+        finish();
     }
 
 
@@ -608,28 +629,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         } else {
             img_equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
         }
-    }
-
-
-   /* *******
-    * Quitter
-    * *******/
-    private void exit() {
-        mediaPlayer.release();
-        getContentResolver().unregisterContentObserver(niveau_Volume);
-
-        if (showBitrate)
-            stopBitrate();
-
-        stopSleepTimer();
-
-        Intent player = new Intent(this, RadioService.class);
-        player.putExtra("action", ACTION_STOP);
-        startService(player);
-
-        unregisterReceiver(playerReceiver);
-
-        finish();
     }
 
 
