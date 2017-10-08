@@ -18,6 +18,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -55,11 +56,11 @@ import com.google.android.exoplayer2.util.Util;
 
 import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.R;
-import org.oucho.radio2.utils.ImageFactory;
 import org.oucho.radio2.net.Connectivity;
 import org.oucho.radio2.net.CustomHttpDataSource;
 import org.oucho.radio2.net.WifiLocker;
 import org.oucho.radio2.utils.Counter;
+import org.oucho.radio2.utils.ImageFactory;
 import org.oucho.radio2.utils.Later;
 import org.oucho.radio2.utils.Playlist;
 import org.oucho.radio2.utils.State;
@@ -80,6 +81,7 @@ import static org.oucho.radio2.utils.State.isPaused;
 import static org.oucho.radio2.utils.State.isPlaying;
 import static org.oucho.radio2.utils.State.isWantPlaying;
 
+
 public class RadioService extends Service implements RadioKeys, EventListener, OnAudioFocusChangeListener {
 
     private Context context = null;
@@ -91,6 +93,7 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
     private final String default_url = null;
     private final String default_name = null;
 
+    private MediaPlayer mediaPlayer;
     private Later stopSoonTask = null;
     private Playlist playlist_task = null;
     private Connectivity connectivity = null;
@@ -110,6 +113,7 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
     private static boolean sIsServiceForeground = false;
     private static final int NOTIFY_ID = 32;
     private static boolean timer = false;
+
 
     @Override
     public void onCreate() {
@@ -135,6 +139,9 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         mUserAgent = Util.getUserAgent(this, APPLICATION_NAME);
 
         createExoPlayer();
+
+        mediaPlayer = MediaPlayer.create(context, R.raw.connexion);
+        mediaPlayer.setLooping(true);
     }
 
 
@@ -142,6 +149,8 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         super.onDestroy();
 
         stopPlayback();
+
+        mediaPlayer.release();
 
         if ( mExoPlayer != null ) {
             releaseExoPlayer();
@@ -156,7 +165,6 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
             unregisterReceiver(notificationUpdateReceiver);
 
         WifiLocker.unlock();
-
 
     }
 
@@ -751,6 +759,14 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
                     trad = etat_lecture;
                     updateNotification(getName(), trad, null);
                 }
+
+                try {
+                    if (etat_lecture.equals("Loading...")) {
+                        mediaPlayer.start();
+                    } else if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+                    }
+                } catch (NullPointerException ignore) {}
             }
         }
     }
@@ -835,7 +851,7 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         contentView.setTextViewText(R.id.notif_text, locale_string);
 
         if (logo_radio != null) {
-            contentView.setImageViewBitmap(R.id.notif_ombre, logo_radio);
+            contentView.setImageViewBitmap(R.id.notif_logo, logo_radio);
 
             img_logo = logo_radio;
         }

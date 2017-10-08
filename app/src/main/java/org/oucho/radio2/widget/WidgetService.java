@@ -7,6 +7,7 @@ import android.os.IBinder;
 import org.oucho.radio2.radio.RadioService;
 
 public class WidgetService extends Service {
+
     public WidgetService() {
     }
 

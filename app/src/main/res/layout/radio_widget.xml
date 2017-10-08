@@ -10,45 +10,42 @@
     <ImageView
         android:id="@+id/logo"
         android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:paddingLeft="9dp"
-        android:paddingTop="7dp"
         android:src="@drawable/ic_radio_blue_grey_600_48dp"
         tools:ignore="ContentDescription" />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="5dp"
         android:layout_toEndOf="@id/logo"
         android:layout_toStartOf="@id/control"
-        android:orientation="vertical"
-        android:layout_marginEnd="5dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/radio"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/station_name"
-            android:textSize="15sp"
-            android:textColor="@color/grey_800"
-            android:maxLines="1"
-            android:ellipsize="end"
+            android:layout_height="match_parent"
             android:layout_marginStart="9dp"
-            android:paddingTop="14dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/station_name"
+            android:textColor="@color/grey_800"
+            android:textSize="15sp"
             tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/state"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="état du lecteur"
-            android:textSize="13sp"
-            android:textColor="@color/grey_600"
-            android:gravity="center"
+            android:layout_height="match_parent"
             android:layout_marginStart="9dp"
-            android:paddingTop="2dp"
+            android:layout_marginTop="2dp"
+            android:text="Stop"
+            android:textColor="@color/grey_600"
+            android:textSize="13sp"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>

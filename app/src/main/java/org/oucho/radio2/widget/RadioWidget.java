@@ -12,18 +12,15 @@ import android.widget.RemoteViews;
 import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.R;
 import org.oucho.radio2.radio.RadioApplication;
+import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.utils.ImageFactory;
 
 import static android.content.Context.MODE_PRIVATE;
-import static org.oucho.radio2.radio.RadioKeys.INTENT_CONTROL_PAUSE;
-import static org.oucho.radio2.radio.RadioKeys.INTENT_CONTROL_RESTART;
-import static org.oucho.radio2.radio.RadioKeys.INTENT_CONTROL_STOP;
-import static org.oucho.radio2.radio.RadioKeys.PREF_FILE;
 import static org.oucho.radio2.utils.State.isPlaying;
 
 
-public class RadioWidget extends AppWidgetProvider {
+public class RadioWidget extends AppWidgetProvider implements RadioKeys{
 
     private static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
@@ -32,6 +29,7 @@ public class RadioWidget extends AppWidgetProvider {
 
         SharedPreferences preferences = RadioApplication.getInstance().getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
+        // prenvent memory clean
         Intent player = new Intent(context, WidgetService.class);
         context.startService(player);
 
@@ -64,7 +62,6 @@ public class RadioWidget extends AppWidgetProvider {
 
         String name = RadioService.getName();
         String state = RadioService.getState();
-        String img;
         Bitmap logo = RadioService.getLogo();
 
         if (name == null) {
@@ -76,7 +73,7 @@ public class RadioWidget extends AppWidgetProvider {
         }
 
         if (logo == null) {
-            img = preferences.getString("image_data", null);
+            String img = preferences.getString("image_data", null);
 
             if (img != null) {
                 logo = ImageFactory.stringToBitmap(img);

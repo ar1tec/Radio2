@@ -14,7 +14,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.TrafficStats;
 import android.os.Build;
 import android.os.Bundle;
@@ -125,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
     private CountDownTimer sleepTimerCounter;
     private DrawerLayout mDrawerLayout;
-    private MediaPlayer mediaPlayer;
     private PlayerReceiver playerReceiver;
     private ScheduledFuture scheduledFuture;
 
@@ -221,8 +219,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         this.findViewById(R.id.search_button).setOnClickListener(this);
 
 
-        mediaPlayer = MediaPlayer.create(mContext, R.raw.connexion);
-        mediaPlayer.setLooping(true);
+
 
         showCurrentBitRate();
         showBitrate = true;
@@ -310,7 +307,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mediaPlayer.release();
         getContentResolver().unregisterContentObserver(niveau_Volume);
 
         if (showBitrate)
@@ -323,7 +319,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
 
     private void exit() {
-        mediaPlayer.release();
         getContentResolver().unregisterContentObserver(niveau_Volume);
 
         if (showBitrate)
@@ -583,13 +578,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
                 updatePlayPauseIcon();
                 updateListView();
 
-                try {
-                    if (playing_state.equals("Loading...")) {
-                        mediaPlayer.start();
-                    } else if (mediaPlayer.isPlaying()) {
-                        mediaPlayer.pause();
-                    }
-                } catch (NullPointerException ignore) {}
             }
         }
     }
