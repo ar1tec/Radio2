@@ -14,12 +14,9 @@ import android.widget.ImageView;
 import static org.oucho.radio2.angelo.Angelo.LoadedFrom.MEMORY;
 
 final class AngeloDrawable extends BitmapDrawable {
+
     private static final float FADE_DURATION = 200f; //ms
 
-    /**
-     * Create or update the drawable on the target {@link ImageView} to display the supplied bitmap
-     * image.
-     */
     static void setBitmap(ImageView target, Context context, Bitmap bitmap,
                           Angelo.LoadedFrom loadedFrom, boolean noFade) {
         Drawable placeholder = target.getDrawable();
@@ -31,10 +28,6 @@ final class AngeloDrawable extends BitmapDrawable {
         target.setImageDrawable(drawable);
     }
 
-    /**
-     * Create or update the drawable on the target {@link ImageView} to display the supplied
-     * placeholder image.
-     */
     static void setPlaceholder(ImageView target, Drawable placeholderDrawable) {
         target.setImageDrawable(placeholderDrawable);
         if (target.getDrawable() instanceof AnimationDrawable) {
@@ -59,7 +52,8 @@ final class AngeloDrawable extends BitmapDrawable {
         }
     }
 
-    @Override public void draw(Canvas canvas) {
+    @Override
+    public void draw(Canvas canvas) {
         if (!animating) {
             super.draw(canvas);
         } else {
@@ -83,7 +77,8 @@ final class AngeloDrawable extends BitmapDrawable {
 
     }
 
-    @Override public void setAlpha(int alpha) {
+    @Override
+    public void setAlpha(int alpha) {
         this.alpha = alpha;
         if (placeholder != null) {
             placeholder.setAlpha(alpha);
@@ -91,14 +86,16 @@ final class AngeloDrawable extends BitmapDrawable {
         super.setAlpha(alpha);
     }
 
-    @Override public void setColorFilter(ColorFilter cf) {
+    @Override
+    public void setColorFilter(ColorFilter cf) {
         if (placeholder != null) {
             placeholder.setColorFilter(cf);
         }
         super.setColorFilter(cf);
     }
 
-    @Override protected void onBoundsChange(Rect bounds) {
+    @Override
+    protected void onBoundsChange(Rect bounds) {
         if (placeholder != null) {
             placeholder.setBounds(bounds);
         }

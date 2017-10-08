@@ -35,6 +35,7 @@ public class Angelo {
 
     public interface RequestTransformer {
         Request transformRequest(Request request);
+
         RequestTransformer IDENTITY = request -> request;
     }
 
@@ -274,7 +275,8 @@ public class Angelo {
             setName(THREAD_PREFIX + "refQueue");
         }
 
-        @Override public void run() {
+        @Override
+        public void run() {
             Process.setThreadPriority(THREAD_PRIORITY_BACKGROUND);
             while (true) {
                 try {
@@ -354,6 +356,7 @@ public class Angelo {
         DISK(),
         NETWORK();
 
-        LoadedFrom() {}
+        LoadedFrom() {
+        }
     }
 }

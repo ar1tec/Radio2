@@ -12,23 +12,26 @@ import static android.content.ContentResolver.SCHEME_CONTENT;
 import static org.oucho.radio2.angelo.Angelo.LoadedFrom.DISK;
 
 class ContentStreamRequestHandler extends RequestHandler {
-  final Context context;
 
-  ContentStreamRequestHandler(Context context) {
-    this.context = context;
-  }
+    final Context context;
 
-  @Override public boolean canHandleRequest(Request data) {
-    return SCHEME_CONTENT.equals(data.uri.getScheme());
-  }
+    ContentStreamRequestHandler(Context context) {
+        this.context = context;
+    }
 
-  @Override public Result load(Request request, int networkPolicy) throws IOException {
-    Source source = Okio.source(getInputStream(request));
-    return new Result(source, DISK);
-  }
+    @Override
+    public boolean canHandleRequest(Request data) {
+        return SCHEME_CONTENT.equals(data.uri.getScheme());
+    }
 
-  InputStream getInputStream(Request request) throws FileNotFoundException {
-    ContentResolver contentResolver = context.getContentResolver();
-    return contentResolver.openInputStream(request.uri);
-  }
+    @Override
+    public Result load(Request request, int networkPolicy) throws IOException {
+        Source source = Okio.source(getInputStream(request));
+        return new Result(source, DISK);
+    }
+
+    InputStream getInputStream(Request request) throws FileNotFoundException {
+        ContentResolver contentResolver = context.getContentResolver();
+        return contentResolver.openInputStream(request.uri);
+    }
 }

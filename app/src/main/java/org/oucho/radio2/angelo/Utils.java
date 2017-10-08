@@ -26,6 +26,7 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
 
 final class Utils {
+
     static final String THREAD_PREFIX = "Angelo-";
     static final String THREAD_IDLE_NAME = THREAD_PREFIX + "Idle";
     private static final String ANGELO_CACHE = "angelo-cache";

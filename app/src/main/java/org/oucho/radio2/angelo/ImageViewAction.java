@@ -17,7 +17,8 @@ class ImageViewAction extends Action<ImageView> {
         this.callback = callback;
     }
 
-    @Override public void complete(Bitmap result, Angelo.LoadedFrom from) {
+    @Override
+    public void complete(Bitmap result, Angelo.LoadedFrom from) {
         if (result == null) {
             throw new AssertionError(String.format("Attempted to complete action with no result!\n%s", this));
         }
@@ -35,7 +36,8 @@ class ImageViewAction extends Action<ImageView> {
         }
     }
 
-    @Override public void error(Exception e) {
+    @Override
+    public void error(Exception e) {
         ImageView target = this.target.get();
         if (target == null) {
             return;
@@ -57,7 +59,8 @@ class ImageViewAction extends Action<ImageView> {
         }
     }
 
-    @Override void cancel() {
+    @Override
+    void cancel() {
         super.cancel();
         if (callback != null) {
             callback = null;

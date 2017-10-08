@@ -35,11 +35,13 @@ class BitmapHunter implements Runnable {
     private static final AtomicInteger SEQUENCE_GENERATOR = new AtomicInteger();
 
     private static final RequestHandler ERRORING_HANDLER = new RequestHandler() {
-        @Override public boolean canHandleRequest(Request data) {
+        @Override
+        public boolean canHandleRequest(Request data) {
             return true;
         }
 
-        @Override public Result load(Request request, int networkPolicy) throws IOException {
+        @Override
+        public Result load(Request request, int networkPolicy) throws IOException {
             throw new IllegalStateException("Unrecognized type of request: " + request);
         }
     };
@@ -115,7 +117,8 @@ class BitmapHunter implements Runnable {
         }
     }
 
-    @Override public void run() {
+    @Override
+    public void run() {
         try {
             updateThreadName(data);
 

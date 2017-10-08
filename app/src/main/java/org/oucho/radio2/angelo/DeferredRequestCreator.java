@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import java.lang.ref.WeakReference;
 
 class DeferredRequestCreator implements OnPreDrawListener, OnAttachStateChangeListener {
+
     private final RequestCreator creator;
     @VisibleForTesting
     private final WeakReference<ImageView> target;
@@ -29,15 +30,18 @@ class DeferredRequestCreator implements OnPreDrawListener, OnAttachStateChangeLi
         }
     }
 
-    @Override public void onViewAttachedToWindow(View view) {
+    @Override
+    public void onViewAttachedToWindow(View view) {
         view.getViewTreeObserver().addOnPreDrawListener(this);
     }
 
-    @Override public void onViewDetachedFromWindow(View view) {
+    @Override
+    public void onViewDetachedFromWindow(View view) {
         view.getViewTreeObserver().removeOnPreDrawListener(this);
     }
 
-    @Override public boolean onPreDraw() {
+    @Override
+    public boolean onPreDraw() {
         ImageView target = this.target.get();
         if (target == null) {
             return true;

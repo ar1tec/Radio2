@@ -19,12 +19,14 @@ class NetworkRequestHandler extends RequestHandler {
         this.downloader = downloader;
     }
 
-    @Override public boolean canHandleRequest(Request data) {
+    @Override
+    public boolean canHandleRequest(Request data) {
         String scheme = data.uri.getScheme();
         return (SCHEME_HTTP.equals(scheme) || SCHEME_HTTPS.equals(scheme));
     }
 
-    @Override public Result load(Request request, int networkPolicy) throws IOException {
+    @Override
+    public Result load(Request request, int networkPolicy) throws IOException {
         okhttp3.Request downloaderRequest = createRequest(request, networkPolicy);
         Response response = downloader.load(downloaderRequest);
         ResponseBody body = response.body();
@@ -50,15 +52,18 @@ class NetworkRequestHandler extends RequestHandler {
         return new Result(body.source(), loadedFrom);
     }
 
-    @Override int getRetryCount() {
+    @Override
+    int getRetryCount() {
         return 2;
     }
 
-    @Override boolean shouldRetry(NetworkInfo info) {
+    @Override
+    boolean shouldRetry(NetworkInfo info) {
         return info == null || info.isConnected();
     }
 
-    @Override boolean supportsReplay() {
+    @Override
+    boolean supportsReplay() {
         return true;
     }
 

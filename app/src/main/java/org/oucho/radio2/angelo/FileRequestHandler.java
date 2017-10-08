@@ -16,11 +16,13 @@ class FileRequestHandler extends ContentStreamRequestHandler {
         super(context);
     }
 
-    @Override public boolean canHandleRequest(Request data) {
+    @Override
+    public boolean canHandleRequest(Request data) {
         return SCHEME_FILE.equals(data.uri.getScheme());
     }
 
-    @Override public Result load(Request request, int networkPolicy) throws IOException {
+    @Override
+    public Result load(Request request, int networkPolicy) throws IOException {
         Source source = Okio.source(getInputStream(request));
         return new Result(null, source, DISK);
     }

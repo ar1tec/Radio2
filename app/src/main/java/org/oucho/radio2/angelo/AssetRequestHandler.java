@@ -24,13 +24,15 @@ class AssetRequestHandler extends RequestHandler {
         this.context = context;
     }
 
-    @Override public boolean canHandleRequest(Request data) {
+    @Override
+    public boolean canHandleRequest(Request data) {
         Uri uri = data.uri;
         return (SCHEME_FILE.equals(uri.getScheme())
                 && !uri.getPathSegments().isEmpty() && ANDROID_ASSET.equals(uri.getPathSegments().get(0)));
     }
 
-    @Override public Result load(Request request, int networkPolicy) throws IOException {
+    @Override
+    public Result load(Request request, int networkPolicy) throws IOException {
         if (assetManager == null) {
             synchronized (lock) {
                 assetManager = context.getAssets();

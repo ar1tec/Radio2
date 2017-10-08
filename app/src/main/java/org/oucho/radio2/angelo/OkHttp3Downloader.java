@@ -13,6 +13,7 @@ import okhttp3.Response;
 
 
 public final class OkHttp3Downloader implements Downloader {
+
     @VisibleForTesting
     private final Call.Factory client;
 
@@ -32,7 +33,9 @@ public final class OkHttp3Downloader implements Downloader {
         this.client = client;
     }
 
-    @NonNull @Override public Response load(@NonNull Request request) throws IOException {
+    @NonNull
+    @Override
+    public Response load(@NonNull Request request) throws IOException {
         return client.newCall(request).execute();
     }
 

@@ -191,11 +191,9 @@ public final class Request {
             return priority != null;
         }
 
-
         void stableKey(@Nullable String stableKey) {
             this.stableKey = stableKey;
         }
-
 
         void resize(@Px int targetWidth, @Px int targetHeight) {
             if (targetWidth < 0) {

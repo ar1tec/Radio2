@@ -14,24 +14,28 @@ class FetchAction extends Action<Object> {
         this.callback = callback;
     }
 
-    @Override void complete(Bitmap result, Angelo.LoadedFrom from) {
+    @Override
+    void complete(Bitmap result, Angelo.LoadedFrom from) {
         if (callback != null) {
             callback.onSuccess();
         }
     }
 
-    @Override void error(Exception e) {
+    @Override
+    void error(Exception e) {
         if (callback != null) {
             callback.onError(e);
         }
     }
 
-    @Override void cancel() {
+    @Override
+    void cancel() {
         super.cancel();
         callback = null;
     }
 
-    @Override Object getTarget() {
+    @Override
+    Object getTarget() {
         return target;
     }
 }

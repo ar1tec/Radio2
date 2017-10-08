@@ -28,13 +28,15 @@ class MediaStoreRequestHandler extends ContentStreamRequestHandler {
         super(context);
     }
 
-    @Override public boolean canHandleRequest(Request data) {
+    @Override
+    public boolean canHandleRequest(Request data) {
         final Uri uri = data.uri;
         return (SCHEME_CONTENT.equals(uri.getScheme())
                 && MediaStore.AUTHORITY.equals(uri.getAuthority()));
     }
 
-    @Override public Result load(Request request, int networkPolicy) throws IOException {
+    @Override
+    public Result load(Request request, int networkPolicy) throws IOException {
         ContentResolver contentResolver = context.getContentResolver();
 
         String mimeType = contentResolver.getType(request.uri);

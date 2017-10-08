@@ -53,7 +53,8 @@ public class RequestCreator {
         this.data = new Request.Builder(uri, resourceId);
     }
 
-    @VisibleForTesting RequestCreator() {
+    @VisibleForTesting
+    RequestCreator() {
         this.angelo = null;
         this.data = new Request.Builder(null, 0);
     }

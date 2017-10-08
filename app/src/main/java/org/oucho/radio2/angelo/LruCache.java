@@ -15,7 +15,7 @@ public class LruCache implements Cache {
 
 
     /** Create a cache using an appropriate portion of the available RAM as the maximum size. */
-    public LruCache(@NonNull Context context) {
+    LruCache(@NonNull Context context) {
         this(Utils.calculateMemoryCacheSize(context));
     }
 
@@ -28,7 +28,8 @@ public class LruCache implements Cache {
         this.map = new LinkedHashMap<>(0, 0.75f, true);
     }
 
-    @Override public Bitmap get(String key) {
+    @Override
+    public Bitmap get(String key) {
         if (key == null) {
             throw new NullPointerException("key == null");
         }
@@ -44,7 +45,8 @@ public class LruCache implements Cache {
         return null;
     }
 
-    @Override public void set(String key, Bitmap bitmap) {
+    @Override
+    public void set(String key, Bitmap bitmap) {
         if (key == null || bitmap == null) {
             throw new NullPointerException("key == null || bitmap == null");
         }

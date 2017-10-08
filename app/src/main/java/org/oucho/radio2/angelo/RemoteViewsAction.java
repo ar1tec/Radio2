@@ -10,6 +10,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 import static org.oucho.radio2.angelo.Utils.getService;
 
 abstract class RemoteViewsAction extends Action<RemoteViewsAction.RemoteViewsTarget> {
+
     final RemoteViews remoteViews;
     private final int viewId;
     private Callback callback;
@@ -25,7 +26,8 @@ abstract class RemoteViewsAction extends Action<RemoteViewsAction.RemoteViewsTar
         this.callback = callback;
     }
 
-    @Override void complete(Bitmap result, Angelo.LoadedFrom from) {
+    @Override
+    void complete(Bitmap result, Angelo.LoadedFrom from) {
         remoteViews.setImageViewBitmap(viewId, result);
         update();
         if (callback != null) {
@@ -33,14 +35,16 @@ abstract class RemoteViewsAction extends Action<RemoteViewsAction.RemoteViewsTar
         }
     }
 
-    @Override void cancel() {
+    @Override
+    void cancel() {
         super.cancel();
         if (callback != null) {
             callback = null;
         }
     }
 
-    @Override public void error(Exception e) {
+    @Override
+    public void error(Exception e) {
         if (errorResId != 0) {
             setImageResource(errorResId);
         }
@@ -49,7 +53,8 @@ abstract class RemoteViewsAction extends Action<RemoteViewsAction.RemoteViewsTar
         }
     }
 
-    @Override RemoteViewsTarget getTarget() {
+    @Override
+    RemoteViewsTarget getTarget() {
         if (target == null) {
             target = new RemoteViewsTarget(remoteViews, viewId);
         }
@@ -72,14 +77,16 @@ abstract class RemoteViewsAction extends Action<RemoteViewsAction.RemoteViewsTar
             this.viewId = viewId;
         }
 
-        @Override public boolean equals(Object o) {
+        @Override
+        public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             RemoteViewsTarget remoteViewsTarget = (RemoteViewsTarget) o;
             return viewId == remoteViewsTarget.viewId && remoteViews.equals(remoteViewsTarget.remoteViews);
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return 31 * remoteViews.hashCode() + viewId;
         }
     }
@@ -94,7 +101,8 @@ abstract class RemoteViewsAction extends Action<RemoteViewsAction.RemoteViewsTar
             this.appWidgetIds = appWidgetIds;
         }
 
-        @Override void update() {
+        @Override
+        void update() {
             AppWidgetManager manager = AppWidgetManager.getInstance(angelo.context);
             manager.updateAppWidget(appWidgetIds, remoteViews);
         }
@@ -108,14 +116,14 @@ abstract class RemoteViewsAction extends Action<RemoteViewsAction.RemoteViewsTar
         NotificationAction(Angelo angelo, Request data, RemoteViews remoteViews, int viewId,
                            int notificationId, Notification notification, String notificationTag, int memoryPolicy,
                            int networkPolicy, String key, Object tag, int errorResId, Callback callback) {
-            super(angelo, data, remoteViews, viewId, errorResId, memoryPolicy, networkPolicy, tag, key,
-                    callback);
+            super(angelo, data, remoteViews, viewId, errorResId, memoryPolicy, networkPolicy, tag, key, callback);
             this.notificationId = notificationId;
             this.notificationTag = notificationTag;
             this.notification = notification;
         }
 
-        @Override void update() {
+        @Override
+        void update() {
             NotificationManager manager = getService(angelo.context, NOTIFICATION_SERVICE);
             manager.notify(notificationTag, notificationId, notification);
         }

@@ -8,6 +8,7 @@ import java.lang.ref.WeakReference;
 import static org.oucho.radio2.angelo.Angelo.Priority;
 
 abstract class Action<T> {
+
     static class RequestWeakReference<M> extends WeakReference<M> {
         final Action action;
 

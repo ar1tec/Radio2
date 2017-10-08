@@ -15,12 +15,14 @@ class ResourceRequestHandler extends RequestHandler {
         this.context = context;
     }
 
-    @Override public boolean canHandleRequest(Request data) {
+    @Override
+    public boolean canHandleRequest(Request data) {
         return data.resourceId != 0 || SCHEME_ANDROID_RESOURCE.equals(data.uri.getScheme());
 
     }
 
-    @Override public Result load(Request request, int networkPolicy) throws IOException {
+    @Override
+    public Result load(Request request, int networkPolicy) throws IOException {
         Resources res = Utils.getResources(context, request);
         int id = Utils.getResourceId(res, request);
         return new Result(decodeResource(res, id, request));
