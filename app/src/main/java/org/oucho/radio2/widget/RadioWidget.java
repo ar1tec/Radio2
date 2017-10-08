@@ -1,4 +1,4 @@
-package org.oucho.radio2.radio;
+package org.oucho.radio2.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -11,6 +11,8 @@ import android.widget.RemoteViews;
 
 import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.R;
+import org.oucho.radio2.radio.RadioApplication;
+import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.utils.ImageFactory;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -28,17 +30,14 @@ public class RadioWidget extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.radio_widget);
 
-
         SharedPreferences preferences = RadioApplication.getInstance().getSharedPreferences(PREF_FILE, MODE_PRIVATE);
 
-        Intent serviceIntent = new Intent(context, RadioService.class);
-        context.startService(serviceIntent);
+        Intent player = new Intent(context, WidgetService.class);
+        context.startService(player);
 
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-
         views.setOnClickPendingIntent(R.id.widget_layout, pendingIntent);
 
         Intent playpause = new Intent();
@@ -48,6 +47,7 @@ public class RadioWidget extends AppWidgetProvider {
             playpause.setAction(INTENT_CONTROL_RESTART);
         }
         PendingIntent togglePlayIntent = PendingIntent.getBroadcast(context, 0, playpause, 0);
+
 
         Intent stop = new Intent();
         stop.setAction(INTENT_CONTROL_STOP);

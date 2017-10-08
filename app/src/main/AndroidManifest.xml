@@ -18,6 +18,7 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -28,6 +29,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.oucho.radio2.radio.RadioActivity" />
         </activity>
+
         <activity android:name=".radio.RadioActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -79,12 +81,15 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".filepicker.FilePickerActivity"
             android:label="@string/select_file"
             android:theme="@style/AppThemeFilePicker" />
 
         <service android:name=".radio.RadioService" />
+
+        <service android:name=".widget.WidgetService"/>
 
         <receiver
             android:name=".receiver.StopReceiver"
@@ -93,6 +98,7 @@
                 <action android:name="org.oucho.radio2.STOP" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".receiver.NewRadioReceiver"
             tools:ignore="ExportedReceiver">
@@ -101,7 +107,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".radio.RadioWidget">
+        <receiver android:name=".widget.RadioWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -110,6 +116,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/radio_widget_info" />
         </receiver>
+
     </application>
 
 </manifest>

@@ -63,6 +63,7 @@ import org.oucho.radio2.utils.Counter;
 import org.oucho.radio2.utils.Later;
 import org.oucho.radio2.utils.Playlist;
 import org.oucho.radio2.utils.State;
+import org.oucho.radio2.widget.RadioWidget;
 
 import java.io.IOException;
 import java.net.URL;
@@ -155,8 +156,9 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
             unregisterReceiver(notificationUpdateReceiver);
 
         WifiLocker.unlock();
-    }
 
+
+    }
 
 
     @Override
@@ -674,7 +676,7 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
 
     @SuppressWarnings("SameReturnValue")
     private int done() {
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override

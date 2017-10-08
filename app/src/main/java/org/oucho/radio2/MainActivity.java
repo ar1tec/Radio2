@@ -319,8 +319,8 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
         try {
             unregisterReceiver(playerReceiver);
         } catch (IllegalArgumentException ignore) {}
-
     }
+
 
     private void exit() {
         mediaPlayer.release();
@@ -339,7 +339,6 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         finish();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
