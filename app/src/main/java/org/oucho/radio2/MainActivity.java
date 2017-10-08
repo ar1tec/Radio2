@@ -992,7 +992,7 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
 
         } else {
 
-            String encodedImage = ImageFactory.drawableResourceToBitmap(mContext, R.drawable.ic_radio_white_36dp);
+            String encodedImage = ImageFactory.drawableResourceToBitmap(mContext, R.drawable.ic_radio_blue_grey_600_36dp);
 
             Intent intent = new Intent();
             intent.setAction(INTENT_UPDATENOTIF);

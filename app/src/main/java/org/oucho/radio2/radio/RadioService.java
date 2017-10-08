@@ -84,14 +84,19 @@ import static org.oucho.radio2.utils.State.isWantPlaying;
 
 public class RadioService extends Service implements RadioKeys, EventListener, OnAudioFocusChangeListener {
 
+    private final String TAG = "Player Service";
+
     private Context context = null;
+
     private String mUserAgent;
     private String launch_url = null;
-
     private static String url = null;
     private static String name = null;
+    private static String locale_string;
     private final String default_url = null;
     private final String default_name = null;
+
+    private static Bitmap img_logo;
 
     private MediaPlayer mediaPlayer;
     private Later stopSoonTask = null;
@@ -100,18 +105,16 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
     private SimpleExoPlayer mExoPlayer = null;
     private AudioManager audio_manager = null;
     private SharedPreferences préférences = null;
+    private NotificationUpdate notificationUpdateReceiver;
     private AsyncTask<Integer,Void,Void> pause_task = null;
 
     private int failure_ttl = 0;
+    private static final int NOTIFY_ID = 32;
     private final int initial_failure_ttl = 5;
+
     private float currentVol = 1.0f;
 
-    private final String TAG = "Player Service";
-
-    private NotificationUpdate notificationUpdateReceiver;
-
     private static boolean sIsServiceForeground = false;
-    private static final int NOTIFY_ID = 32;
     private static boolean timer = false;
 
 
@@ -823,28 +826,22 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
 
         if (isPlaying()) {
-            contentView.setImageViewResource(R.id.playpause, R.drawable.ic_pause_circle_filled_grey_800_36dp);
+            contentView.setImageViewResource(R.id.playpause, R.drawable.ic_pause_circle_filled_amber_a700_36dp);
         } else {
-            contentView.setImageViewResource(R.id.playpause, R.drawable.ic_play_circle_filled_grey_800_36dp);
+            contentView.setImageViewResource(R.id.playpause, R.drawable.ic_play_circle_filled_amber_a700_36dp);
 
         }
 
         contentView.setOnClickPendingIntent(R.id.stop, stopIntent);
         contentView.setOnClickPendingIntent(R.id.playpause, togglePlayIntent);
 
-        if (isPlaying()) {
-            notificationBuilder.addAction(R.drawable.ic_pause_white_18dp, "", togglePlayIntent);
-        } else {
-            notificationBuilder.addAction(R.drawable.ic_play_arrow_white_18dp, "", togglePlayIntent);
-        }
-
 
         if ("Play".equals(action)) {
-            locale_string = context.getResources().getString(R.string.play);
+            setState(context.getResources().getString(R.string.play));
         } else if ("Loading...".equals(action)) {
-            locale_string = context.getResources().getString(R.string.loading);
+            setState(context.getResources().getString(R.string.loading));
         } else {
-            locale_string = action;
+            setState(action);
         }
 
         contentView.setTextViewText(R.id.notif_name, radio_name);
@@ -852,8 +849,7 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
 
         if (logo_radio != null) {
             contentView.setImageViewBitmap(R.id.notif_logo, logo_radio);
-
-            img_logo = logo_radio;
+            setLogo(logo_radio);
         }
 
         notification.contentView = contentView;
@@ -884,38 +880,43 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         sendBroadcast(widget);
     }
 
-    private static String locale_string;
-
-    private static Bitmap img_logo;
-
     private void removeNotification(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         assert notificationManager != null;
         notificationManager.cancel(NOTIFY_ID);
     }
 
-    public static String getState() {
-        return locale_string;
-    }
 
-    public static Bitmap getLogo() {
-        return img_logo;
-    }
-
-    public static String getUrl() {
-        return url;
-    }
-
-    private static void setUrl(String value) {
-        url = value;
+    private static void setName(String value) {
+        name = value;
     }
 
     public static String getName() {
         return name;
     }
 
-    private static void setName(String value) {
-        name = value;
+    private static void setLogo(Bitmap value) {
+        img_logo = value;
+    }
+
+    public static Bitmap getLogo() {
+        return img_logo;
+    }
+
+    private static void setUrl(String value) {
+        url = value;
+    }
+
+    public static String getUrl() {
+        return url;
+    }
+
+    private static void setState(String value) {
+        locale_string = value;
+    }
+
+    public static String getState() {
+        return locale_string;
     }
 
     public static void timerOnOff(boolean onOff){

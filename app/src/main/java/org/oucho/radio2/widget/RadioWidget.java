@@ -52,9 +52,9 @@ public class RadioWidget extends AppWidgetProvider implements RadioKeys{
         PendingIntent stopIntent = PendingIntent.getBroadcast(context, 0, stop, 0);
 
         if (isPlaying()) {
-            views.setImageViewResource(R.id.playpause, R.drawable.ic_pause_circle_filled_grey_800_36dp);
+            views.setImageViewResource(R.id.playpause, R.drawable.ic_pause_circle_filled_amber_a700_36dp);
         } else {
-            views.setImageViewResource(R.id.playpause, R.drawable.ic_play_circle_filled_grey_800_36dp);
+            views.setImageViewResource(R.id.playpause, R.drawable.ic_play_circle_filled_amber_a700_36dp);
         }
 
         views.setOnClickPendingIntent(R.id.stop, stopIntent);

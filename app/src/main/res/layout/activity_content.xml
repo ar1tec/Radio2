@@ -71,8 +71,7 @@
             android:layout_marginEnd="2dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="center"
-            android:src="@drawable/ic_stop_grey_600_48dp"
-            android:tint="@color/colorAccent"
+            android:src="@drawable/ic_stop_amber_a700_48dp"
             android:layout_centerHorizontal="true"
             tools:ignore="ContentDescription" />
 
@@ -84,8 +83,7 @@
             android:layout_marginStart="35dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="center"
-            android:src="@drawable/ic_play_circle_filled_grey_600_48dp"
-            android:tint="@color/colorAccent"
+            android:src="@drawable/ic_play_circle_filled_amber_a700_48dp"
             android:layout_centerHorizontal="true"
             tools:ignore="ContentDescription" />
 
@@ -97,8 +95,7 @@
             android:layout_marginStart="35dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="center"
-            android:src="@drawable/ic_pause_circle_filled_grey_600_48dp"
-            android:tint="@color/colorAccent"
+            android:src="@drawable/ic_pause_circle_filled_amber_a700_48dp"
             android:layout_centerHorizontal="true"
             tools:ignore="ContentDescription"
             android:visibility="invisible"/>
