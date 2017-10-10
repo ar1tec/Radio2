@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 
 class AngeloExecutorService extends ThreadPoolExecutor {
-    private static final int DEFAULT_THREAD_COUNT = 6;
+    private static final int DEFAULT_THREAD_COUNT = 16;
 
     AngeloExecutorService() {
         super(DEFAULT_THREAD_COUNT, DEFAULT_THREAD_COUNT, 0, TimeUnit.MILLISECONDS,
@@ -28,21 +28,22 @@ class AngeloExecutorService extends ThreadPoolExecutor {
             case ConnectivityManager.TYPE_WIFI:
             case ConnectivityManager.TYPE_WIMAX:
             case ConnectivityManager.TYPE_ETHERNET:
-                setThreadCount(6);
+                setThreadCount(16);
                 break;
+
             case ConnectivityManager.TYPE_MOBILE:
                 switch (info.getSubtype()) {
                     case TelephonyManager.NETWORK_TYPE_LTE:  // 4G
                     case TelephonyManager.NETWORK_TYPE_HSPAP:
                     case TelephonyManager.NETWORK_TYPE_EHRPD:
-                        setThreadCount(6);
+                        setThreadCount(16);
                         break;
                     case TelephonyManager.NETWORK_TYPE_UMTS: // 3G
                     case TelephonyManager.NETWORK_TYPE_CDMA:
                     case TelephonyManager.NETWORK_TYPE_EVDO_0:
                     case TelephonyManager.NETWORK_TYPE_EVDO_A:
                     case TelephonyManager.NETWORK_TYPE_EVDO_B:
-                        setThreadCount(3);
+                        setThreadCount(8);
                         break;
                     case TelephonyManager.NETWORK_TYPE_GPRS: // 2G
                     case TelephonyManager.NETWORK_TYPE_EDGE:
@@ -52,6 +53,7 @@ class AngeloExecutorService extends ThreadPoolExecutor {
                         setThreadCount(DEFAULT_THREAD_COUNT);
                 }
                 break;
+
             default:
                 setThreadCount(DEFAULT_THREAD_COUNT);
         }
