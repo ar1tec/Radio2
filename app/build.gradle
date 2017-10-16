@@ -8,7 +8,7 @@ android {
         applicationId "org.oucho.radio2"
         minSdkVersion 21
         targetSdkVersion 26
-        versionName "2.14.4"
+        versionName "2.14.5"
         setProperty("archivesBaseName", "Radio_$versionName")
     }
 

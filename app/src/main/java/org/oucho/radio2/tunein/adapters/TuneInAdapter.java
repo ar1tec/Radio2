@@ -1,5 +1,6 @@
 package org.oucho.radio2.tunein.adapters;
 
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,6 +70,8 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
             viewHolder.relativeLayout.setVisibility(View.VISIBLE);
             viewHolder.details_title.setText(name);
 
+            int img_size = viewHolder.image.getContext().getResources().getDimensionPixelSize(R.dimen.browser_img_size);
+
             for (String part : parts) {
 
                 if (part.contains("subtext=\"")) {
@@ -77,7 +80,13 @@ public class TuneInAdapter extends BaseAdapter<TuneInAdapter.TuneInViewHolder>  
 
                 if (part.contains("image=\"")) {
                     String url_image = part.replace("image=\"", "");
-                    Angelo.with(viewHolder.itemView.getContext()).load(url_image).error(R.drawable.ic_mic_blue_grey_400_24dp).fit().centerCrop().into(viewHolder.image);
+                    Angelo.with(viewHolder.itemView.getContext())
+                            .load(url_image)
+                            .config(Bitmap.Config.RGB_565)
+                            .error(R.drawable.ic_mic_blue_grey_400_24dp)
+                            .resize(img_size, img_size)
+                            .centerInside()
+                            .into(viewHolder.image);
                 }
             }
         }

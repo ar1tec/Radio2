@@ -21,4 +21,6 @@
 
     <dimen name="fastscroll_scrollbar_padding">6dp</dimen>
 
+    <dimen name="browser_img_size">50dp</dimen>
+
 </resources>

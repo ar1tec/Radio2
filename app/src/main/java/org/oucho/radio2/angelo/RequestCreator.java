@@ -165,7 +165,7 @@ public class RequestCreator {
     }
 
     /** Resize the image to the specified size in pixels. */
-    RequestCreator resize(int targetWidth, int targetHeight) {
+    public RequestCreator resize(int targetWidth, int targetHeight) {
         data.resize(targetWidth, targetHeight);
         return this;
     }
