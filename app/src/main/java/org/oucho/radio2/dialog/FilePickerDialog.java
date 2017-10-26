@@ -337,7 +337,7 @@ public class FilePickerDialog extends BottomSheetDialogFragment {
 
     }
 
-    public static String getSdcardPath(Context context) {
+    private static String getSdcardPath(Context context) {
         for(File file : context.getExternalFilesDirs("external")) {
             if (file != null && !file.equals(context.getExternalFilesDir("external"))) {
                 int index = file.getAbsolutePath().lastIndexOf("/Android/data");

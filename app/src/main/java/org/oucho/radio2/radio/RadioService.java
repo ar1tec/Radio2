@@ -52,7 +52,6 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
-import com.google.android.exoplayer2.util.Util;
 
 import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.R;
@@ -88,7 +87,6 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
 
     private Context context = null;
 
-    private String mUserAgent;
     private String launch_url = null;
     private static String url = null;
     private static String name = null;
@@ -138,8 +136,6 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
 
         audio_manager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         connectivity = new Connectivity(context,this);
-
-        mUserAgent = Util.getUserAgent(this, APPLICATION_NAME);
 
         createExoPlayer();
 
@@ -614,7 +610,7 @@ public class RadioService extends Service implements RadioKeys, EventListener, O
         };
 
         @SuppressWarnings("unchecked")
-        DataSource.Factory dataSourceFactory = new CustomHttpDataSource(mUserAgent, transferListener);
+        DataSource.Factory dataSourceFactory = new CustomHttpDataSource(USER_AGENT, transferListener);
 
         MediaSource mediaSource;
 

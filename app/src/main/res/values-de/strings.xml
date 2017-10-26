@@ -69,6 +69,8 @@
     <string name="search">Suchen</string>
     <string name="pause">Pause</string>
     <string name="stop">Stop</string>
+    <string name="internal_storage">Interne Speicher</string>
+    <string name="extrnal_storage">Externer Speicher</string>
 
 
 </resources>

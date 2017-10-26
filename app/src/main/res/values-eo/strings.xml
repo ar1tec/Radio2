@@ -71,5 +71,7 @@
     <string name="search">Serĉi</string>
     <string name="pause">Paŭzo</string>
     <string name="stop">Ĉesu</string>
+    <string name="extrnal_storage">Ekstera Stokado</string>
+    <string name="internal_storage">Interna Stokado</string>
 
 </resources>
