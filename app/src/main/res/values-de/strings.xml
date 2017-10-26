@@ -45,42 +45,10 @@
 
     <string name="importerMenu">Stationsliste einlesen</string>
     <string name="exporterMenu">Stationsliste exportieren</string>
-    <string name="select_file">Datei auswählen</string>
 
     <!-- permission -->
     <string name="permission">Erlaubnis-Anforderung</string>
     <string name="permission_write_external_storage">Schreibzugriff auf externen Speicher</string>
-
-
-
-    <string-array name="size_units">
-        <item>o</item>
-        <item>Ko</item>
-        <item>Mo</item>
-        <item>Go</item>
-        <item>To</item>
-        <item>Po</item>
-    </string-array>
-
-    <string name="empty_directory">Leeres Verzeichnis</string>
-    <string name="action_select_all">Alles auswählen</string>
-    <string name="action_deselect">Nicht auswählen</string>
-    <string name="action_invert_selection">Auswahl umkehren</string>
-    <string name="new_folder">Neues Verzeichnis</string>
-    <string name="folder_name_hint">Verzeichnisname</string>
-    <string name="folder_created">Verzeichnis erfolgreich erzeugt</string>
-    <string name="folder_not_created">Fehler, Verzeichnis nicht angelegt</string>
-    <string name="folder_already_exists">Verzeichnis existiert bereits</string>
-    <string name="sort">Sortieren</string>
-
-    <string-array name="sorting_types">
-        <item>Name, aufsteigend</item>
-        <item>Name, absteigend</item>
-        <item>Größe, aufsteigend</item>
-        <item>Größe, absteigend</item>
-        <item>Datum, aufsteigend</item>
-        <item>Datum, absteigend</item>
-    </string-array>
 
 
     <string name="add_logo">Tippen um ein Logo hinzuzufügen</string>

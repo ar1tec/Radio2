@@ -28,9 +28,9 @@ import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.tunein.adapters.BaseAdapter;
 import org.oucho.radio2.tunein.adapters.TuneInAdapter;
 import org.oucho.radio2.tunein.loaders.TuneInLoader;
-import org.oucho.radio2.utils.CustomLayoutManager;
+import org.oucho.radio2.view.CustomLayoutManager;
 import org.oucho.radio2.utils.ImageFactory;
-import org.oucho.radio2.utils.fastscroll.FastScrollRecyclerView;
+import org.oucho.radio2.view.fastscroll.FastScrollRecyclerView;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;

@@ -55,19 +55,17 @@ import android.widget.Toast;
 import org.oucho.radio2.db.Radio;
 import org.oucho.radio2.db.RadiosDatabase;
 import org.oucho.radio2.dialog.AboutDialog;
+import org.oucho.radio2.dialog.FilePickerDialog;
 import org.oucho.radio2.dialog.PermissionDialog;
-import org.oucho.radio2.filepicker.FilePicker;
-import org.oucho.radio2.filepicker.FilePickerActivity;
-import org.oucho.radio2.filepicker.FilePickerParcelObject;
 import org.oucho.radio2.radio.RadioAdapter;
 import org.oucho.radio2.radio.RadioKeys;
 import org.oucho.radio2.radio.RadioService;
 import org.oucho.radio2.tunein.TuneInFragment;
 import org.oucho.radio2.tunein.adapters.BaseAdapter.OnItemClickListener;
 import org.oucho.radio2.update.CheckUpdate;
-import org.oucho.radio2.utils.CustomLayoutManager;
+import org.oucho.radio2.view.CustomLayoutManager;
 import org.oucho.radio2.utils.ImageFactory;
-import org.oucho.radio2.utils.SeekArc;
+import org.oucho.radio2.view.SeekArc;
 import org.oucho.radio2.utils.State;
 import org.oucho.radio2.utils.audio.GetAudioFocusTask;
 import org.oucho.radio2.utils.audio.VolumeTimer;
@@ -85,14 +83,11 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements RadioKeys, NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
-    private static final int FILE_PICKER_RESULT = 0;
-
     private Context mContext;
     private ActionBar actionBar;
     private SharedPreferences preferences;
 
     private String radio_name;
-    private String import_type; // file or img
     private String playing_state;
     private String import_export_radio_list;
     private final String app_music = "org.oucho.musicplayer";
@@ -1320,18 +1315,22 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             checkWritePermission();
             import_export_radio_list = "importer";
         } else {
-            import_type = "fichier";
-            String currentPath = Environment.getExternalStorageDirectory().toString() + "/Radio";
 
-            Intent intent = new Intent(getApplicationContext(), FilePickerActivity.class);
-            intent.putExtra(FilePicker.SET_ONLY_ONE_ITEM, true);
-            intent.putExtra(FilePicker.SET_FILTER_LISTED, new String[] { "xml" });
-            intent.putExtra(FilePicker.DISABLE_NEW_FOLDER_BUTTON, true);
-            intent.putExtra(FilePicker.DISABLE_SORT_BUTTON, true);
-            intent.putExtra(FilePicker.ENABLE_QUIT_BUTTON, true);
-            intent.putExtra(FilePicker.SET_CHOICE_TYPE, FilePicker.CHOICE_TYPE_FILES);
-            intent.putExtra(FilePicker.SET_START_DIRECTORY, currentPath);
-            startActivityForResult(intent, FILE_PICKER_RESULT);
+            FilePickerDialog.with(getSupportFragmentManager())
+                    .type("xml")
+                    .onFileSelected(path -> {
+
+                        File file = new  File(path);
+
+                        if(file.exists()){
+
+                            ReadXML readXML = new ReadXML();
+                            String XMLdata = readXML.readFile(file.getPath());
+                            readXML.read(mContext, XMLdata);
+
+                            updateListView();
+                        }
+                    }).show();
         }
     }
 
@@ -1347,65 +1346,31 @@ public class MainActivity extends AppCompatActivity implements RadioKeys, Naviga
             checkWritePermission();
             import_export_radio_list = "image";
         } else {
-            import_type = "image";
-            String currentPath = Environment.getExternalStorageDirectory().toString() + "/";
 
-            Intent intent = new Intent(getApplicationContext(), FilePickerActivity.class);
-            intent.putExtra(FilePicker.SET_ONLY_ONE_ITEM, true);
-            intent.putExtra(FilePicker.SET_FILTER_LISTED, new String[] { "bmp", "gif", "jpeg", "jpg", "png" });
-            intent.putExtra(FilePicker.DISABLE_NEW_FOLDER_BUTTON, true);
-            intent.putExtra(FilePicker.DISABLE_SORT_BUTTON, true);
-            intent.putExtra(FilePicker.ENABLE_QUIT_BUTTON, true);
-            intent.putExtra(FilePicker.SET_CHOICE_TYPE, FilePicker.CHOICE_TYPE_FILES);
-            intent.putExtra(FilePicker.SET_START_DIRECTORY, currentPath);
-            startActivityForResult(intent, FILE_PICKER_RESULT);
+            FilePickerDialog.with(getSupportFragmentManager())
+                    .type("image")
+                    .onFileSelected(path -> {
+
+                        File file = new  File(path);
+
+                        if(file.exists()){
+
+                            try {
+                                logoRadio = ImageFactory.getResizedBitmap(mContext, BitmapFactory.decodeFile(file.getAbsolutePath()));
+
+                                final ImageView logo = edit_radio_view.findViewById(R.id.logo);
+                                final TextView text = edit_radio_view.findViewById(R.id.texte);
+
+                                logo.setImageBitmap(logoRadio);
+                                logo.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
+                                text.setVisibility(View.INVISIBLE);
+                            } catch (NullPointerException ignored) {}
+
+                        }
+                    }).show();
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == FILE_PICKER_RESULT && data != null) {
-            FilePickerParcelObject object = data.getParcelableExtra(FilePickerParcelObject.class.getCanonicalName());
-            StringBuilder buffer = new StringBuilder();
-
-            if (object.count > 0) {
-                for (int i = 0; i < object.count; i++) {
-                    buffer.append(object.names.get(i));
-                    if (i < object.count - 1) buffer.append(", ");
-                }
-            }
-
-            if ( import_type.equals("fichier") ) {
-
-                ReadXML readXML = new ReadXML();
-
-                String XMLdata = readXML.readFile(object.path + buffer.toString());
-
-                readXML.read(mContext, XMLdata);
-
-
-                updateListView();
-
-
-            } else if (import_type.equals("image")) {
-                String pathImg = object.path + buffer.toString();
-                File imgFile = new  File(pathImg);
-                if(imgFile.exists()){
-                    try {
-                        logoRadio = ImageFactory.getResizedBitmap(mContext, BitmapFactory.decodeFile(imgFile.getAbsolutePath()));
-
-                        final ImageView logo = edit_radio_view.findViewById(R.id.logo);
-                        final TextView text = edit_radio_view.findViewById(R.id.texte);
-
-                        logo.setImageBitmap(logoRadio);
-                        logo.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white));
-                        text.setVisibility(View.INVISIBLE);
-                    } catch (NullPointerException ignored) {}
-                }
-            }
-        }
-    }
 
 /* *********************************************************************************************
  * Arrêt de la radio

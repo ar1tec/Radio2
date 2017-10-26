@@ -11,6 +11,7 @@ import android.os.Process;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.lang.ref.ReferenceQueue;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -138,6 +139,12 @@ public class Angelo {
         return new RequestCreator(this, uri, 0);
     }
 
+    public RequestCreator load(File file) {
+        if (file == null) {
+            return new RequestCreator(this, null, 0);
+        }
+        return load(Uri.fromFile(file));
+    }
 
     public RequestCreator load(@Nullable String path) {
         if (path == null) {

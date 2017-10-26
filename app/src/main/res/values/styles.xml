@@ -24,12 +24,4 @@
         <item name="color">@color/grey_600</item>
     </style>
 
-
-    <style name="AppThemeFilePicker" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/grey_800</item>
-        <item name="colorPrimaryDark">@color/grey_900</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-
 </resources>

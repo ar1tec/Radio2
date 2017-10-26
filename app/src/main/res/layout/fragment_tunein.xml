@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <org.oucho.radio2.utils.fastscroll.FastScrollRecyclerView
+        <org.oucho.radio2.view.fastscroll.FastScrollRecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

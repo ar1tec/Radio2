@@ -82,11 +82,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".filepicker.FilePickerActivity"
-            android:label="@string/select_file"
-            android:theme="@style/AppThemeFilePicker" />
-
         <service android:name=".radio.RadioService" />
 
         <service android:name=".widget.WidgetService"/>

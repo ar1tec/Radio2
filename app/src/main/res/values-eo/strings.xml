@@ -10,13 +10,11 @@
     <string name="ok">OK</string>
     <string name="errorInvalidURL">Bonvolu enmeti validan adreson</string>
 
-
     <string name="addRadio_fromApp">Radio %1$s aldonita</string>
     <string name="addRadio_error">Ĉi tiu radio jam estas registrita</string>
     <string name="addRadio_error_url">La adreso de ĉi tiu radio estas malĝusta</string>
 
     <string name="add_mpd">Sendu al MPD Client</string>
-
 
     <!-- nav header activity main -->
 
@@ -26,14 +24,12 @@
 
     <string name="exit">Lasi</string>
 
-
     <!-- Timer -->
     <string name="start">komenco</string>
     <string name="cancel">nuligi</string>
     <string name="continuer">daŭrigi</string>
     <string name="cancel_timer">ĝisnombrado</string>
     <string name="impossible">0 neebla</string>
-
 
     <!-- update -->
     <string name="appupdater_update_available">Ĝisdatigo havebla</string>
@@ -54,44 +50,10 @@
 
     <string name="importerMenu">Importi radilan liston</string>
     <string name="exporterMenu">Konservu la liston de radioaparatoj</string>
-    <string name="select_file">Elekti rezervon</string>
 
     <!-- permission -->
     <string name="permission">Petu permeson</string>
     <string name="permission_write_external_storage">Ĉi tiu operacio postulas vian permeson por aliri la stokadon.</string>
-
-
-
-
-    <string-array name="size_units">
-        <item>b</item>
-        <item>Kb</item>
-        <item>Mb</item>
-        <item>Gb</item>
-        <item>Tb</item>
-        <item>Pb</item>
-    </string-array>
-
-    <string name="empty_directory">Malplena dosierujo</string>
-    <string name="action_select_all">Elektu ĉion</string>
-    <string name="action_deselect">Malmarku</string>
-    <string name="action_invert_selection">Reverti elekton</string>
-    <string name="new_folder">Nova dosierujo</string>
-    <string name="folder_name_hint">Dosierujo nomo</string>
-    <string name="folder_created">Sukcese kreis dosierujon</string>
-    <string name="folder_not_created">Eraro! La dosierujo ne estis kreita</string>
-    <string name="folder_already_exists">La dosierujo jam ekzistas</string>
-    <string name="sort">Speco</string>
-
-    <string-array name="sorting_types">
-        <item>Per nomo, suprenirante</item>
-        <item>Per nomo, malsuprenirante</item>
-        <item>De grandeco, supreniranta</item>
-        <item>De grandeco, malsupreniranta</item>
-        <item>De dato, supreniranta</item>
-        <item>De dato, malsupreniranta</item>
-    </string-array>
-
 
     <string name="add_logo">Tuŝu aldoni logoon</string>
     <string name="station_name">Nomo de la radio-aŭskultado</string>
@@ -109,6 +71,5 @@
     <string name="search">Serĉi</string>
     <string name="pause">Paŭzo</string>
     <string name="stop">Ĉesu</string>
-
 
 </resources>

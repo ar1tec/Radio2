@@ -28,7 +28,7 @@
             android:layout_alignParentStart="true">
 
 
-            <org.oucho.radio2.utils.AutoScrollableTextView
+            <org.oucho.radio2.view.AutoScrollableTextView
                 android:id="@+id/station"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

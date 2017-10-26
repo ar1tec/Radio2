@@ -67,43 +67,11 @@
 
     <string name="importerMenu">Import station list</string>
     <string name="exporterMenu">Export station list</string>
-    <string name="select_file">Select file</string>
 
     <!-- permission -->
     <string name="permission">Permission request</string>
     <string name="permission_write_external_storage">Permission to write external storage</string>
 
-
-    <string-array name="size_units">
-        <item>o</item>
-        <item>Ko</item>
-        <item>Mo</item>
-        <item>Go</item>
-        <item>To</item>
-        <item>Po</item>
-    </string-array>
-
-    <string name="empty_directory">Empty directory</string>
-    <string name="action_select_all">Select all</string>
-    <string name="action_deselect">Deselect</string>
-    <string name="action_invert_selection">Invert selection</string>
-    <string name="new_folder">New folder</string>
-    <string name="folder_created">Folder created</string>
-    <string name="folder_not_created">Error! Folder not created</string>
-    <string name="folder_already_exists">Folder already exists</string>
-    <string name="sort">Sort</string>
-
-    <string-array name="sorting_types">
-        <item>Name, ascending</item>
-        <item>Name, descending</item>
-        <item>Size, ascending</item>
-        <item>Size, descending</item>
-        <item>Date, ascending</item>
-        <item>Date, descending</item>
-    </string-array>
-
-
-    <string name="folder_name_hint">Folder name</string>
 
     <string name="addRadio_fromApp">Radio %1$s added</string>
     <string name="addRadio_error">This radio is already registered</string>
@@ -114,5 +82,6 @@
     <string name="error_connexion">Connection problem</string>
     <string name="search">Search</string>
 
-
+    <string name="internal_storage">Internal Storage</string>
+    <string name="extrnal_storage">External Storage</string>
 </resources>
